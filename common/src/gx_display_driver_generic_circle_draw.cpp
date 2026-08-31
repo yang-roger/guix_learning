@@ -1,0 +1,181 @@
+/***************************************************************************
+ * Copyright (c) 2024 Microsoft Corporation
+ * Copyright (c) 2026 Eclipse ThreadX contributors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which is available at
+ * https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: MIT
+ **************************************************************************/
+
+
+/**************************************************************************/
+/**************************************************************************/
+/**                                                                       */
+/** GUIX Component                                                        */
+/**                                                                       */
+/**   Display Management (Display)                                        */
+/**                                                                       */
+/**************************************************************************/
+
+#include "gx_display.h"
+
+#include "gx_utility.h"
+#include "gx_context.h"
+
+/**************************************************************************/
+/*                                                                        */
+/*  FUNCTION                                               RELEASE        */
+/*                                                                        */
+/*    _gx_display_driver_generic_circle_draw                              */
+/*                                                           6.1          */
+/*  AUTHOR                                                                */
+/*                                                                        */
+/*    Kenneth Maxwell, Microsoft Corporation                              */
+/*                                                                        */
+/*  DESCRIPTION                                                           */
+/*                                                                        */
+/*    Display driver to draw circle.                                      */
+/*                                                                        */
+/*  INPUT                                                                 */
+/*                                                                        */
+/*    context                               Drawing context               */
+/*    xcenter                               x-coord of center of circle   */
+/*    ycenter                               y-coord of center of circle   */
+/*    r                                     Radius of circle              */
+/*                                                                        */
+/*  OUTPUT                                                                */
+/*                                                                        */
+/*    None                                                                */
+/*                                                                        */
+/*  CALLS                                                                 */
+/*                                                                        */
+/*    [gx_display_driver_pixel_blend]       Basic display driver pixel    */
+/*                                            blend function              */
+/*    _gx_utility_rectangle_point_detect    Detect whether a pixel is     */
+/*                                            inside rectangle            */
+/*    [gx_display_driver_pixel_write]       Basic display driver pixel    */
+/*                                            write function              */
+/*                                                                        */
+/*  CALLED BY                                                             */
+/*                                                                        */
+/*    GUIX Internal Code                                                  */
+/*                                                                        */
+/**************************************************************************/
+#if defined(GX_ARC_DRAWING_SUPPORT)
+
+void _gx_display_driver_generic_circle_draw(GX_DRAW_CONTEXT *context, INT xcenter, INT ycenter, UINT r)
+{
+    /* The circle draw function is implemented from midpoint circle algorithm. */
+INT           x;
+INT           y;
+INT           d;
+GX_POINT      point;
+INT           sign[4][2] = { {1, 1}, {-1, 1}, {1, -1}, {-1, -1} };
+INT           index;
+
+GX_RECTANGLE *clip = context->clip;
+GX_DISPLAY   *display = context->display;
+GX_BRUSH     *brush = &context->brush;
+
+#if defined(GX_BRUSH_ALPHA_SUPPORT)
+GX_UBYTE     brush_alpha = brush->alpha;
+
+    if (display->driver_pixel_blend == GX_NULL)
+    {
+        /* Pixel blend function is null means alpha isn't supported in this driver.
+           So set alpha value to 0xff to make it draw the original color in case GX_BRUSH_ALPHA_SUPPORT is defined. */
+        brush_alpha = 0xff;
+    }
+    else
+    {
+        if (brush_alpha == 0)
+        {
+            /* Nothing to draw here. */
+            return;
+        }
+    }
+#endif
+
+    x = 0;
+    y = (INT)r;
+    d = 5 - (INT)(4 * r);
+#if defined (GX_BRUSH_ALPHA_SUPPORT)
+    if (brush_alpha != 0xff)
+    {
+        while (x <= y)
+        {
+            for (index = 0; index < 4; index++)
+            {
+                point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
+                point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
+
+                if (_gx_utility_rectangle_point_detect(clip, point))
+                {
+                    display->driver_pixel_blend(context, point.x, point.y, brush->line_color, brush_alpha);
+                }
+
+                point.x = (GX_VALUE)(y * sign[index][0] + xcenter);
+                point.y = (GX_VALUE)(x * sign[index][1] + ycenter);
+
+                if (_gx_utility_rectangle_point_detect(clip, point))
+                {
+                    display->driver_pixel_blend(context, point.x, point.y, brush->line_color, brush_alpha);
+                }
+            }
+
+            if (d < 0)
+            {
+                d += 8 * x + 12;
+            }
+            else
+            {
+                d += 8 * (x - y) + 20;
+                y--;
+            }
+            x++;
+        }
+    }
+    else
+    {
+#endif
+        while (x <= y)
+        {
+            for (index = 0; index < 4; index++)
+            {
+                point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
+                point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
+
+                if (_gx_utility_rectangle_point_detect(clip, point))
+                {
+                    display->driver_pixel_write(context, point.x, point.y, brush->line_color);
+                }
+
+                point.x = (GX_VALUE)(y * sign[index][0] + xcenter);
+                point.y = (GX_VALUE)(x * sign[index][1] + ycenter);
+
+                if (_gx_utility_rectangle_point_detect(clip, point))
+                {
+                    display->driver_pixel_write(context, point.x, point.y, brush->line_color);
+                }
+            }
+
+            if (d < 0)
+            {
+                d += 8 * x + 12;
+            }
+            else
+            {
+                d += 8 * (x - y) + 20;
+                y--;
+            }
+            x++;
+        }
+#if defined (GX_BRUSH_ALPHA_SUPPORT)
+    }
+#endif
+}
+
+#endif
+

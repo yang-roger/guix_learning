@@ -1,0 +1,127 @@
+
+/***************************************************************************
+ * Copyright (c) 2024 Microsoft Corporation
+ * Copyright (c) 2026 Eclipse ThreadX contributors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which is available at
+ * https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: MIT
+ **************************************************************************/
+
+
+/**************************************************************************/
+/**************************************************************************/
+/**                                                                       */
+/** GUIX Component                                                        */
+/**                                                                       */
+/**   Dispaly Management (Dispaly)                                        */
+/**                                                                       */
+/**************************************************************************/
+
+#include "gx_display.h"
+
+#include "gx_canvas.h"
+#include "gx_pixelmap.h"
+
+/**************************************************************************/
+/*                                                                        */
+/*  FUNCTION                                               RELEASE        */
+/*                                                                        */
+/*    _gx_display_driver_1bpp_mouse_capture                               */
+/*                                                           6.1          */
+/*  AUTHOR                                                                */
+/*                                                                        */
+/*    Kenneth Maxwell, Microsoft Corporation                              */
+/*                                                                        */
+/*  DESCRIPTION                                                           */
+/*                                                                        */
+/*    This service captures canvas memory under mouse position.           */
+/*                                                                        */
+/*  INPUT                                                                 */
+/*                                                                        */
+/*    display                               Display control block         */
+/*                                                                        */
+/*  OUTPUT                                                                */
+/*                                                                        */
+/*  CALLS                                                                 */
+/*                                                                        */
+/*                                                                        */
+/*  CALLED BY                                                             */
+/*                                                                        */
+/*    GUIX Internal Code                                                  */
+/*                                                                        */
+/**************************************************************************/
+#if defined(GX_MOUSE_SUPPORT)
+#if !defined(GX_HARDWARE_MOUSE_SUPPORT)
+void _gx_display_driver_1bpp_mouse_capture(GX_DISPLAY  *display)
+{
+INT            width;
+INT            height;
+INT            row;
+INT            column;
+GX_UBYTE      *put;
+GX_UBYTE      *putrow;
+GX_UBYTE      *getrow;
+GX_UBYTE      *get;
+GX_RECTANGLE  *mouse_rect;
+GX_UBYTE       getmask;
+GX_UBYTE       putmask;
+GX_CANVAS     *canvas;
+
+    if (display->mouse.cursor_info)
+    {
+        if (display->mouse.capture_memory)
+        {
+            mouse_rect = _gx_display_driver_mouse_rectangle_set(display, &width, &height);
+            if (mouse_rect)
+            {
+                canvas = display->mouse.canvas;
+
+                getrow = (GX_UBYTE *)canvas->memory;
+                getrow += ((canvas->x_resolution + 7) >> 3) * mouse_rect->top;
+                getrow += mouse_rect->left >> 3;
+                putrow = (GX_UBYTE *)display->mouse.capture_memory;
+
+                for (row = 0; row < height; row++)
+                {
+                    get = getrow;
+                    put = putrow;
+
+                    getmask = (GX_UBYTE)(((GX_UBYTE)0x80) >> (mouse_rect->left & 0x07));
+                    putmask = 0x80;
+
+                    for (column = 0; column < width; column++)
+                    {
+                        if ((*get) & getmask)
+                        {
+                            *put |= putmask;
+                        }
+                        else
+                        {
+                            *put = (GX_UBYTE)((*put) & (~putmask));
+                        }
+                        getmask >>= 1;
+                        putmask >>= 1;
+                        if (!getmask)
+                        {
+                            get++;
+                            getmask = 0x80;
+                        }
+                        if (!putmask)
+                        {
+                            put++;
+                            putmask = 0x80;
+                        }
+                    }
+                    getrow += (canvas->x_resolution + 7) >> 3;
+                    putrow += (width + 7) >> 3;
+                }
+            }
+        }
+    }
+}
+#endif
+#endif
+

@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "all_widgets", "all_widgets.vcproj", "{DEA5CA3F-AED2-40F4-B64B-EEBEC87581AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{60A9BC3F-C7DB-4F20-A1C3-B6299884D187} = {60A9BC3F-C7DB-4F20-A1C3-B6299884D187}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "guix++", "..\..\..\..\..\ports\win32\build\vs_2008\guix.vcproj", "{60A9BC3F-C7DB-4F20-A1C3-B6299884D187}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DEA5CA3F-AED2-40F4-B64B-EEBEC87581AB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DEA5CA3F-AED2-40F4-B64B-EEBEC87581AB}.Debug|Win32.Build.0 = Debug|Win32
+		{60A9BC3F-C7DB-4F20-A1C3-B6299884D187}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60A9BC3F-C7DB-4F20-A1C3-B6299884D187}.Debug|Win32.Build.0 = Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

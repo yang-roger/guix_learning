@@ -1,0 +1,84 @@
+/***************************************************************************
+ * Copyright (c) 2024 Microsoft Corporation
+ * Copyright (c) 2026 Eclipse ThreadX contributors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which is available at
+ * https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: MIT
+ **************************************************************************/
+
+
+/**************************************************************************/
+/**************************************************************************/
+/**                                                                       */
+/** GUIX Component                                                        */
+/**                                                                       */
+/**   Display Management (Display)                                        */
+/**                                                                       */
+/**************************************************************************/
+
+#include "gx_display.h"
+
+#include "gx_system.h"
+#include "gx_image_reader.h"
+
+/**************************************************************************/
+/*                                                                        */
+/*  FUNCTION                                               RELEASE        */
+/*                                                                        */
+/*    _gx_display_driver_24xrgb_png_draw                                  */
+/*                                                           6.1          */
+/*  AUTHOR                                                                */
+/*                                                                        */
+/*    Kenneth Maxwell, Microsoft Corporation                              */
+/*                                                                        */
+/*  DESCRIPTION                                                           */
+/*                                                                        */
+/*    24xrgb format screen driver PNG drawing function.                   */
+/*                                                                        */
+/*  INPUT                                                                 */
+/*                                                                        */
+/*    context                               Drawing context               */
+/*    xpos                                  x-coord of top-left draw point*/
+/*    ypos                                  y-coord of top-left draw point*/
+/*    pixelmap                              Pointer to GX_PIXELMAP struct */
+/*                                                                        */
+/*  OUTPUT                                                                */
+/*                                                                        */
+/*    None                                                                */
+/*                                                                        */
+/*  CALLS                                                                 */
+/*                                                                        */
+/*    _gx_image_reader_create                                             */
+/*    _gx_image_reader_start                                              */
+/*    _gx_display_driver_24xrgb_pixelmap_draw                             */
+/*    _gx_system_memory_free                                              */
+/*                                                                        */
+/*  CALLED BY                                                             */
+/*                                                                        */
+/*    Application Code                                                    */
+/*    GUIX Internal Code                                                  */
+/*                                                                        */
+/**************************************************************************/
+#if defined(GX_SOFTWARE_DECODER_SUPPORT)
+void _gx_display_driver_24xrgb_png_draw(GX_DRAW_CONTEXT *context, INT xpos, INT ypos, GX_PIXELMAP *pixelmap)
+{
+GX_IMAGE_READER image_reader;
+GX_PIXELMAP     pic_outmap;
+
+    _gx_image_reader_create(&image_reader,
+                            pixelmap->data,
+                            (INT)pixelmap->data_size,
+                            GX_COLOR_FORMAT_24XRGB, GX_IMAGE_READER_MODE_ALPHA);
+
+    if (_gx_image_reader_start(&image_reader, &pic_outmap) == GX_SUCCESS)
+    {
+        _gx_display_driver_24xrgb_pixelmap_draw(context, xpos, ypos, &pic_outmap);
+
+        _gx_system_memory_free((void *)pic_outmap.data);
+    }
+}
+#endif
+

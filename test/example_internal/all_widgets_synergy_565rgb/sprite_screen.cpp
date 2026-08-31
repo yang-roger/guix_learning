@@ -1,0 +1,77 @@
+/***************************************************************************
+ * Copyright (c) 2024 Microsoft Corporation
+ * Copyright (c) 2026 Eclipse ThreadX contributors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which is available at
+ * https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: MIT
+ **************************************************************************/
+
+/* This is a small demo of the high-performance GUIX graphics framework. */
+
+#include <stdio.h>
+#include "gx_api.h"
+#include "all_widgets_synergy_565rgb_resources.h"
+#include "all_widgets_synergy_565rgb_specifications.h"
+
+GX_UBYTE          alpha_value = 255;
+
+VOID rotate_memory_free(VOID *mem);
+
+UINT sprite_event_handler(GX_WINDOW *window, GX_EVENT *event_ptr)
+{
+    switch (event_ptr->type)
+    {
+    case GX_SIGNAL(ID_ALPHA_SLIDER, GX_EVENT_SLIDER_VALUE):
+        alpha_value = (GX_UBYTE)event_ptr->payload.longdata;
+        gx_system_dirty_mark(&sprite_screen.sprite_screen_apple_window);
+        break;
+
+    case GX_SIGNAL(ID_BIRD_SPRITE, GX_EVENT_SPRITE_COMPLETE):
+        gx_sprite_start(&sprite_screen.sprite_screen_sprite_1, 0);
+        break;
+
+    default:
+        return gx_window_event_process(window, event_ptr);
+    }
+
+    return 0;
+}
+
+VOID apple_window_draw(GX_WINDOW *window)
+{
+GX_PIXELMAP *map;
+GX_PIXELMAP scaled_map;
+int         width;
+int         height;
+int         xpos;
+int         ypos;
+
+    gx_context_pixelmap_get(GX_PIXELMAP_ID_RED_APPLE, &map);
+
+    width = (alpha_value * map->width) >> 8;
+    height = (alpha_value * map->height) >> 8;
+
+    if ((width == 0) || (height == 0))
+    {
+        return;
+    }
+
+    if (gx_utility_pixelmap_resize(map, &scaled_map, width, height) == GX_SUCCESS)
+    {
+        xpos = window->size.left;
+        ypos = window->size.top;
+
+        xpos += (map->width - width) >> 1;
+        ypos += (map->height - height) >> 1;
+
+        gx_canvas_pixelmap_blend((GX_VALUE)xpos, (GX_VALUE)ypos, &scaled_map, alpha_value);
+
+        if (scaled_map.data)
+        {
+            rotate_memory_free((VOID *)scaled_map.data);
+        }
+    }
+}
