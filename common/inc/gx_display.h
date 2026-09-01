@@ -81,9 +81,9 @@ struct GX_DISPLAY_LAYER_SERVICES
 
 struct GX_MOUSE_CURSOR_INFO
 {
-    GX_RESOURCE_ID            cursor_image_id;
-    GX_VALUE                  cursor_hotspot_x;
-    GX_VALUE                  cursor_hotspot_y;
+    GX_RESOURCE_ID            image_id;
+    GX_VALUE                  hotspot_x;
+    GX_VALUE                  hotspot_y;
 };
 
 struct GX_DISPLAY_MOUSE
@@ -186,7 +186,7 @@ struct GX_DISPLAY
 #endif
 
     void (*driver_pixelmap_rotate)(GX_DRAW_CONTEXT* context, INT xpos, INT ypos, GX_PIXELMAP* pixelmap,
-                                                       INT angle, INT rot_cx, INT rot_cy);
+                                   INT angle, INT rot_cx, INT rot_cy);
 
     /* Define driver function pointer for low-level pixel writing.  */
     void (*driver_pixel_write)(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR color);

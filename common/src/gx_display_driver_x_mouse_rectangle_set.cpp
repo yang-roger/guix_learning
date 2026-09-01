@@ -7,15 +7,15 @@ GX_RECTANGLE* _gx_display_driver_mouse_rectangle_set(GX_DISPLAY* display, INT* m
 {
     GX_RECTANGLE* mouse_rect = &display->mouse.rect;
 
-    GX_RESOURCE_ID image_id = display->mouse.cursor_info->cursor_image_id;
+    GX_RESOURCE_ID image_id = display->mouse.cursor_info->image_id;
     if (image_id && image_id < display->pixelmap_table_size)
     {
         GX_PIXELMAP* map = display->pixelmap_table[image_id];
 
         mouse_rect->left = display->mouse.position.x;
         mouse_rect->top = display->mouse.position.y;
-        mouse_rect->left = (GX_VALUE)(mouse_rect->left - display->mouse.cursor_info->cursor_hotspot_x);
-        mouse_rect->top = (GX_VALUE)(mouse_rect->top - display->mouse.cursor_info->cursor_hotspot_y);
+        mouse_rect->left = (GX_VALUE)(mouse_rect->left - display->mouse.cursor_info->hotspot_x);
+        mouse_rect->top = (GX_VALUE)(mouse_rect->top - display->mouse.cursor_info->hotspot_y);
 
         mouse_rect->right = (GX_VALUE)(mouse_rect->left + map->width - 1);
         mouse_rect->bottom = (GX_VALUE)(mouse_rect->top + map->height - 1);

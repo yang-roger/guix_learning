@@ -67,15 +67,15 @@ GX_CANVAS       *canvas;
 
     if(display->mouse.cursor_info)
     {
-        image_id = display->mouse.cursor_info->cursor_image_id;
+        image_id = display->mouse.cursor_info->image_id;
 
         if (image_id && image_id < display->pixelmap_table_size)
         {
             canvas = display->mouse.canvas;
             left = display->mouse.position.x;
             top = display->mouse.position.y;
-            left = (GX_VALUE)(left - display->mouse.cursor_info->cursor_hotspot_x);
-            top = (GX_VALUE)(top - display->mouse.cursor_info->cursor_hotspot_y);
+            left = (GX_VALUE)(left - display->mouse.cursor_info->hotspot_x);
+            top = (GX_VALUE)(top - display->mouse.cursor_info->hotspot_y);
             map = display->pixelmap_table[image_id];
 
             old_context = _gx_system_current_draw_context;
