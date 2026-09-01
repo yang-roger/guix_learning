@@ -33,8 +33,8 @@
 /* Define macros for assembling a 15-bit r:g:b value from 3 components.  */
 
 #define ASSEMBLECOLOR(_r, _g, _b) \
-    ((((_r) & 0x7c) << 10) |      \
-     (((_g) & 0x3e) << 5) |       \
+    ((((_r) & 0x1f) << 10) |      \
+     (((_g) & 0x1f) << 5) |       \
      (((_b) & 0x1f)))
 
 
