@@ -98,11 +98,7 @@ USHORT       bcolor;
 INT          row;
 INT          col;
 
-    dirty.left = dirty.top = 0;
-    dirty.right = (GX_VALUE)(canvas->x_resolution - 1);
-    dirty.bottom = (GX_VALUE)(canvas->y_resolution - 1);
-
-    _gx_utility_rectangle_shift(&dirty, canvas->display_offset_x, canvas->display_offset_y);
+    canvas->display_area_(&dirty);
 
     if (_gx_utility_rectangle_overlap_detect(&dirty, &composite->dirty_area, &overlap))
     {
