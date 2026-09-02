@@ -81,7 +81,6 @@ INT           decision;
 INT           nextx;
 INT           nexty;
 INT           y_increment;
-GX_POINT      end_point;
 GX_POINT      mid_point;
 GX_RECTANGLE  half_rectangle;
 GX_RECTANGLE  half_over;
@@ -139,19 +138,10 @@ GX_UBYTE      alpha;
     put = (GX_UBYTE *)(context->memory) + ystart * context->pitch + xstart;
     next_put = (GX_UBYTE *)(context->memory) + yend * context->pitch + xend;
 
-
-    end_point.x = (GX_VALUE)xstart;
-    end_point.y = (GX_VALUE)ystart;
-
-    if (clip->contain_point_(end_point))
+    if (clip->contain_point_((GX_VALUE)xstart, (GX_VALUE)ystart) &&
+        clip->contain_point_((GX_VALUE)xend, (GX_VALUE)yend))
     {
-        end_point.x = (GX_VALUE)xend;
-        end_point.y = (GX_VALUE)yend;
-
-        if (clip->contain_point_(end_point))
-        {
-            clipped = GX_FALSE;
-        }
+        clipped = GX_FALSE;
     }
 
     if (clipped)
