@@ -81,7 +81,7 @@ GX_CANVAS   *canvas;
 
         if (display->driver_buffer_toggle)
         {
-            _gx_utility_rectangle_combine(&mouse_rect, &display->mouse.rect);
+            mouse_rect.combine_(display->mouse.rect);
             canvas->dirty_area = mouse_rect;
             display->driver_buffer_toggle(canvas, &canvas->dirty_area);
         }

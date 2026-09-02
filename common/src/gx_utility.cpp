@@ -1174,9 +1174,9 @@ UINT         status;
 UINT         pixelmap_format;
 GX_RECTANGLE canvas_size;
 
-    _gx_utility_rectangle_define(&canvas_size, 0, 0, (GX_VALUE)(canvas->x_resolution - 1), (GX_VALUE)(canvas->y_resolution - 1));
+    canvas_size.set_(0, 0, (GX_VALUE)(canvas->x_resolution - 1), (GX_VALUE)(canvas->y_resolution - 1));
 
-    if (!_gx_utility_rectangle_inside_detect(&canvas_size, rect))
+    if (!canvas_size.contain_rectangle_(*rect))
     {
         return GX_INVALID_SIZE;
     }

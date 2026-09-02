@@ -2382,7 +2382,7 @@ static UINT _gx_image_reader_jpeg_pixel_write_info_set(GX_JPEG_INFO *jpeg_info)
         jpeg_info->output_width = jpeg_info->width;
         jpeg_info->output_height = jpeg_info->height;
 
-        _gx_utility_rectangle_define(&jpeg_info->output_clip, 0, 0, (GX_VALUE)(jpeg_info->width - 1), (GX_VALUE)(jpeg_info->height - 1));
+        jpeg_info->output_clip.set_(0, 0, (GX_VALUE)(jpeg_info->width - 1), (GX_VALUE)(jpeg_info->height - 1));
     }
 
     jpeg_info->output_stride = jpeg_info->output_rotation_angle == 0 ? jpeg_info->output_width : jpeg_info->output_height;
