@@ -119,7 +119,7 @@ GX_UBYTE brush_alpha;
         point.x = (GX_VALUE)xstart;
         point.y = (GX_VALUE)ystart;
 
-        if (_gx_utility_rectangle_point_detect(clip, point))
+        if (clip->contain_point_(point))
         {
             alpha = 0xc0;
 #if defined(GX_BRUSH_ALPHA_SUPPORT)
@@ -130,7 +130,7 @@ GX_UBYTE brush_alpha;
         point.x = (GX_VALUE)xend;
         point.y = (GX_VALUE)yend;
 
-        if (_gx_utility_rectangle_point_detect(clip, point))
+        if (clip->contain_point_(point))
         {
             alpha = 0x40;
 #if defined(GX_BRUSH_ALPHA_SUPPORT)
@@ -141,7 +141,7 @@ GX_UBYTE brush_alpha;
         point.x = (GX_VALUE)xstart;
         point.y = (GX_VALUE)yend;
 
-        if (_gx_utility_rectangle_point_detect(clip, point))
+        if (clip->contain_point_(point))
         {
             alpha = 0x40;
 #if defined(GX_BRUSH_ALPHA_SUPPORT)
@@ -152,7 +152,7 @@ GX_UBYTE brush_alpha;
         point.x = (GX_VALUE)xend;
         point.y = (GX_VALUE)ystart;
 
-        if (_gx_utility_rectangle_point_detect(clip, point))
+        if (clip->contain_point_(point))
         {
             alpha = 0xc0;
 #if defined(GX_BRUSH_ALPHA_SUPPORT)
@@ -177,8 +177,8 @@ GX_UBYTE brush_alpha;
     point2.x = (GX_VALUE)xend;
     point2.y = (GX_VALUE)yend;
 
-    if (_gx_utility_rectangle_point_detect(clip, point) &&
-        _gx_utility_rectangle_point_detect(clip, point2))
+    if (clip->contain_point_(point) &&
+        clip->contain_point_(point2))
     {
         /* both endpoints are inside clip rectangle. We don't need to clip
            inside the inner loop */

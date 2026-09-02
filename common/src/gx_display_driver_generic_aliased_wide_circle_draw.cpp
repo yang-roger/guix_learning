@@ -178,7 +178,7 @@ GX_UBYTE temp_alpha;
                 point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
                 point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     /* Draw point(x, y).  */
                     blend_func(context, point.x, point.y, brush->line_color, alpha1);
@@ -186,7 +186,7 @@ GX_UBYTE temp_alpha;
 
                 point.y = (GX_VALUE)((y - 1) * sign[index][1] + ycenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     /* Draw point(x, y - 1). */
                     blend_func(context, point.x, point.y, brush->line_color, (GX_UBYTE)alpha2);
@@ -195,7 +195,7 @@ GX_UBYTE temp_alpha;
                 point.x = (GX_VALUE)(y * sign[index][0] + xcenter);
                 point.y = (GX_VALUE)(x * sign[index][1] + ycenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     /* Draw point (y, x). */
                     blend_func(context, point.x, point.y, brush->line_color, alpha1);
@@ -203,7 +203,7 @@ GX_UBYTE temp_alpha;
 
                 point.x = (GX_VALUE)((y - 1) * sign[index][0] + xcenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     /* Draw point (y - 1, x. )*/
                     blend_func(context, point.x, point.y, brush->line_color, alpha2);
@@ -242,7 +242,7 @@ GX_UBYTE temp_alpha;
         point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
         point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-        if (_gx_utility_rectangle_point_detect(clip, point))
+        if (clip->contain_point_(point))
         {
             blend_func(context, point.x, point.y, brush->line_color, (GX_UBYTE)(255 - error));
         }

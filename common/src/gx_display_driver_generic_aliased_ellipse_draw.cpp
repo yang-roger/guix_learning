@@ -141,14 +141,14 @@ GX_UBYTE brush_alpha;
             point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
             point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-            if (_gx_utility_rectangle_point_detect(clip, point))
+            if (clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color, alpha1);
             }
 
             point.y = (GX_VALUE)((y - 1) * sign[index][1] + ycenter);
 
-            if (_gx_utility_rectangle_point_detect(clip, point))
+            if (clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color, alpha2);
             }
@@ -174,7 +174,7 @@ GX_UBYTE brush_alpha;
         point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
         point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-        if (_gx_utility_rectangle_point_detect(clip, point))
+        if (clip->contain_point_(point))
         {
             blend_func(context, point.x, point.y, brush->line_color, alpha1);
         }
@@ -206,14 +206,14 @@ GX_UBYTE brush_alpha;
             point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
 
-            if (_gx_utility_rectangle_point_detect(clip, point))
+            if (clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color, alpha1);
             }
 
             point.x = (GX_VALUE)((x + 1) * sign[index][0] + xcenter);
 
-            if (_gx_utility_rectangle_point_detect(clip, point))
+            if (clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color, alpha2);
             }

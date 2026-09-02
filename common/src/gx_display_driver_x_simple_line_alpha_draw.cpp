@@ -114,12 +114,12 @@ void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolo
     end_point.x = (GX_VALUE)xstart;
     end_point.y = (GX_VALUE)ystart;
 
-    if (_gx_utility_rectangle_point_detect(clip, end_point))
+    if (clip->contain_point_(end_point))
     {
         end_point.x = (GX_VALUE)xend;
         end_point.y = (GX_VALUE)yend;
 
-        if (_gx_utility_rectangle_point_detect(clip, end_point))
+        if (clip->contain_point_(end_point))
         {
             clipped = GX_FALSE;
         }
@@ -135,7 +135,7 @@ void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolo
         mid_point.y = (GX_VALUE)((yend + ystart) >> 1);
 
         /* Judge the clip in which side.  */
-        if (_gx_utility_rectangle_point_detect(clip, mid_point))
+        if (clip->contain_point_(mid_point))
         {
 
             /* the clip in two sides.  */

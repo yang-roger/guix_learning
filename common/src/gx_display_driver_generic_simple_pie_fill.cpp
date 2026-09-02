@@ -231,8 +231,8 @@ GX_FILL_PIXELMAP_INFO info;
 
             if ((point.y >= ymin) && (point.y <= ymax))
             {
-                if (_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[1], point))
+                if (arc_clip[0].contain_point_(point) ||
+                    arc_clip[1].contain_point_(point))
                 {
                     Index = (point.y - ymin) << 1;
                     if (point.x < pLineEnds[Index])
@@ -252,8 +252,8 @@ GX_FILL_PIXELMAP_INFO info;
 
             if ((point.y >= ymin) && (point.y <= ymax))
             {
-                if (_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[1], point))
+                if (arc_clip[0].contain_point_(point) ||
+                    arc_clip[1].contain_point_(point))
                 {
                     Index = (point.y - ymin) << 1;
                     if (point.x < pLineEnds[Index])

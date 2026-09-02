@@ -159,12 +159,12 @@ GX_UBYTE alpha;
     end_point.x = (GX_VALUE)xstart;
     end_point.y = (GX_VALUE)ystart;
 
-    if (_gx_utility_rectangle_point_detect(&rotated_clip, end_point))
+    if (rotated_clip.contain_point_(end_point))
     {
         end_point.x = (GX_VALUE)xend;
         end_point.y = (GX_VALUE)yend;
 
-        if (_gx_utility_rectangle_point_detect(&rotated_clip, end_point))
+        if (rotated_clip.contain_point_(end_point))
         {
             clipped = GX_FALSE;
         }
@@ -181,7 +181,7 @@ GX_UBYTE alpha;
         mid_point.y = (GX_VALUE)(yend + ystart) >> 1;
 
         /* Judge the clip in which side.  */
-        if (_gx_utility_rectangle_point_detect(&rotated_clip, mid_point))
+        if (rotated_clip.contain_point_(mid_point))
         {
 
             /* The clip in two sides.  */

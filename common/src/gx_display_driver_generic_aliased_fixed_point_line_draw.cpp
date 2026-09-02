@@ -189,8 +189,8 @@ GX_UBYTE brush_alpha;
         }
     }
 
-    if (_gx_utility_rectangle_point_detect(clip, point) &&
-        _gx_utility_rectangle_point_detect(clip, point2))
+    if (clip->contain_point_(point) &&
+        clip->contain_point_(point2))
     {
         /* both endpoints are inside clip rectangle. We don't need to clip
            inside the inner loop */

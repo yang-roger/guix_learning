@@ -161,7 +161,7 @@ GX_UBYTE brush_alpha;
             xend = point.x;
 
             /* draw pixel(x, y). */
-            if (_gx_utility_rectangle_point_detect(clip, point))
+            if (clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color, alpha1);
             }
@@ -192,7 +192,7 @@ GX_UBYTE brush_alpha;
             if (x)
             {
                 /* draw pixel(-x, y). */
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     blend_func(context, point.x, point.y, brush->line_color, alpha1);
                 }
@@ -247,7 +247,7 @@ GX_UBYTE brush_alpha;
             xend = (GX_VALUE)(point.x - 1);
 
             /* draw pixel(x, y). */
-            if (_gx_utility_rectangle_point_detect(clip, point))
+            if (clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color, alpha1);
             }
@@ -274,7 +274,7 @@ GX_UBYTE brush_alpha;
             }
 
             /* draw pixel(-x, y). */
-            if (_gx_utility_rectangle_point_detect(clip, point))
+            if (clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color, alpha1);
             }

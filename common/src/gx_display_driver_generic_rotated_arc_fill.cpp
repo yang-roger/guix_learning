@@ -235,10 +235,10 @@ INT                   inner_offset;
             if ((point.x >= xmin) &&
                 (point.x <= xmax))
             {
-                if (_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[1], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[2], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[3], point))
+                if (arc_clip[0].contain_point_(point) ||
+                    arc_clip[1].contain_point_(point) ||
+                    arc_clip[2].contain_point_(point) ||
+                    arc_clip[3].contain_point_(point))
                 {
                     Index1 = (point.x - xmin) << 1;
                     if (point.y < pLineEnds[Index1])
@@ -259,10 +259,10 @@ INT                   inner_offset;
             if ((point.x >= xmin) &&
                 (point.x <= xmax))
             {
-                if (_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[1], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[2], point) ||
-                    _gx_utility_rectangle_point_detect(&arc_clip[3], point))
+                if (arc_clip[0].contain_point_(point) ||
+                    arc_clip[1].contain_point_(point) ||
+                    arc_clip[2].contain_point_(point) ||
+                    arc_clip[3].contain_point_(point))
                 {
                     Index1 = (point.x - xmin) << 1;
                     if (point.y < pLineEnds[Index1])

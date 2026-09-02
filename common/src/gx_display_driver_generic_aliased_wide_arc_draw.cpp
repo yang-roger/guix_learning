@@ -242,9 +242,9 @@ INT           next_shift;
                 point.x = (GX_VALUE)(curx * sign[loop][0] + xcenter);
                 point.y = (GX_VALUE)(cury * sign[loop][1] + ycenter);
 
-                if ((_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                     _gx_utility_rectangle_point_detect(&arc_clip[1], point)) &&
-                    _gx_utility_rectangle_point_detect(clip, point))
+                if ((arc_clip[0].contain_point_(point) ||
+                     arc_clip[1].contain_point_(point)) &&
+                    clip->contain_point_(point))
                 {
                     /* Draw point(curx, cury).  */
                     blend_func(context, point.x, point.y, brush->line_color, alpha1);
@@ -252,9 +252,9 @@ INT           next_shift;
 
                 point.y = (GX_VALUE)((cury - 1) * sign[loop][1] + ycenter);
 
-                if ((_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                     _gx_utility_rectangle_point_detect(&arc_clip[1], point)) &&
-                    _gx_utility_rectangle_point_detect(clip, point))
+                if ((arc_clip[0].contain_point_(point) ||
+                     arc_clip[1].contain_point_(point)) &&
+                    clip->contain_point_(point))
                 {
                     blend_func(context, point.x, point.y, brush->line_color, (GX_UBYTE)alpha2);
                 }
@@ -262,9 +262,9 @@ INT           next_shift;
                 point.x = (GX_VALUE)(cury * sign[loop][0] + xcenter);
                 point.y = (GX_VALUE)(curx * sign[loop][1] + ycenter);
 
-                if ((_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                     _gx_utility_rectangle_point_detect(&arc_clip[1], point)) &&
-                    _gx_utility_rectangle_point_detect(clip, point))
+                if ((arc_clip[0].contain_point_(point) ||
+                     arc_clip[1].contain_point_(point)) &&
+                    clip->contain_point_(point))
                 {
                     /* Draw point(cury, curx).  */
                     blend_func(context, point.x, point.y, brush->line_color,  alpha1);
@@ -272,8 +272,8 @@ INT           next_shift;
 
                 if ((point.y >= ymin) && (point.y <= ymax))
                 {
-                    if (_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                        _gx_utility_rectangle_point_detect(&arc_clip[1], point))
+                    if (arc_clip[0].contain_point_(point) ||
+                        arc_clip[1].contain_point_(point))
                     {
                         Index = (point.y - ymin) << 1;
 
@@ -304,9 +304,9 @@ INT           next_shift;
 
                 point.x = (GX_VALUE)((cury - 1) * sign[loop][0] + xcenter);
 
-                if ((_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                     _gx_utility_rectangle_point_detect(&arc_clip[1], point)) &&
-                    _gx_utility_rectangle_point_detect(clip, point))
+                if ((arc_clip[0].contain_point_(point) ||
+                     arc_clip[1].contain_point_(point)) &&
+                    clip->contain_point_(point))
                 {
                     /* Draw point(cury - 1, curx).  */
                     blend_func(context, point.x, point.y, brush->line_color, (GX_UBYTE)alpha2);
@@ -314,8 +314,8 @@ INT           next_shift;
 
                 if ((point.y >= ymin) && (point.y <= ymax))
                 {
-                    if (_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                        _gx_utility_rectangle_point_detect(&arc_clip[1], point))
+                    if (arc_clip[0].contain_point_(point) ||
+                        arc_clip[1].contain_point_(point))
                     {
                         Index = (point.y - ymin) << 1;
 
@@ -363,8 +363,8 @@ INT           next_shift;
 
                     if ((point.y >= ymin) && (point.y <= ymax))
                     {
-                        if (_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                            _gx_utility_rectangle_point_detect(&arc_clip[1], point))
+                        if (arc_clip[0].contain_point_(point) ||
+                            arc_clip[1].contain_point_(point))
                         {
                             Index = (point.y - ymin) << 1;
 
@@ -404,9 +404,9 @@ INT           next_shift;
             point.x = (GX_VALUE)(curx * sign[loop][0] + xcenter);
             point.y = (GX_VALUE)(cury * sign[loop][1] + ycenter);
 
-            if ((_gx_utility_rectangle_point_detect(&arc_clip[0], point) ||
-                 _gx_utility_rectangle_point_detect(&arc_clip[1], point)) &&
-                _gx_utility_rectangle_point_detect(clip, point))
+            if ((arc_clip[0].contain_point_(point) ||
+                 arc_clip[1].contain_point_(point)) &&
+                clip->contain_point_(point))
             {
                 blend_func(context, point.x, point.y, brush->line_color,  alpha1);
             }

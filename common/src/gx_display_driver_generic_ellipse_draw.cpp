@@ -133,7 +133,7 @@ GX_UBYTE brush_alpha = brush->alpha;
                 point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
                 point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     display->driver_pixel_blend(context, point.x, point.y, brush->line_color, brush_alpha);
                 }
@@ -161,7 +161,7 @@ GX_UBYTE brush_alpha = brush->alpha;
                 point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
                 point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     display->driver_pixel_blend(context, point.x, point.y, brush->line_color, brush_alpha);
                 }
@@ -191,7 +191,7 @@ GX_UBYTE brush_alpha = brush->alpha;
                 point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
                 point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     display->driver_pixel_write(context, point.x, point.y, brush->line_color);
                 }
@@ -222,7 +222,7 @@ GX_UBYTE brush_alpha = brush->alpha;
                 point.x = (GX_VALUE)(x * sign[index][0] + xcenter);
                 point.y = (GX_VALUE)(y * sign[index][1] + ycenter);
 
-                if (_gx_utility_rectangle_point_detect(clip, point))
+                if (clip->contain_point_(point))
                 {
                     display->driver_pixel_write(context, point.x, point.y, brush->line_color);
                 }
