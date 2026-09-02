@@ -132,14 +132,14 @@ GX_UBYTE old_alpha;
         clip_rect.top = (GX_VALUE)(ystart - (brush_width >> 1));
         clip_rect.bottom = (GX_VALUE)(clip_rect.top + brush_width - 1);
 
-        if (_gx_utility_rectangle_overlap_detect(&clip_rect, context->clip, &clip_rect))
+        if (gx_rectangle_intersect_(clip_rect, *context->clip, &clip_rect))
         {
             display->driver_horizontal_line_draw(context,
-                                                              clip_rect.left,
-                                                              clip_rect.right,
-                                                              clip_rect.top,
-                                                              clip_rect.bottom - clip_rect.top + 1,
-                                                              context->brush.line_color);
+                                                 clip_rect.left,
+                                                 clip_rect.right,
+                                                 clip_rect.top,
+                                                 clip_rect.bottom - clip_rect.top + 1,
+                                                 context->brush.line_color);
         }
     }
     else if (xstart == xend)
@@ -156,14 +156,14 @@ GX_UBYTE old_alpha;
         clip_rect.top = (GX_VALUE)ystart;
         clip_rect.bottom = (GX_VALUE)yend;
 
-        if (_gx_utility_rectangle_overlap_detect(&clip_rect, context->clip, &clip_rect))
+        if (gx_rectangle_intersect_(clip_rect, *context->clip, &clip_rect))
         {
             display->driver_vertical_line_draw(context,
-                                                            clip_rect.top,
-                                                            clip_rect.bottom,
-                                                            clip_rect.left,
-                                                            clip_rect.right - clip_rect.left + 1,
-                                                            context->brush.line_color);
+                                               clip_rect.top,
+                                               clip_rect.bottom,
+                                               clip_rect.left,
+                                               clip_rect.right - clip_rect.left + 1,
+                                               context->brush.line_color);
         }
     }
     else

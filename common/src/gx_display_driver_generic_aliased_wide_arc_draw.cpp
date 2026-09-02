@@ -633,8 +633,7 @@ INT           next_shift;
                 pLineEnds[Index + 1] = clip->right;
             }
 
-            display->driver_horizontal_line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], cury, 1,
-                                                              brush->line_color);
+            display->driver_horizontal_line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], cury, 1, brush->line_color);
         }
         Index += 2;
     }
@@ -780,10 +779,10 @@ GX_UBYTE old_alpha;
     else
     {
         display->driver_anti_aliased_line_draw(context,
-                                                            startp.x,
-                                                            startp.y,
-                                                            endp.x,
-                                                            endp.y);
+                                               startp.x,
+                                               startp.y,
+                                               endp.x,
+                                               endp.y);
     }
 
     _gx_utility_circle_point_get(xcenter, ycenter, r, end_angle, &startp);
@@ -801,10 +800,10 @@ GX_UBYTE old_alpha;
     else
     {
         display->driver_anti_aliased_line_draw(context,
-                                                            startp.x,
-                                                            startp.y,
-                                                            endp.x,
-                                                            endp.y);
+                                               startp.x,
+                                               startp.y,
+                                               endp.x,
+                                               endp.y);
     }
 
     brush->width = (GX_VALUE)brush_width;

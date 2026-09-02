@@ -78,7 +78,7 @@ INT          row;
 
     canvas->display_area_(&dirty);
 
-    if (_gx_utility_rectangle_overlap_detect(&dirty, &composite->dirty_area, &overlap))
+    if (gx_rectangle_intersect_(dirty, composite->dirty_area, &overlap))
     {
         width = overlap.right - overlap.left + 1;
         read = (USHORT *)canvas->memory;

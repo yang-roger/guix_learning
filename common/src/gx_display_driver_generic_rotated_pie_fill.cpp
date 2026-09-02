@@ -517,8 +517,7 @@ GX_FILL_PIXELMAP_INFO info;
 
             if (pLineEnds[Index] <= pLineEnds[Index + 1])
             {
-                line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], curx, 1,
-                          brush->fill_color);
+                line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], curx, 1, brush->fill_color);
             }
 
             Index += 2;

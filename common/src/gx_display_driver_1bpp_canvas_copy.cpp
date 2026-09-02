@@ -79,7 +79,7 @@ INT          offset;
 
     canvas->display_area_(&dirty);
 
-    if (_gx_utility_rectangle_overlap_detect(&dirty, &composite->dirty_area, &overlap))
+    if (gx_rectangle_intersect_(dirty, composite->dirty_area, &overlap))
     {
         offset = overlap.left - dirty.left;
         read_pos = (UINT)((overlap.top - dirty.top) * readstride + (offset >> 3));

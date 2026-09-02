@@ -501,8 +501,7 @@ GX_FILL_PIXELMAP_INFO info;
             }
             else
             {
-                line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], cury, 1,
-                          brush->fill_color);
+                line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], cury, 1, brush->fill_color);
             }
         }
         else

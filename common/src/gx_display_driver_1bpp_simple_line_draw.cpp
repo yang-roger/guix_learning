@@ -342,7 +342,7 @@ INT           stride;
                     half_rectangle.bottom = (GX_VALUE)ystart;
                 }
 
-                if (_gx_utility_rectangle_overlap_detect(clip, &half_rectangle, &half_over))
+                if (gx_rectangle_intersect_(*clip, half_rectangle, &half_over))
                 {
                     curx = xstart;
                     cury = ystart;
@@ -403,7 +403,7 @@ INT           stride;
                     half_rectangle.left = mid_point.x;
                 }
 
-                if (_gx_utility_rectangle_overlap_detect(clip, &half_rectangle, &half_over))
+                if (gx_rectangle_intersect_(*clip, half_rectangle, &half_over))
                 {
                     curx = xstart;
                     cury = ystart;

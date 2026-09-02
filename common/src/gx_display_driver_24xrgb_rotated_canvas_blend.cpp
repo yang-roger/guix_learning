@@ -81,7 +81,7 @@ INT          col;
 
     canvas->display_area_(&dirty);
 
-    if (_gx_utility_rectangle_overlap_detect(&dirty, &composite->dirty_area, &overlap))
+    if (gx_rectangle_intersect_(dirty, composite->dirty_area, &overlap))
     {
         alpha = canvas->alpha;
         balpha = (GX_UBYTE)(256 - alpha);

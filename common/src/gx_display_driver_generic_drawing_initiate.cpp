@@ -69,7 +69,7 @@ GX_CANVAS      *mouse_canvas;
         {
             if (canvas->draw_nesting == 1 && (display->mouse.status & GX_MOUSE_VISIBLE))
             {
-                if (_gx_utility_rectangle_overlap_detect(&display->mouse.rect, &canvas->dirty_area, &mouse_rect))
+                if (gx_rectangle_intersect_(display->mouse.rect, canvas->dirty_area, &mouse_rect))
                 {
                     /* restore captured data */
                     display->mouse_restore(display);

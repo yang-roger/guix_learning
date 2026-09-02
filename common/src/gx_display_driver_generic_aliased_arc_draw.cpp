@@ -114,10 +114,10 @@ GX_UBYTE brush_alpha;
     _gx_display_driver_arc_clipping_get(xcenter, ycenter, r, start_angle, end_angle,
                                         &arc_clip[0], &arc_clip[1], &arc_clip[2], &arc_clip[3]);
 
-    _gx_utility_rectangle_overlap_detect(context->clip, &arc_clip[0], &arc_clip[0]);
-    _gx_utility_rectangle_overlap_detect(context->clip, &arc_clip[1], &arc_clip[1]);
-    _gx_utility_rectangle_overlap_detect(context->clip, &arc_clip[2], &arc_clip[2]);
-    _gx_utility_rectangle_overlap_detect(context->clip, &arc_clip[3], &arc_clip[3]);
+    gx_rectangle_intersect_(*context->clip, arc_clip[0], &arc_clip[0]);
+    gx_rectangle_intersect_(*context->clip, arc_clip[1], &arc_clip[1]);
+    gx_rectangle_intersect_(*context->clip, arc_clip[2], &arc_clip[2]);
+    gx_rectangle_intersect_(*context->clip, arc_clip[3], &arc_clip[3]);
 
     x = 0;
     y = (INT)r;

@@ -102,10 +102,10 @@ GX_UBYTE     brush_alpha = brush->alpha;
     /* Get the clipping rectangles of the circle arc. */
     _gx_display_driver_arc_clipping_get(xcenter, ycenter, r, start_angle, end_angle, &clip[0], &clip[1], &clip[2], &clip[3]);
 
-    _gx_utility_rectangle_overlap_detect(context->clip, &clip[0], &clip[0]);
-    _gx_utility_rectangle_overlap_detect(context->clip, &clip[1], &clip[1]);
-    _gx_utility_rectangle_overlap_detect(context->clip, &clip[2], &clip[2]);
-    _gx_utility_rectangle_overlap_detect(context->clip, &clip[3], &clip[3]);
+    gx_rectangle_intersect_(*context->clip, clip[0], &clip[0]);
+    gx_rectangle_intersect_(*context->clip, clip[1], &clip[1]);
+    gx_rectangle_intersect_(*context->clip, clip[2], &clip[2]);
+    gx_rectangle_intersect_(*context->clip, clip[3], &clip[3]);
 
     x = 0;
     y = (INT)r;

@@ -273,8 +273,7 @@ GX_UBYTE temp_alpha;
                 x2 = clip->right;
             }
 
-            display->driver_horizontal_line_draw(context, x, x2, y, 1,
-                                                              brush->line_color);
+            display->driver_horizontal_line_draw(context, x, x2, y, 1, brush->line_color);
         }
         index += 2;
     }

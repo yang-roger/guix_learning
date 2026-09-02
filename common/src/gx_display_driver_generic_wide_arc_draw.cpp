@@ -443,8 +443,7 @@ void          (*line_draw)(GX_DRAW_CONTEXT *context, INT x1, INT x2, INT ypos, I
                 pLineEnds[Index + 1] = clip->right;
             }
 
-            line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], cury, 1,
-                      brush->line_color);
+            line_draw(context, pLineEnds[Index], pLineEnds[Index + 1], cury, 1, brush->line_color);
         }
 
         Index += 2;

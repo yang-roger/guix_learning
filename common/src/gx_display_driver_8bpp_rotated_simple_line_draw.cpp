@@ -322,7 +322,7 @@ GX_RECTANGLE  rotated_clip;
                     half_rectangle.bottom = (GX_VALUE)ystart;
                 }
 
-                if (_gx_utility_rectangle_overlap_detect(&rotated_clip, &half_rectangle, &half_over))
+                if (gx_rectangle_intersect_(rotated_clip, half_rectangle, &half_over))
                 {
                     curx = xstart;
                     cury = ystart;
@@ -373,7 +373,7 @@ GX_RECTANGLE  rotated_clip;
                     half_rectangle.left = mid_point.x;
                 }
 
-                if (_gx_utility_rectangle_overlap_detect(&rotated_clip, &half_rectangle, &half_over))
+                if (gx_rectangle_intersect_(rotated_clip, half_rectangle, &half_over))
                 {
                     curx = xstart;
                     cury = ystart;
