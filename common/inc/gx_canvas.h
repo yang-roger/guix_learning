@@ -122,8 +122,6 @@ struct GX_CANVAS
 
     UINT shift_(GX_VALUE dx, GX_VALUE dy);
 
-    void dirty_mark_(const GX_RECTANGLE* area = GX_NULL);
-
     bool dirty_list_is_full_() const { return dirty_count >= GX_MAX_DIRTY_AREAS; }
 
     bool dirty_list_add_(GX_WIDGET* widget, const GX_RECTANGLE& dirty_rect);
@@ -144,6 +142,9 @@ struct GX_CANVAS
 #endif
 
     void clamp_(GX_RECTANGLE* rect) const;
+
+private:
+    void dirty_mark_(const GX_RECTANGLE* area = GX_NULL);
 };
 
 inline UINT GX_CANVAS::offset_set_(const GX_POINT& offset)
@@ -183,24 +184,22 @@ private:
 GX_CANVAS* _gx_canvas_composite_create(void);
 UINT _gx_canvas_rotated_pixelmap_bound_calculate(GX_RECTANGLE* rect, INT angle, INT rot_cx, INT rot_cy);
 
-UINT _gx_canvas_alpha_set(GX_CANVAS* canvas, GX_UBYTE alpha);
-UINT _gx_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
-UINT _gx_canvas_block_move(GX_RECTANGLE* block, GX_VALUE dx, GX_VALUE dy, GX_RECTANGLE* dirty);
-UINT _gx_canvas_circle_draw(INT xcenter, INT ycenter, UINT r);
-
 UINT _gx_canvas_create(GX_CANVAS* canvas, const GX_CHAR* name, GX_DISPLAY* display,
                        UINT type, UINT width, UINT height, GX_COLOR* memory_area, ULONG memory_size);
 UINT _gx_canvas_delete(GX_CANVAS* canvas);
 
-UINT _gx_canvas_drawing_complete(GX_CANVAS* canvas, GX_BOOL Flush);
-UINT _gx_canvas_drawing_initiate(GX_CANVAS* canvas, GX_WIDGET* who, GX_RECTANGLE* dirty_area);
-
-UINT _gx_canvas_ellipse_draw(INT xcenter, INT ycenter, INT a, INT b);
-
-UINT _gx_canvas_hardware_layer_bind(GX_CANVAS* canvas, INT layer);
-UINT _gx_canvas_hide(GX_CANVAS* canvas);
-UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX_VALUE y_end);
 UINT _gx_canvas_memory_define(GX_CANVAS* canvas, GX_COLOR* memory, ULONG memsize);
+UINT _gx_canvas_offset_set(GX_CANVAS* canvas, GX_VALUE x, GX_VALUE y);
+UINT _gx_canvas_alpha_set(GX_CANVAS* canvas, GX_UBYTE alpha);
+UINT _gx_canvas_hardware_layer_bind(GX_CANVAS* canvas, INT layer);
+
+UINT _gx_canvas_shift(GX_CANVAS* canvas, GX_VALUE dx, GX_VALUE dy);
+
+UINT _gx_canvas_drawing_initiate(GX_CANVAS* canvas, GX_WIDGET* who, GX_RECTANGLE* dirty_area);
+UINT _gx_canvas_drawing_complete(GX_CANVAS* canvas, GX_BOOL Flush);
+
+UINT _gx_canvas_show(GX_CANVAS* canvas);
+UINT _gx_canvas_hide(GX_CANVAS* canvas);
 
 #if defined(GX_MOUSE_SUPPORT)
 UINT _gx_canvas_mouse_define(GX_CANVAS* canvas, GX_MOUSE_CURSOR_INFO* info);
@@ -208,43 +207,46 @@ UINT _gx_canvas_mouse_show(GX_CANVAS* canvas);
 UINT _gx_canvas_mouse_hide(GX_CANVAS* canvas);
 #endif
 
-UINT _gx_canvas_offset_set(GX_CANVAS* canvas, GX_VALUE x, GX_VALUE y);
 UINT _gx_canvas_pixel_draw(GX_POINT position);
-UINT _gx_canvas_pixelmap_blend(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap, GX_UBYTE alpha);
-UINT _gx_canvas_pixelmap_draw(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap);
+UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX_VALUE y_end);
+UINT _gx_canvas_rectangle_draw(GX_RECTANGLE* rectangle);
+UINT _gx_canvas_polygon_draw(GX_POINT* point_array, INT number_of_points);
+
+UINT _gx_canvas_circle_draw(INT xcenter, INT ycenter, UINT r);
+UINT _gx_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
+UINT _gx_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
+UINT _gx_canvas_ellipse_draw(INT xcenter, INT ycenter, INT a, INT b);
+
 UINT _gx_canvas_pixelmap_get(GX_PIXELMAP* pixelmap);
+UINT _gx_canvas_pixelmap_draw(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap);
+UINT _gx_canvas_pixelmap_blend(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap, GX_UBYTE alpha);
 UINT _gx_canvas_pixelmap_tile(GX_RECTANGLE* fill, GX_PIXELMAP* pixelmap);
 UINT _gx_canvas_pixelmap_rotate(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap, INT angle, INT rot_cx, INT rot_cy);
-UINT _gx_canvas_polygon_draw(GX_POINT* point_array, INT number_of_points);
-UINT _gx_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
-UINT _gx_canvas_rectangle_draw(GX_RECTANGLE* rectangle);
-UINT _gx_canvas_rotated_text_draw_ext(const GX_STRING* text, GX_VALUE xcenter, GX_VALUE ycenter, INT angle);
-UINT _gx_canvas_shift(GX_CANVAS* canvas, GX_VALUE dx, GX_VALUE dy);
-UINT _gx_canvas_show(GX_CANVAS* canvas);
-UINT _gx_canvas_aligned_text_draw(const GX_STRING* text, GX_RECTANGLE* rectangle, ULONG alignment);
-UINT _gx_canvas_text_draw_ext(GX_VALUE x, GX_VALUE y, const GX_STRING* text);
 
+UINT _gx_canvas_text_draw_ext(GX_VALUE x, GX_VALUE y, const GX_STRING* text);
+UINT _gx_canvas_aligned_text_draw(const GX_STRING* text, GX_RECTANGLE* rectangle, ULONG alignment);
+UINT _gx_canvas_rotated_text_draw_ext(const GX_STRING* text, GX_VALUE xcenter, GX_VALUE ycenter, INT angle);
+
+UINT _gx_canvas_block_move(GX_RECTANGLE* block, GX_VALUE dx, GX_VALUE dy, GX_RECTANGLE* dirty);
 
 // Define error checking shells for API services.  These are only referenced by the application.
-
-UINT _gxe_canvas_alpha_set(GX_CANVAS* canvas, GX_UBYTE alpha);
-UINT _gxe_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
-UINT _gxe_canvas_block_move(GX_RECTANGLE* block, GX_VALUE dx, GX_VALUE dy, GX_RECTANGLE* dirty);
-UINT _gxe_canvas_circle_draw(INT xcenter, INT ycenter, UINT r);
 
 UINT _gxe_canvas_create(GX_CANVAS* canvas, const GX_CHAR* name, GX_DISPLAY* display, UINT type, UINT width,
                         UINT height, GX_COLOR* memory_area, ULONG memory_size, UINT canvas_control_block_size);
 UINT _gxe_canvas_delete(GX_CANVAS* canvas);
 
-UINT _gxe_canvas_drawing_complete(GX_CANVAS* canvas, GX_BOOL Flush);
-UINT _gxe_canvas_drawing_initiate(GX_CANVAS* canvas, GX_WIDGET* who, GX_RECTANGLE* dirty_area);
-
-UINT _gxe_canvas_ellipse_draw(INT xcenter, INT ycenter, INT a, INT b);
-
-UINT _gxe_canvas_hardware_layer_bind(GX_CANVAS* canvas, INT layer);
-UINT _gxe_canvas_hide(GX_CANVAS* canvas);
-UINT _gxe_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX_VALUE y_end);
 UINT _gxe_canvas_memory_define(GX_CANVAS* canvas, GX_COLOR* memory, ULONG memsize);
+UINT _gxe_canvas_offset_set(GX_CANVAS* canvas, GX_VALUE x, GX_VALUE y);
+UINT _gxe_canvas_alpha_set(GX_CANVAS* canvas, GX_UBYTE alpha);
+UINT _gxe_canvas_hardware_layer_bind(GX_CANVAS* canvas, INT layer);
+
+UINT _gxe_canvas_shift(GX_CANVAS* canvas, GX_VALUE x, GX_VALUE y);
+
+UINT _gxe_canvas_drawing_initiate(GX_CANVAS* canvas, GX_WIDGET* who, GX_RECTANGLE* dirty_area);
+UINT _gxe_canvas_drawing_complete(GX_CANVAS* canvas, GX_BOOL Flush);
+
+UINT _gxe_canvas_show(GX_CANVAS* canvas);
+UINT _gxe_canvas_hide(GX_CANVAS* canvas);
 
 #if defined(GX_MOUSE_SUPPORT)
 UINT _gxe_canvas_mouse_define(GX_CANVAS* canvas, GX_MOUSE_CURSOR_INFO* info);
@@ -252,21 +254,27 @@ UINT _gxe_canvas_mouse_show(GX_CANVAS* canvas);
 UINT _gxe_canvas_mouse_hide(GX_CANVAS* canvas);
 #endif
 
-UINT _gxe_canvas_offset_set(GX_CANVAS* canvas, GX_VALUE x, GX_VALUE y);
-UINT _gxe_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
 UINT _gxe_canvas_pixel_draw(GX_POINT position);
-UINT _gxe_canvas_pixelmap_blend(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap, GX_UBYTE alpha);
-UINT _gxe_canvas_pixelmap_draw(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap);
+UINT _gxe_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX_VALUE y_end);
+UINT _gxe_canvas_rectangle_draw(GX_RECTANGLE* rectangle);
+UINT _gxe_canvas_polygon_draw(GX_POINT* point_array, INT number_of_points);
+
+UINT _gxe_canvas_circle_draw(INT xcenter, INT ycenter, UINT r);
+UINT _gxe_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
+UINT _gxe_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
+UINT _gxe_canvas_ellipse_draw(INT xcenter, INT ycenter, INT a, INT b);
+
 UINT _gxe_canvas_pixelmap_get(GX_PIXELMAP* pixelmap);
+UINT _gxe_canvas_pixelmap_draw(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap);
+UINT _gxe_canvas_pixelmap_blend(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap, GX_UBYTE alpha);
 UINT _gxe_canvas_pixelmap_tile(GX_RECTANGLE* fill, GX_PIXELMAP* pixelmap);
 UINT _gxe_canvas_pixelmap_rotate(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap, INT angle, INT rot_cx, INT rot_cy);
-UINT _gxe_canvas_polygon_draw(GX_POINT* point_array, INT number_of_points);
-UINT _gxe_canvas_rectangle_draw(GX_RECTANGLE* rectangle);
-UINT _gxe_canvas_rotated_text_draw_ext(const GX_STRING* text, GX_VALUE xcenter, GX_VALUE ycenter, INT angle);
-UINT _gxe_canvas_shift(GX_CANVAS* canvas, GX_VALUE x, GX_VALUE y);
-UINT _gxe_canvas_show(GX_CANVAS* canvas);
-UINT _gxe_canvas_aligned_text_draw(const GX_STRING* string, GX_RECTANGLE* rectangle, ULONG alignment);
+
 UINT _gxe_canvas_text_draw_ext(GX_VALUE x, GX_VALUE y, const GX_STRING* string);
+UINT _gxe_canvas_aligned_text_draw(const GX_STRING* string, GX_RECTANGLE* rectangle, ULONG alignment);
+UINT _gxe_canvas_rotated_text_draw_ext(const GX_STRING* text, GX_VALUE xcenter, GX_VALUE ycenter, INT angle);
+
+UINT _gxe_canvas_block_move(GX_RECTANGLE* block, GX_VALUE dx, GX_VALUE dy, GX_RECTANGLE* dirty);
 
 #ifdef GX_TARGET_WIN32
 void _win32_compatible_canvas_memory_allocate(GX_CANVAS* canvas);
