@@ -219,12 +219,12 @@ static void _gx_display_driver_24xrgb_pixelmap_compressed_write(GX_DRAW_CONTEXT 
 {
 INT                yval;
 INT                xval;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_COLOR          *put;
 GX_COLOR          *putrow;
 GX_UBYTE           count;
 GX_COLOR           pixel;
-const GX_UBYTE *get_count;
+const GX_UBYTE    *get_count;
 GX_UBYTE           brush_alpha;
 
 GX_RECTANGLE      *clip = context->clip;
@@ -386,10 +386,10 @@ static void _gx_display_driver_24xrgb_pixelmap_compressed_alpha_write(GX_DRAW_CO
 {
 INT                yval;
 INT                xval;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_UBYTE           count;
 GX_COLOR           pixel;
-const GX_UBYTE *get_count;
+const GX_UBYTE    *get_count;
 GX_UBYTE           brush_alpha;
 GX_UBYTE           alpha;
 GX_UBYTE           combined_alpha;
@@ -528,16 +528,13 @@ static void _gx_display_driver_24xrgb_palette_pixelmap_compressed_write(GX_DRAW_
 {
 INT             yval;
 INT             xval;
-const UCHAR *get;
+const UCHAR    *get;
 UCHAR           count;
 GX_COLOR       *put;
 GX_COLOR       *putrow;
 GX_COLOR        pixel;
 GX_COLOR       *palette;
 GX_UBYTE        brush_alpha;
-GX_UBYTE        r;
-GX_UBYTE        g;
-GX_UBYTE        b;
 GX_RECTANGLE   *clip = context->clip;
 
     get = (const UCHAR *)pixelmap->data;
@@ -592,11 +589,7 @@ GX_RECTANGLE   *clip = context->clip;
                 /* repeated value */
                 count = (UCHAR)((count & 0x7f) + 1);
 
-                r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get++]);
-
-                pixel = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
+                pixel = palette[*get++] & 0x00ffffff;
 
                 if (brush_alpha == 0xff)
                 {
@@ -605,7 +598,7 @@ GX_RECTANGLE   *clip = context->clip;
                         if (xval >= clip->left &&
                             xval <= clip->right)
                         {
-                            *put = pixel & 0x00ffffff;
+                            *put = pixel;
                         }
                         put++;
                         xval++;
@@ -635,11 +628,7 @@ GX_RECTANGLE   *clip = context->clip;
                         if (xval >= clip->left &&
                             xval <= clip->right)
                         {
-                            r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                            g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                            b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get]);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
-                            *put = pixel & 0x00ffffff;
+                            *put = palette[*get] & 0x00ffffff;
                         }
                         get++;
                         put++;
@@ -653,10 +642,7 @@ GX_RECTANGLE   *clip = context->clip;
                         if (xval >= clip->left &&
                             xval <= clip->right)
                         {
-                            r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                            g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                            b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get]);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
+                            pixel = palette[*get] & 0x00ffffff;
                             _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, brush_alpha);
                         }
                         get++;
@@ -710,15 +696,11 @@ static void _gx_display_driver_24xrgb_palette_pixelmap_write(GX_DRAW_CONTEXT *co
 {
 INT           xval;
 INT           yval;
-GX_COLOR      color;
 INT           width;
 GX_UBYTE     *get;
 GX_COLOR     *palette;
 GX_COLOR     *put;
 GX_COLOR     *putrow;
-GX_UBYTE      r;
-GX_UBYTE      g;
-GX_UBYTE      b;
 
 GX_RECTANGLE *clip = context->clip;
 
@@ -747,12 +729,7 @@ GX_RECTANGLE *clip = context->clip;
         put = putrow;
         for (xval = clip->left; xval <= clip->right; xval++)
         {
-            r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-            g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-            b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get++]);
-
-            color = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
-            *put++ = color & 0x00ffffff;
+            *put++ = palette[*get++] & 0x00ffffff;
         }
         putrow += context->pitch;
         get += pixelmap->width - width;
@@ -806,9 +783,6 @@ GX_COLOR      color;
 INT           width;
 GX_UBYTE     *get;
 GX_COLOR     *palette;
-GX_UBYTE      r;
-GX_UBYTE      g;
-GX_UBYTE      b;
 
 GX_RECTANGLE *clip = context->clip;
 
@@ -830,10 +804,7 @@ GX_RECTANGLE *clip = context->clip;
         {
             if ((*get) != pixelmap->transparent_color)
             {
-                r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get]);
-                color = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
+                color = palette[*get] & 0x00ffffff;
                 _gx_display_driver_32bpp_pixel_write(context, xval, yval, color);
             }
             get++;
@@ -886,15 +857,12 @@ static void _gx_display_driver_24xrgb_palette_pixelmap_transparent_compressed_wr
 {
 INT             yval;
 INT             xval;
-const UCHAR *get;
+const UCHAR    *get;
 UCHAR           count;
 GX_COLOR        pixel;
 GX_COLOR       *palette;
 GX_COLOR       *put;
 GX_COLOR       *putrow;
-GX_UBYTE        r;
-GX_UBYTE        g;
-GX_UBYTE        b;
 GX_UBYTE        brush_alpha;
 GX_RECTANGLE   *clip = context->clip;
 
@@ -946,11 +914,7 @@ GX_RECTANGLE   *clip = context->clip;
                 count = (UCHAR)((count & 0x7f) + 1);
                 if ((*get) != pixelmap->transparent_color)
                 {
-                    r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                    g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                    b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get]);
-
-                    pixel = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
+                    pixel = palette[*get] & 0x00ffffff;
                     if (brush_alpha == 0xff)
                     {
                         while (count--)
@@ -998,11 +962,7 @@ GX_RECTANGLE   *clip = context->clip;
                             if (xval >= clip->left &&
                                 xval <= clip->right)
                             {
-                                r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                                g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                                b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get]);
-                                pixel = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
-                                *put = pixel;
+                                *put = palette[*get] & 0x00ffffff;
                             }
                         }
                         get++;
@@ -1019,10 +979,7 @@ GX_RECTANGLE   *clip = context->clip;
                             if (xval >= clip->left &&
                                 xval <= clip->right)
                             {
-                                r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                                g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                                b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get]);
-                                pixel = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
+                                pixel = palette[*get] & 0x00ffffff;
                                 _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, brush_alpha);
                             }
                         }
@@ -1081,7 +1038,8 @@ INT              width;
 GX_COLOR        *putrow;
 USHORT          *getrow;
 GX_COLOR        *put;
-const USHORT *get;
+const USHORT    *get;
+USHORT           pixel;
 
 GX_RECTANGLE    *clip = context->clip;
 
@@ -1102,10 +1060,8 @@ GX_RECTANGLE    *clip = context->clip;
 
         for (xval = 0; xval < width; xval++)
         {
-            *put++ = (GX_COLOR)ASSEMBLECOLOR_32BPP(REDVAL_16BPP(*get) << 3,
-                                                   GREENVAL_16BPP(*get) << 2,
-                                                   BLUEVAL_16BPP(*get) << 3);
-            get++;
+            pixel = *get++;
+            *put++ = GX_COLOR_24RGB_FROM_565RGB(pixel);
         }
         putrow += context->pitch;
         getrow += pixelmap->width;
@@ -1155,12 +1111,9 @@ static void _gx_display_driver_24xrgb_565rgb_pixelmap_compressed_write(GX_DRAW_C
 {
 INT              yval;
 INT              xval;
-const USHORT *get;
+const USHORT    *get;
 USHORT           count;
 GX_COLOR         pixel;
-GX_UBYTE         r;
-GX_UBYTE         g;
-GX_UBYTE         b;
 GX_UBYTE         brush_alpha;
 GX_COLOR        *put;
 GX_COLOR        *putrow;
@@ -1212,10 +1165,7 @@ GX_RECTANGLE    *clip = context->clip;
                 /* repeated value */
                 count = (USHORT)((count & 0x7fff) + 1);
                 pixel = *get++;
-                r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                 if (brush_alpha == 0xff)
                 {
                     while (count--)
@@ -1254,10 +1204,7 @@ GX_RECTANGLE    *clip = context->clip;
                             xval <= clip->right)
                         {
                             pixel = *get;
-                            r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                            g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                            b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                            pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                             *put = pixel;
                         }
                         get++;
@@ -1273,10 +1220,7 @@ GX_RECTANGLE    *clip = context->clip;
                             xval <= clip->right)
                         {
                             pixel = *get;
-                            r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                            g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                            b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                            pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                             _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, brush_alpha);
                         }
                         get++;
@@ -1336,13 +1280,10 @@ static void _gx_display_driver_24xrgb_565rgb_pixelmap_compressed_alpha_write(GX_
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE           count;
 GX_COLOR           pixel;
 GX_UBYTE           alpha_value;
-GX_UBYTE           r;
-GX_UBYTE           g;
-GX_UBYTE           b;
 GX_UBYTE           brush_alpha;
 GX_UBYTE           combined_alpha;
 
@@ -1396,10 +1337,7 @@ GX_RECTANGLE      *clip = context->clip;
                     {
                         get += 2;
                         pixel = *(USHORT *)get;
-                        r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                        g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                        b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                        pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                        pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                         get += 2;
                         while (count--)
                         {
@@ -1425,10 +1363,7 @@ GX_RECTANGLE      *clip = context->clip;
                         {
                             get += 2;
                             pixel = *(USHORT *)get;
-                            r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                            g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                            b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                            pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                             get += 2;
                             while (count--)
                             {
@@ -1469,10 +1404,7 @@ GX_RECTANGLE      *clip = context->clip;
                             if (alpha_value)
                             {
                                 pixel = *(USHORT *)get;
-                                r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                                g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                                b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                                pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                                pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                                 if (alpha_value == 0xff)
                                 {
                                     _gx_display_driver_32bpp_pixel_write(context, xval, yval, pixel);
@@ -1503,10 +1435,7 @@ GX_RECTANGLE      *clip = context->clip;
                             if (alpha_value)
                             {
                                 pixel = *(USHORT *)get;
-                                r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                                g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                                b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                                pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                                pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                                 combined_alpha = (GX_UBYTE)(brush_alpha * alpha_value / 255);
                                 _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, combined_alpha);
                             }
@@ -1572,13 +1501,10 @@ static void _gx_display_driver_24xrgb_565rgb_pixelmap_alpha_write(GX_DRAW_CONTEX
 INT                skipcount;
 INT                xval;
 INT                yval;
-const GX_UBYTE *getalpha;
-const USHORT   *get;
+const GX_UBYTE    *getalpha;
+const USHORT      *get;
 USHORT            *getrow;
 GX_UBYTE          *getrowalpha;
-GX_UBYTE           r;
-GX_UBYTE           g;
-GX_UBYTE           b;
 GX_COLOR           pixel;
 GX_UBYTE           alpha_value;
 
@@ -1603,10 +1529,7 @@ GX_RECTANGLE      *clip = context->clip;
             pixel = *get++;
             if (alpha_value)
             {
-                r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
                 if (alpha_value == 0xff)
                 {
                     _gx_display_driver_32bpp_pixel_write(context, xval, yval, pixel);
@@ -1670,7 +1593,7 @@ INT              skipcount;
 INT              xval;
 INT              yval;
 USHORT          *getrow;
-const USHORT *get;
+const USHORT    *get;
 UCHAR            alpha_value;
 ULONG            pixel;
 
@@ -1688,12 +1611,11 @@ GX_RECTANGLE    *clip = context->clip;
 
         for (xval = clip->left; xval <= clip->right; xval++)
         {
-            /* 0x000f-->b , 0x00f0-->g , 0x0f00-->r , 0xf000-->a */
-            /*4444bgra -->565rgb*/
             alpha_value = (UCHAR)(((*get) & 0xf000) >> 8);
             if (alpha_value)
             {
-                pixel = (GX_COLOR)((((*get) & 0x0f00) << 12) | (((*get) & 0x00f0) << 8) | (((*get) & 0x000f) << 4));
+                pixel = *get;
+                pixel = GX_COLOR_24RGB_FROM_4444ARGB(pixel);
                 if (alpha_value == 0xf0)
                 {
                     _gx_display_driver_32bpp_pixel_write(context, xval, yval, pixel);
@@ -1752,15 +1674,12 @@ static void _gx_display_driver_24xrgb_4444argb_pixelmap_compressed_alpha_write(G
 {
 INT              yval;
 INT              xval;
-const USHORT *get;
+const USHORT    *get;
 USHORT           count;
 GX_COLOR         pixel;
 GX_UBYTE         falpha;
 GX_UBYTE         brush_alpha;
 GX_UBYTE         combined_alpha;
-GX_UBYTE         r;
-GX_UBYTE         g;
-GX_UBYTE         b;
 
 GX_RECTANGLE    *clip = context->clip;
 
@@ -1809,13 +1728,7 @@ GX_RECTANGLE    *clip = context->clip;
                 falpha = (falpha >> 4) | falpha;
                 if (falpha)
                 {
-                    r = (GX_UBYTE)(((USHORT)pixel & 0x0f00) >> 4);
-                    r = (GX_UBYTE)((r >> 4) | r);
-                    g = (GX_UBYTE)((USHORT)pixel & 0x00f0);
-                    g = (GX_UBYTE)((g >> 4) | g);
-                    b = (GX_UBYTE)((USHORT)pixel & 0x000f);
-                    b = (GX_UBYTE)((b << 4) | b);
-                    pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
+                    pixel = gx_color_24rgb_from_4444argb((USHORT)pixel);
                     if (brush_alpha == 0xff)
                     {
                         combined_alpha = falpha;
@@ -1854,15 +1767,9 @@ GX_RECTANGLE    *clip = context->clip;
                             pixel = *get;
                             falpha = (GX_UBYTE)(((USHORT)pixel & 0xf000) >> 8);
                             falpha = (falpha >> 4) | falpha;
-                            r = (GX_UBYTE)(((USHORT)pixel & 0x0f00) >> 4);
-                            r = (GX_UBYTE)((r >> 4) | r);
-                            g = (GX_UBYTE)((USHORT)pixel & 0x00f0);
-                            g = (GX_UBYTE)((g >> 4) | g);
-                            b = (GX_UBYTE)((USHORT)pixel & 0x000f);
-                            b = (GX_UBYTE)((b << 4) | b);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
                             if (falpha)
                             {
+                                pixel = gx_color_24rgb_from_4444argb((USHORT)pixel);
                                 _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, falpha);
                             }
                         }
@@ -1881,14 +1788,11 @@ GX_RECTANGLE    *clip = context->clip;
                             falpha = (GX_UBYTE)(((USHORT)pixel & 0xf000) >> 8);
                             falpha = (falpha >> 4) | falpha;
                             combined_alpha = (GX_UBYTE)(falpha * brush_alpha / 255);
-                            r = (GX_UBYTE)(((USHORT)pixel & 0x0f00) >> 4);
-                            r = (GX_UBYTE)((r >> 4) | r);
-                            g = (GX_UBYTE)((USHORT)pixel & 0x00f0);
-                            g = (GX_UBYTE)((g >> 4) | g);
-                            b = (GX_UBYTE)((USHORT)pixel & 0x000f);
-                            b = (GX_UBYTE)((b << 4) | b);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
-                            _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, combined_alpha);
+                            if (combined_alpha)
+                            {
+                                pixel = gx_color_24rgb_from_4444argb((USHORT)pixel);
+                                _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, combined_alpha);
+                            }
                         }
                         get++;
                         xval++;
