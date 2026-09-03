@@ -212,9 +212,6 @@ GX_COLOR      color;
 INT           width;
 GX_UBYTE     *get;
 GX_COLOR     *palette;
-GX_UBYTE      r;
-GX_UBYTE      g;
-GX_UBYTE      b;
 
 GX_RECTANGLE *clip = context->clip;
 
@@ -225,22 +222,16 @@ GX_RECTANGLE *clip = context->clip;
 
     width = clip->right - clip->left + 1;
 
-
-        for (yval = clip->top; yval <= clip->bottom; yval++)
+    for (yval = clip->top; yval <= clip->bottom; yval++)
+    {
+        for (xval = clip->left; xval <= clip->right; xval++)
         {
-            for (xval = clip->left; xval <= clip->right; xval++)
-            {
-                r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get++]);
-
-                color = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
-
-                _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, color, alpha);
-            }
-
-            get += pixelmap->width - width;
+            color = palette[*get++] & 0x00ffffff;
+            _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, color, alpha);
         }
+
+        get += pixelmap->width - width;
+    }
 }
 
 /**************************************************************************/
@@ -289,9 +280,6 @@ GX_COLOR      color;
 INT           width;
 GX_UBYTE     *get;
 GX_COLOR     *palette;
-GX_UBYTE      r;
-GX_UBYTE      g;
-GX_UBYTE      b;
 
 GX_RECTANGLE *clip = context->clip;
 
@@ -308,10 +296,7 @@ GX_RECTANGLE *clip = context->clip;
          {
              if ((*get) != pixelmap->transparent_color)
              {
-                 r = (GX_UBYTE)REDVAL_32BPP(palette[*get]);
-                 g = (GX_UBYTE)GREENVAL_32BPP(palette[*get]);
-                 b = (GX_UBYTE)BLUEVAL_32BPP(palette[*get]);
-                 color = (GX_COLOR)ASSEMBLECOLOR_24BPP(r, g, b);
+                 color = palette[*get] & 0x00ffffff;
                  _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, color, alpha);
              }
              get++;
@@ -383,15 +368,17 @@ GX_RECTANGLE *clip = context->clip;
 
         for (xval = clip->left; xval <= clip->right; xval++)
         {
-            /* 0x000f-->b , 0x00f0-->g , 0x0f00-->r , 0xf000-->a */
-            /*4444bgra -->565rgb*/
             falpha = (UCHAR)(((*get) & 0xf000) >> 8);
             if (falpha)
             {
                 falpha = (GX_UBYTE)(falpha | (falpha >> 4));
-                pixel = (GX_COLOR)((((*get) & 0x0f00) << 12) | (((*get) & 0x00f0) << 8) | (((*get) & 0x000f) << 4));
                 combined_alpha = (GX_UBYTE)(falpha * alpha / 255);
-                _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, combined_alpha);
+                if (combined_alpha)
+                {
+                    pixel = *get;
+                    pixel = GX_COLOR_24RGB_FROM_4444ARGB(pixel);
+                    _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, combined_alpha);
+                }
             }
             get++;
         }
@@ -447,9 +434,6 @@ const GX_UBYTE *getalpha;
 const USHORT   *get;
 USHORT         *getrow;
 GX_UBYTE       *getrowalpha;
-GX_UBYTE        r;
-GX_UBYTE        g;
-GX_UBYTE        b;
 GX_COLOR        pixel;
 GX_UBYTE        falpha;
 GX_UBYTE        combined_alpha;
@@ -475,12 +459,12 @@ GX_RECTANGLE   *clip = context->clip;
             if (falpha)
             {
                 combined_alpha = (GX_UBYTE)(falpha * alpha / 255);
-                pixel = *get;
-                r = (GX_UBYTE)(((USHORT)pixel & 0xf800) >> 8);
-                g = (GX_UBYTE)(((USHORT)pixel & 0x07e0) >> 3);
-                b = (GX_UBYTE)(((USHORT)pixel & 0x001f) << 3);
-                pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
-                _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, combined_alpha);
+                if (combined_alpha)
+                {
+                    pixel = *get;
+                    pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
+                    _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, combined_alpha);
+                }
             }
             get++;
         }
@@ -545,9 +529,8 @@ GX_RECTANGLE *clip = context->clip;
 
         for (xval = clip->left; xval <= clip->right; xval++)
         {
-            pixel = (GX_COLOR)ASSEMBLECOLOR_32BPP(REDVAL_16BPP(*get) << 3,
-                                                  GREENVAL_16BPP(*get) << 2,
-                                                  BLUEVAL_16BPP(*get) << 3);
+            pixel = *get;
+            pixel = GX_COLOR_24RGB_FROM_565RGB(pixel);
             _gx_display_driver_24xrgb_pixel_blend(context, xval, yval, pixel, alpha);
             get++;
         }
