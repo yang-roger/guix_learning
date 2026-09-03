@@ -1617,7 +1617,7 @@ static UINT _gx_animation_slide_landing(GX_ANIMATION* animation)
         }
     }
 
-    if (((info.style & GX_ANIMATION_EASING_FUNC_MASK) && (info.steps != 0)) ||
+    if (((info.style & GX_ANIMATION_EASING_FUNC_MASK) && (animation->steps != 0)) ||
         ((shift_x < 0) && ((GX_VALUE)(target_size.left + shift_x) > parent->left_())) ||
         ((shift_x > 0) && ((GX_VALUE)(target_size.left + shift_x) < parent->left_())) ||
         ((shift_y < 0) && ((GX_VALUE)(target_size.top + shift_y) > parent->top_())) ||
