@@ -51,9 +51,9 @@
 
 
 #define GX_COLOR_24RGB_FROM_4444ARGB(c) \
-     (GX_COLOR)((((c) & 0x0f00) << 12) | \
-                (((c) & 0x00f0) << 8)  | \
-                (((c) & 0x000f) << 4))
+    (GX_COLOR)((((c) & 0x0f00) << 12) | \
+               (((c) & 0x00f0) << 8)  | \
+               (((c) & 0x000f) << 4))
 
 static inline GX_COLOR gx_color_24rgb_from_4444argb(USHORT pixel)
 {
@@ -71,5 +71,26 @@ static inline GX_COLOR gx_color_24rgb_from_4444argb(USHORT pixel)
     return (GX_COLOR)ASSEMBLECOLOR_32BPP(r, g, b);
 }
 
+#define GX_COLOR_32ARGB_FROM_565RGB(c)  \
+    (GX_COLOR)(0xFF000000 | GX_COLOR_24RGB_FROM_565RGB(c))
+
+#define GX_COLOR_32ARGB_FROM_4444ARGB(c) \
+    (GX_COLOR)(0xFF000000 | GX_COLOR_24RGB_FROM_4444ARGB(c))
+
+static inline GX_COLOR gx_color_32argb_from_4444argb(USHORT pixel)
+{
+    GX_UBYTE r;
+    GX_UBYTE g;
+    GX_UBYTE b;
+
+    r = (GX_UBYTE)((pixel & 0x0f00) >> 4);
+    r = (GX_UBYTE)((r >> 4) | r);
+    g = (GX_UBYTE)(pixel & 0x00f0);
+    g = (GX_UBYTE)((g >> 4) | g);
+    b = (GX_UBYTE)(pixel & 0x000f);
+    b = (GX_UBYTE)((b << 4) | b);
+
+    return (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+}
 
 #endif

@@ -71,7 +71,7 @@ ULONG        *get;
 ULONG        *getrow;
 GX_RECTANGLE *clip = context->clip;
 GX_RECTANGLE  rotated_clip;
-void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -159,7 +159,7 @@ ULONG         combined_alpha;
 ULONG         color;
 GX_RECTANGLE *clip = context->clip;
 GX_RECTANGLE  rotated_clip;
-void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -261,7 +261,7 @@ GX_UBYTE     *get;
 GX_COLOR     *palette;
 GX_RECTANGLE *clip = context->clip;
 GX_RECTANGLE  rotated_clip;
-void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -352,7 +352,7 @@ GX_UBYTE     *get;
 GX_COLOR     *palette;
 GX_RECTANGLE *clip = context->clip;
 GX_RECTANGLE  rotated_clip;
-void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -439,14 +439,14 @@ static void _gx_display_driver_32bpp_rotated_4444argb_pixelmap_alpha_blend(GX_DR
 INT              xval;
 INT              yval;
 USHORT          *getrow;
-const USHORT *get;
+const USHORT    *get;
 UCHAR            falpha;
 GX_UBYTE         combined_alpha;
 ULONG            pixel;
 
 GX_RECTANGLE    *clip = context->clip;
 GX_RECTANGLE     rotated_clip;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -490,8 +490,8 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                 falpha = (GX_UBYTE)(falpha | (falpha >> 4));
 
                 /* Convert 4444argb color to 24xrgb color.  */
-                pixel = (GX_COLOR)((((*get) & 0x0f00) << 12) | (((*get) & 0x00f0) << 8) | (((*get) & 0x000f) << 4));
-                pixel |= 0xff000000;
+                pixel = *get;
+                pixel = GX_COLOR_32ARGB_FROM_4444ARGB(pixel);
 
                 /* Calulate combined alpha.  */
                 combined_alpha = (GX_UBYTE)(falpha * alpha / 255);
@@ -550,8 +550,8 @@ static void _gx_display_driver_32bpp_rotated_565rgb_pixelmap_alpha_blend(GX_DRAW
 INT                skipcount;
 INT                xval;
 INT                yval;
-const GX_UBYTE *getalpha;
-const USHORT   *get;
+const GX_UBYTE    *getalpha;
+const USHORT      *get;
 USHORT            *getrow;
 GX_UBYTE          *getrowalpha;
 GX_COLOR           pixel;
@@ -559,7 +559,7 @@ GX_UBYTE           falpha;
 GX_UBYTE           combined_alpha;
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -604,10 +604,7 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                 pixel = *get;
 
                 /* Convert 565rgb color to 24xrgb color.  */
-                pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff,
-                                                       REDVAL_16BPP(pixel) << 3,
-                                                       GREENVAL_16BPP(pixel) << 2,
-                                                       BLUEVAL_16BPP(pixel) << 3);
+                pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
 
                 /* Blend 24xrgb color to background.  */
                 blend_func(context, xval, yval, pixel, combined_alpha);
@@ -663,11 +660,11 @@ static void _gx_display_driver_32bpp_rotated_565rgb_pixelmap_raw_blend(GX_DRAW_C
 INT              xval;
 INT              yval;
 USHORT          *getrow;
-const USHORT *get;
+const USHORT    *get;
 GX_COLOR         pixel;
 GX_RECTANGLE    *clip = context->clip;
 GX_RECTANGLE     rotated_clip;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -701,10 +698,8 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
         for (xval = rotated_clip.left; xval <= rotated_clip.right; xval++)
         {
             /* Convert 565rgb color to 24xrgb color.  */
-            pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff,
-                                                   REDVAL_16BPP(*get) << 3,
-                                                   GREENVAL_16BPP(*get) << 2,
-                                                   BLUEVAL_16BPP(*get) << 3);
+            pixel = *get;
+            pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
 
             blend_func(context, xval, yval, pixel, alpha);
             get++;

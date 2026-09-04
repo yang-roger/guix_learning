@@ -164,7 +164,7 @@ ULONG        *get;
 UCHAR         alpha_value;
 GX_RECTANGLE *clip = context->clip;
 GX_RECTANGLE  rotated_clip;
-void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -259,16 +259,16 @@ static void _gx_display_driver_32bpp_rotated_pixelmap_compressed_write(GX_DRAW_C
 {
 INT                yval;
 INT                xval;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_COLOR          *put;
 GX_COLOR          *putrow;
 GX_UBYTE           count;
 GX_COLOR           pixel;
-const GX_UBYTE *get_count;
+const GX_UBYTE    *get_count;
 GX_UBYTE           brush_alpha;
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -452,16 +452,16 @@ static void _gx_display_driver_32bpp_rotated_pixelmap_compressed_alpha_write(GX_
 {
 INT                yval;
 INT                xval;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_UBYTE           count;
 GX_COLOR           pixel;
-const GX_UBYTE *get_count;
+const GX_UBYTE    *get_count;
 GX_UBYTE           brush_alpha;
 GX_UBYTE           alpha;
 GX_UBYTE           combined_alpha;
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -620,7 +620,7 @@ static void _gx_display_driver_32bpp_rotated_palette_pixelmap_compressed_write(G
 {
 INT             yval;
 INT             xval;
-const UCHAR *get;
+const UCHAR    *get;
 UCHAR           count;
 GX_COLOR       *put;
 GX_COLOR       *putrow;
@@ -629,7 +629,7 @@ GX_COLOR       *palette;
 GX_UBYTE        brush_alpha;
 GX_RECTANGLE   *clip = context->clip;
 GX_RECTANGLE    rotated_clip;
-void            (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -1001,7 +1001,7 @@ static void _gx_display_driver_32bpp_rotated_palette_pixelmap_transparent_compre
 {
 INT             yval;
 INT             xval;
-const UCHAR *get;
+const UCHAR    *get;
 UCHAR           count;
 GX_COLOR        pixel;
 GX_COLOR       *palette;
@@ -1010,7 +1010,7 @@ GX_COLOR       *putrow;
 GX_UBYTE        brush_alpha;
 GX_RECTANGLE   *clip = context->clip;
 GX_RECTANGLE    rotated_clip;
-void            (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -1209,7 +1209,8 @@ INT              yval;
 GX_COLOR        *putrow;
 USHORT          *getrow;
 GX_COLOR        *put;
-const USHORT *get;
+const USHORT    *get;
+GX_COLOR         pixel;
 
 GX_RECTANGLE    *clip = context->clip;
 GX_RECTANGLE     rotated_clip;
@@ -1248,11 +1249,9 @@ GX_RECTANGLE     rotated_clip;
 
         for (xval = rotated_clip.left; xval <= rotated_clip.right; xval++)
         {
-            *put++ = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff,
-                                                    REDVAL_16BPP(*get) << 3,
-                                                    GREENVAL_16BPP(*get) << 2,
-                                                    BLUEVAL_16BPP(*get) << 3);
-            get++;
+            pixel = *get++;
+            pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
+            *put++ = pixel;
         }
         putrow += context->pitch;
         getrow += pixelmap->height;
@@ -1301,18 +1300,15 @@ static void _gx_display_driver_32bpp_rotated_565rgb_pixelmap_compressed_write(GX
 {
 INT              yval;
 INT              xval;
-const USHORT *get;
+const USHORT    *get;
 USHORT           count;
 GX_COLOR         pixel;
-GX_UBYTE         r;
-GX_UBYTE         g;
-GX_UBYTE         b;
 GX_UBYTE         brush_alpha;
 GX_COLOR        *put;
 GX_COLOR        *putrow;
 GX_RECTANGLE    *clip = context->clip;
 GX_RECTANGLE     rotated_clip;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -1384,10 +1380,7 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                 /* Repeated value.  */
                 count = (USHORT)((count & 0x7fff) + 1);
                 pixel = *get++;
-                r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
 
                 if (brush_alpha == 0xff)
                 {
@@ -1428,10 +1421,7 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                             xval <= rotated_clip.right)
                         {
                             pixel = *get;
-                            r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                            g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                            b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                            pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
                             *put = pixel;
                         }
                         get++;
@@ -1447,10 +1437,7 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                             xval <= rotated_clip.right)
                         {
                             pixel = *get;
-                            r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                            g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                            b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                            pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
                             blend_func(context, xval, yval, pixel, brush_alpha);
                         }
                         get++;
@@ -1508,19 +1495,16 @@ static void _gx_display_driver_32bpp_rotated_565rgb_pixelmap_compressed_alpha_wr
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE           count;
 GX_COLOR           pixel;
 GX_UBYTE           alpha_value;
-GX_UBYTE           r;
-GX_UBYTE           g;
-GX_UBYTE           b;
 GX_UBYTE           brush_alpha;
 GX_UBYTE           combined_alpha;
 
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -1594,10 +1578,7 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                     {
                         get += 2;
                         pixel = *(USHORT *)get;
-                        r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                        g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                        b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                        pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                        pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
                         get += 2;
                         while (count--)
                         {
@@ -1623,10 +1604,7 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                         {
                             get += 2;
                             pixel = *(USHORT *)get;
-                            r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                            g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                            b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                            pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
                             get += 2;
                             while (count--)
                             {
@@ -1668,10 +1646,7 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                             if (alpha_value)
                             {
                                 pixel = *(USHORT *)get;
-                                r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                                g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                                b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                                pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                                pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
                                 if (alpha_value == 0xff)
                                 {
                                     _gx_display_driver_32bpp_pixel_write(context, xval, yval, pixel);
@@ -1702,10 +1677,7 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                             if (alpha_value)
                             {
                                 pixel = *(USHORT *)get;
-                                r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                                g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                                b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                                pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                                pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
                                 combined_alpha = (GX_UBYTE)(brush_alpha * alpha_value / 255);
                                 blend_func(context, xval, yval, pixel, combined_alpha);
                             }
@@ -1769,19 +1741,16 @@ static void _gx_display_driver_32bpp_rotated_565rgb_pixelmap_alpha_write(GX_DRAW
 INT                skipcount;
 INT                xval;
 INT                yval;
-const GX_UBYTE *getalpha;
-const USHORT   *get;
+const GX_UBYTE    *getalpha;
+const USHORT      *get;
 USHORT            *getrow;
 GX_UBYTE          *getrowalpha;
-GX_UBYTE           r;
-GX_UBYTE           g;
-GX_UBYTE           b;
 GX_COLOR           pixel;
 GX_UBYTE           alpha_value;
 
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -1822,10 +1791,7 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
             pixel = *get++;
             if (alpha_value)
             {
-                r = (GX_UBYTE)(REDVAL_16BPP(pixel) << 3);
-                g = (GX_UBYTE)(GREENVAL_16BPP(pixel) << 2);
-                b = (GX_UBYTE)(BLUEVAL_16BPP(pixel) << 3);
-                pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                pixel = GX_COLOR_32ARGB_FROM_565RGB(pixel);
                 if (alpha_value == 0xff)
                 {
                     _gx_display_driver_32bpp_pixel_write(context, xval, yval, pixel);
@@ -1886,13 +1852,13 @@ INT              skipcount;
 INT              xval;
 INT              yval;
 USHORT          *getrow;
-const USHORT *get;
+const USHORT    *get;
 UCHAR            alpha_value;
 ULONG            pixel;
 
 GX_RECTANGLE    *clip = context->clip;
 GX_RECTANGLE     rotated_clip;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -1930,10 +1896,9 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
             alpha_value = (UCHAR)(((*get) & 0xf000) >> 8);
             if (alpha_value)
             {
-
                 /* Convert 4444argb pixel to 24xrgb pixel.  */
-                pixel = (GX_COLOR)((((*get) & 0x0f00) << 12) | (((*get) & 0x00f0) << 8) | (((*get) & 0x000f) << 4));
-                pixel |= 0xff000000;
+                pixel = *get;
+                pixel = GX_COLOR_32ARGB_FROM_4444ARGB(pixel);
                 if (alpha_value == 0xf0)
                 {
                     _gx_display_driver_32bpp_pixel_write(context, xval, yval, pixel);
@@ -1992,7 +1957,7 @@ static void _gx_display_driver_32bpp_rotated_4444argb_pixelmap_compressed_alpha_
 {
 INT              yval;
 INT              xval;
-const USHORT *get;
+const USHORT    *get;
 USHORT           count;
 GX_COLOR         pixel;
 GX_UBYTE         falpha;
@@ -2003,7 +1968,7 @@ GX_UBYTE         g;
 GX_UBYTE         b;
 GX_RECTANGLE    *clip = context->clip;
 GX_RECTANGLE     rotated_clip;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -2073,13 +2038,7 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                 falpha = (falpha >> 4) | falpha;
                 if (falpha)
                 {
-                    r = (GX_UBYTE)(((USHORT)pixel & 0x0f00) >> 4);
-                    r = (GX_UBYTE)((r >> 4) | r);
-                    g = (GX_UBYTE)((USHORT)pixel & 0x00f0);
-                    g = (GX_UBYTE)((g >> 4) | g);
-                    b = (GX_UBYTE)((USHORT)pixel & 0x000f);
-                    b = (GX_UBYTE)((b << 4) | b);
-                    pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
+                    pixel = gx_color_32argb_from_4444argb(pixel);
                     if (brush_alpha == 0xff)
                     {
                         combined_alpha = falpha;
@@ -2119,15 +2078,9 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                             pixel = *get;
                             falpha = (GX_UBYTE)(((USHORT)pixel & 0xf000) >> 8);
                             falpha = (falpha >> 4) | falpha;
-                            r = (GX_UBYTE)(((USHORT)pixel & 0x0f00) >> 4);
-                            r = (GX_UBYTE)((r >> 4) | r);
-                            g = (GX_UBYTE)((USHORT)pixel & 0x00f0);
-                            g = (GX_UBYTE)((g >> 4) | g);
-                            b = (GX_UBYTE)((USHORT)pixel & 0x000f);
-                            b = (GX_UBYTE)((b << 4) | b);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
                             if (falpha)
                             {
+                                pixel = gx_color_32argb_from_4444argb(pixel);
                                 blend_func(context, xval, yval, pixel, falpha);
                             }
                         }
@@ -2145,15 +2098,12 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                             pixel = *get;
                             falpha = (GX_UBYTE)(((USHORT)pixel & 0xf000) >> 8);
                             falpha = (falpha >> 4) | falpha;
-                            combined_alpha = (GX_UBYTE)(falpha * brush_alpha / 255);
-                            r = (GX_UBYTE)(((USHORT)pixel & 0x0f00) >> 4);
-                            r = (GX_UBYTE)((r >> 4) | r);
-                            g = (GX_UBYTE)((USHORT)pixel & 0x00f0);
-                            g = (GX_UBYTE)((g >> 4) | g);
-                            b = (GX_UBYTE)((USHORT)pixel & 0x000f);
-                            b = (GX_UBYTE)((b << 4) | b);
-                            pixel = (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
-                            blend_func(context, xval, yval, pixel, combined_alpha);
+                            if (falpha)
+                            {
+                                combined_alpha = (GX_UBYTE)(falpha * brush_alpha / 255);
+                                pixel = gx_color_32argb_from_4444argb(pixel);
+                                blend_func(context, xval, yval, pixel, combined_alpha);
+                            }
                         }
                         get++;
                         xval++;
