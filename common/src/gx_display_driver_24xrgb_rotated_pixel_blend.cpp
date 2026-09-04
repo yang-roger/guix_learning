@@ -64,9 +64,6 @@
 /**************************************************************************/
 void _gx_display_driver_24xrgb_rotated_pixel_blend(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha)
 {
-GX_UBYTE fred, fgreen, fblue;
-GX_UBYTE bred, bgreen, bblue;
-GX_UBYTE balpha;
 ULONG    bcolor;
 ULONG   *put;
 
@@ -88,37 +85,10 @@ ULONG   *put;
             put += (context->canvas->y_resolution - y - 1);
         }
 
-        /* No need to blend if alpha value is 255.  */
-        if (alpha == 255)
-        {
-            *put = (ULONG)(fcolor | 0xff000000);
-
-            return;
-        }
-
-        /* Split foreground into red, green, and blue components.  */
-        fred = REDVAL_24BPP(fcolor);
-        fgreen = GREENVAL_24BPP(fcolor);
-        fblue = BLUEVAL_24BPP(fcolor);
-
         /* Read background color.  */
         bcolor = *put;
 
-        /* Split background color into red, green, and blue components.  */
-        bred = REDVAL_24BPP(bcolor);
-        bgreen = GREENVAL_24BPP(bcolor);
-        bblue = BLUEVAL_24BPP(bcolor);
-
-        /* Background alpha is inverse of foreground alpha.  */
-        balpha = (GX_UBYTE)(256 - alpha);
-
-        /* Blend foreground and background, each color channel.  */
-        fred = (GX_UBYTE)(((bred * balpha) + (fred * alpha)) >> 8);
-        fgreen = (GX_UBYTE)(((bgreen * balpha) + (fgreen * alpha)) >> 8);
-        fblue = (GX_UBYTE)(((bblue * balpha) + (fblue * alpha)) >> 8);
-
-        /* Re-assemble into 32-bit color and write it out.  */
-        *put = (ULONG)(ASSEMBLECOLOR_32ARGB(0xff, fred, fgreen, fblue));
+        *put = gx_color_24xrgb_blend(fcolor, alpha, bcolor);
     }
 }
 

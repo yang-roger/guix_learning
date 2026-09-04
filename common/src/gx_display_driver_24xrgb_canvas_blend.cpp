@@ -19,19 +19,6 @@
 /**                                                                       */
 /**************************************************************************/
 
-#define REDVAL(_c)   (GX_UBYTE)((_c) >> 16)
-#define GREENVAL(_c) (GX_UBYTE)((_c) >> 8)
-#define BLUEVAL(_c)  (GX_UBYTE)(_c)
-
-
-/* Define macros for assembling a 24-bit r:g:b value from 3 components.  */
-
-#define ASSEMBLECOLOR(_r, _g, _b) \
-    (((_r) << 16) |               \
-     ((_g) << 8) |                \
-     (_b))
-
-
 #include "gx_display.h"
 
 #include "gx_utility.h"
@@ -84,8 +71,6 @@ ULONG       *read_start;
 ULONG       *write;
 ULONG       *write_start;
 ULONG        fcolor;
-GX_UBYTE     fred, fgreen, fblue;
-GX_UBYTE     bred, bgreen, bblue;
 GX_UBYTE     alpha, balpha;
 
 ULONG        bcolor;
@@ -123,26 +108,10 @@ INT          col;
                 /* read the foreground color */
                 fcolor = *read++;
 
-                /* split foreground into red, green, and blue components */
-                fred = REDVAL(fcolor);
-                fgreen = GREENVAL(fcolor);
-                fblue = BLUEVAL(fcolor);
-
                 /* read background color */
                 bcolor = *write;
 
-                /* split background color into red, green, and blue components */
-                bred = REDVAL(bcolor);
-                bgreen = GREENVAL(bcolor);
-                bblue = BLUEVAL(bcolor);
-
-                /* blend foreground and background, each color channel */
-                fred = (GX_UBYTE)(((bred * balpha) + (fred * alpha)) >> 8);
-                fgreen = (GX_UBYTE)(((bgreen * balpha) + (fgreen * alpha)) >> 8);
-                fblue = (GX_UBYTE)(((bblue * balpha) + (fblue * alpha)) >> 8);
-
-                /* re-assemble into 16-bit color and write it out */
-                *write++ = ASSEMBLECOLOR((ULONG)fred, (ULONG)fgreen, (ULONG)fblue);
+                *write++ = gx_color_24xrgb_blend(fcolor, alpha, bcolor, balpha);
             }
             write_start += composite->x_resolution;
             read_start += canvas->x_resolution;

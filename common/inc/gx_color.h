@@ -93,4 +93,38 @@ static inline GX_COLOR gx_color_32argb_from_4444argb(USHORT pixel)
     return (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, r, g, b);
 }
 
+static inline GX_COLOR gx_color_24xrgb_blend(GX_COLOR fcolor, GX_UBYTE falpha, GX_COLOR bcolor, GX_UBYTE balpha)
+{
+    // split foreground into red, green, and blue components
+    GX_UBYTE fred = REDVAL_24BPP(fcolor);
+    GX_UBYTE fgreen = GREENVAL_24BPP(fcolor);
+    GX_UBYTE fblue = BLUEVAL_24BPP(fcolor);
+
+    // split background color into red, green, and blue components
+    GX_UBYTE bred = REDVAL_24BPP(bcolor);
+    GX_UBYTE bgreen = GREENVAL_24BPP(bcolor);
+    GX_UBYTE bblue = BLUEVAL_24BPP(bcolor);
+
+    // blend foreground and background, each color channel
+    fred = (GX_UBYTE)(((bred * balpha) + (fred * falpha)) >> 8);
+    fgreen = (GX_UBYTE)(((bgreen * balpha) + (fgreen * falpha)) >> 8);
+    fblue = (GX_UBYTE)(((bblue * balpha) + (fblue * falpha)) >> 8);
+
+    // re-assemble into 32-bit color
+    return (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, fred, fgreen, fblue);
+}
+
+static inline GX_COLOR gx_color_24xrgb_blend(GX_COLOR fcolor, GX_UBYTE alpha, GX_COLOR bcolor)
+{
+    if (alpha == 255)
+    {
+        return (GX_COLOR)(fcolor | 0xff000000);
+    }
+
+    // background alpha is inverse of foreground alpha
+    GX_UBYTE balpha = (GX_UBYTE)(256 - alpha);
+
+    return gx_color_24xrgb_blend(fcolor, alpha, bcolor, balpha);
+}
+
 #endif

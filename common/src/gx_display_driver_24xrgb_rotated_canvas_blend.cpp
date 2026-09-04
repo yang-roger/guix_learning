@@ -71,8 +71,6 @@ ULONG       *read_start;
 ULONG       *write;
 ULONG       *write_start;
 ULONG        fcolor;
-GX_UBYTE     fred, fgreen, fblue;
-GX_UBYTE     bred, bgreen, bblue;
 GX_UBYTE     alpha, balpha;
 
 ULONG        bcolor;
@@ -124,26 +122,10 @@ INT          col;
                 /* Read the foreground color.  */
                 fcolor = *read++;
 
-                /* Split foreground into red, green, and blue components.  */
-                fred = REDVAL_24BPP(fcolor);
-                fgreen = GREENVAL_24BPP(fcolor);
-                fblue = BLUEVAL_24BPP(fcolor);
-
                 /* Read background color.  */
                 bcolor = *write;
 
-                /* Split background color into red, green, and blue components.  */
-                bred = REDVAL_24BPP(bcolor);
-                bgreen = GREENVAL_24BPP(bcolor);
-                bblue = BLUEVAL_24BPP(bcolor);
-
-                /* Blend foreground and background, each color channel.  */
-                fred = (GX_UBYTE)(((bred * balpha) + (fred * alpha)) >> 8);
-                fgreen = (GX_UBYTE)(((bgreen * balpha) + (fgreen * alpha)) >> 8);
-                fblue = (GX_UBYTE)(((bblue * balpha) + (fblue * alpha)) >> 8);
-
-                /* Re-assemble into 16-bit color and write it out.  */
-                *write++ = ASSEMBLECOLOR_32ARGB((ULONG)0xff, (ULONG)fred, (ULONG)fgreen, (ULONG)fblue);
+                *write++ = gx_color_24xrgb_blend(fcolor, alpha, bcolor, balpha);
             }
 
             write_start += composite->y_resolution;
