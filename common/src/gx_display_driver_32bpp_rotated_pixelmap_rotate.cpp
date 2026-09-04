@@ -19,10 +19,6 @@
 /**                                                                       */
 /**************************************************************************/
 
-#define BYTE_RANGE(_c) _c > 255 ? 255 : _c
-
-
-
 #include "gx_display.h"
 
 #include "gx_utility.h"
@@ -82,9 +78,7 @@ INT           srcyres;
 INT           cosv;
 INT           sinv;
 INT           alpha;
-GX_COLOR      red;
-GX_COLOR      green;
-GX_COLOR      blue;
+GX_COLOR      color;
 INT           idxminx;
 INT           idxmaxx;
 INT           idxmaxy;
@@ -106,7 +100,7 @@ INT           newxpos;
 INT           newypos;
 GX_RECTANGLE *clip;
 GX_RECTANGLE  rotated_clip;
-void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void        (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     GX_SET_32BPP_BLEND_FUNCTION(blend_func, context->display->color_format);
 
@@ -281,34 +275,9 @@ void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fco
                     alpha >>= 8;
                 }
 
-                red = (GX_COLOR)(REDVAL_24BPP(a) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                                 REDVAL_24BPP(b) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                                 REDVAL_24BPP(c) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                                 REDVAL_24BPP(d) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
+                color = gx_color_32argb_raw_from_4colors_2(a, b, c, d, xdiff, ydiff, alpha);
 
-                green = (GX_COLOR)(GREENVAL_24BPP(a) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                                   GREENVAL_24BPP(b) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                                   GREENVAL_24BPP(c) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                                   GREENVAL_24BPP(d) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-                blue = (GX_COLOR)(BLUEVAL_24BPP(a) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                                  BLUEVAL_24BPP(b) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                                  BLUEVAL_24BPP(c) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                                  BLUEVAL_24BPP(d) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-                if ((alpha > 0) && (alpha < 0xff))
-                {
-                    red = (red << 8) / (GX_COLOR)alpha;
-                    green = (green << 8) / (GX_COLOR)alpha;
-                    blue = (blue << 8) / (GX_COLOR)alpha;
-                }
-
-                red = BYTE_RANGE(red);
-                green = BYTE_RANGE(green);
-                blue = BYTE_RANGE(blue);
-                alpha = BYTE_RANGE(alpha);
-
-                blend_func(context, x + newxpos, y + newypos, ASSEMBLECOLOR_32ARGB((ULONG)0xff, red, green, blue), (GX_UBYTE)alpha);
+                blend_func(context, x + newxpos, y + newypos, color, (GX_UBYTE)alpha);
             }
         }
     }
@@ -364,9 +333,7 @@ INT           srcyres;
 INT           cosv;
 INT           sinv;
 INT           alpha;
-GX_COLOR      red;
-GX_COLOR      green;
-GX_COLOR      blue;
+GX_COLOR      color;
 INT           idxminx;
 INT           idxmaxx;
 INT           idxmaxy;
@@ -536,39 +503,9 @@ void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fco
                     }
                 }
 
-                red = (REDVAL_24BPP(a) * (a >> 24) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                       REDVAL_24BPP(b) * (b >> 24) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                       REDVAL_24BPP(c) * (c >> 24) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                       REDVAL_24BPP(d) * (d >> 24) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
+                color = gx_color_32argb_alpha_from_4colors_2(a, b, c, d, xdiff, ydiff, alpha);
 
-                green = (GREENVAL_24BPP(a) * (a >> 24) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                         GREENVAL_24BPP(b) * (b >> 24) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                         GREENVAL_24BPP(c) * (c >> 24) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                         GREENVAL_24BPP(d) * (d >> 24) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-                blue = (BLUEVAL_24BPP(a) * (a >> 24) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                        BLUEVAL_24BPP(b) * (b >> 24) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                        BLUEVAL_24BPP(c) * (c >> 24) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                        BLUEVAL_24BPP(d) * (d >> 24) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-                alpha = (INT)(((a >> 24) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                               (b >> 24) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                               (c >> 24) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                               (d >> 24) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16);
-
-                if (alpha)
-                {
-                    red /= (UINT)alpha;
-                    green /= (UINT)alpha;
-                    blue /= (UINT)alpha;
-                }
-
-                red = BYTE_RANGE(red);
-                green = BYTE_RANGE(green);
-                blue = BYTE_RANGE(blue);
-                alpha = BYTE_RANGE(alpha);
-
-                blend_func(context, x + newxpos, y + newypos, (GX_COLOR)ASSEMBLECOLOR_32ARGB((ULONG)0xff, red, green, blue), (GX_UBYTE)alpha);
+                blend_func(context, x + newxpos, y + newypos, color, (GX_UBYTE)alpha);
             }
         }
     }

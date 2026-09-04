@@ -23,19 +23,7 @@
 
 #include "gx_utility_math.h"
 #include "gx_system.h"
-
-
-#define REDVAL(_c)     (GX_UBYTE)((_c) >> 16)
-#define GREENVAL(_c)   (GX_UBYTE)((_c) >> 8)
-#define BLUEVAL(_c)    (GX_UBYTE)(_c)
-
-#define ASSEMBLECOLOR(_r, _g, _b) \
-    ((GX_COLOR)(((_r) << 16) |    \
-                ((_g) << 8)) |    \
-                (_b))
-
-#define BYTE_RANGE(_c) _c > 255 ? 255 : _c
-
+#include "gx_color.h"
 
 /**************************************************************************/
 /*                                                                        */
@@ -89,9 +77,6 @@ INT       y;
 INT       xx;
 INT       yy;
 GX_COLOR  neighbor_pixels[2][2];
-INT       red;
-INT       green;
-INT       blue;
 
 
     /* Calculate scale ratio and enlarge it by 256 times to keep precision.  */
@@ -174,26 +159,11 @@ INT       blue;
             }
 
             /* Calulate pixel values by interpolating 4 neighboring pixels. */
-            red = (REDVAL(neighbor_pixels[0][0]) * (256 - xdiff) * (256 - ydiff) + \
-                   REDVAL(neighbor_pixels[0][1]) * xdiff * (256 - ydiff) +         \
-                   REDVAL(neighbor_pixels[1][0]) * ydiff * (256 - xdiff) +         \
-                   REDVAL(neighbor_pixels[1][1]) * xdiff * ydiff) >> 16;
-
-            green = (GREENVAL(neighbor_pixels[0][0]) * (256 - xdiff) * (256 - ydiff) + \
-                     GREENVAL(neighbor_pixels[0][1]) * xdiff * (256 - ydiff) +         \
-                     GREENVAL(neighbor_pixels[1][0]) * ydiff * (256 - xdiff) +         \
-                     GREENVAL(neighbor_pixels[1][1]) * xdiff * ydiff) >> 16;
-
-            blue = (BLUEVAL(neighbor_pixels[0][0]) * (256 - xdiff) * (256 - ydiff) + \
-                    BLUEVAL(neighbor_pixels[0][1]) * xdiff * (256 - ydiff) +         \
-                    BLUEVAL(neighbor_pixels[1][0]) * ydiff * (256 - xdiff) +         \
-                    BLUEVAL(neighbor_pixels[1][1]) * xdiff * ydiff) >> 16;
-
-            red = BYTE_RANGE(red);
-            green = BYTE_RANGE(green);
-            blue = BYTE_RANGE(blue);
-
-            *put++ = ASSEMBLECOLOR((GX_COLOR)red, (GX_COLOR)green, (GX_COLOR)blue);
+            *put++ = gx_color_32argb_raw_from_4colors(neighbor_pixels[0][0],
+                                                      neighbor_pixels[0][1],
+                                                      neighbor_pixels[1][0],
+                                                      neighbor_pixels[1][1],
+                                                      xdiff, ydiff, 0);
         }
     }
 
@@ -252,10 +222,6 @@ INT       y;
 INT       xx;
 INT       yy;
 GX_COLOR  neighbor_pixels[2][2] = {{0, 0}, {0, 0}};
-INT       red;
-INT       green;
-INT       blue;
-INT       alpha;
 
     /* Calculate scale ratio and enlarge it by 256 times to keep precision.  */
     xradio = ((src->width) << 8) / width;
@@ -338,39 +304,11 @@ INT       alpha;
             }
 
             /* Calulate pixel values by interpolating 4 neighboring pixels. */
-            red = (INT)((REDVAL(neighbor_pixels[0][0]) * (neighbor_pixels[0][0] >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                         REDVAL(neighbor_pixels[0][1]) * (neighbor_pixels[0][1] >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                         REDVAL(neighbor_pixels[1][0]) * (neighbor_pixels[1][0] >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                         REDVAL(neighbor_pixels[1][1]) * (neighbor_pixels[1][1] >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-            green = (INT)((GREENVAL(neighbor_pixels[0][0]) * (neighbor_pixels[0][0] >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                           GREENVAL(neighbor_pixels[0][1]) * (neighbor_pixels[0][1] >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                           GREENVAL(neighbor_pixels[1][0]) * (neighbor_pixels[1][0] >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                           GREENVAL(neighbor_pixels[1][1]) * (neighbor_pixels[1][1] >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-            blue = (INT)((BLUEVAL(neighbor_pixels[0][0]) * (neighbor_pixels[0][0] >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                          BLUEVAL(neighbor_pixels[0][1]) * (neighbor_pixels[0][1] >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                          BLUEVAL(neighbor_pixels[1][0]) * (neighbor_pixels[1][0] >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                          BLUEVAL(neighbor_pixels[1][1]) * (neighbor_pixels[1][1] >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-            alpha = (INT)(((neighbor_pixels[0][0] >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                           (neighbor_pixels[0][1] >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                           (neighbor_pixels[1][0] >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                           (neighbor_pixels[1][1] >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-            if (alpha)
-            {
-                red /= alpha;
-                green /= alpha;
-                blue /= alpha;
-            }
-
-            alpha = BYTE_RANGE(alpha);
-            red = BYTE_RANGE(red);
-            green = BYTE_RANGE(green);
-            blue = BYTE_RANGE(blue);
-
-            *put++ = ASSEMBLECOLOR((ULONG)red, (ULONG)green, (ULONG)blue) + ((ULONG)alpha << 24);
+            *put++ = gx_color_32argb_alpha_from_4colors(neighbor_pixels[0][0],
+                                                        neighbor_pixels[0][1],
+                                                        neighbor_pixels[1][0],
+                                                        neighbor_pixels[1][1],
+                                                        xdiff, ydiff);
         }
     }
 
@@ -484,7 +422,6 @@ INT          srcyres;
 INT          cosv;
 INT          sinv;
 INT          alpha;
-GX_COLOR     red, green, blue;
 INT          idxminx, idxmaxx, idxmaxy;
 INT         *mx;
 INT         *my;
@@ -665,34 +602,7 @@ INT          xdiff, ydiff;
                     alpha >>= 8;
                 }
 
-                red = (GX_COLOR)((REDVAL(a) * (256 - xdiff) * (256 - ydiff) + \
-                                  REDVAL(b) * xdiff * (256 - ydiff) +         \
-                                  REDVAL(c) * ydiff * (256 - xdiff) +         \
-                                  REDVAL(d) * xdiff * ydiff) >> 16);
-
-                green = (GX_COLOR)((GREENVAL(a) * (256 - xdiff) * (256 - ydiff) + \
-                                    GREENVAL(b) * xdiff * (256 - ydiff) +         \
-                                    GREENVAL(c) * ydiff * (256 - xdiff) +         \
-                                    GREENVAL(d) * xdiff * ydiff) >> 16);
-
-                blue = (GX_COLOR)((BLUEVAL(a) * (256 - xdiff) * (256 - ydiff) + \
-                                   BLUEVAL(b) * xdiff * (256 - ydiff) +         \
-                                   BLUEVAL(c) * ydiff * (256 - xdiff) +         \
-                                   BLUEVAL(d) * xdiff * ydiff) >> 16);
-
-                if ((alpha > 0) && (alpha < 0xff))
-                {
-                    red = (red << 8) / (ULONG)alpha;
-                    green = (green << 8) / (ULONG)alpha;
-                    blue = (blue << 8) / (ULONG)alpha;
-                }
-
-                red = BYTE_RANGE(red);
-                green = BYTE_RANGE(green);
-                blue = BYTE_RANGE(blue);
-                alpha = BYTE_RANGE(alpha);
-
-                *put++ = ASSEMBLECOLOR(red, green, blue) + (ULONG)(alpha << 24);
+                *put++ = gx_color_32argb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha);
             }
             else
             {
@@ -753,8 +663,6 @@ INT       srcxres;
 INT       srcyres;
 INT       cosv;
 INT       sinv;
-INT       alpha;
-GX_COLOR  red, green, blue;
 INT       idxminx, idxmaxx, idxmaxy;
 INT      *mx;
 INT      *my;
@@ -913,39 +821,7 @@ INT       xdiff, ydiff;
                     }
                 }
 
-                red = (ULONG)((REDVAL(a) * (a >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                               REDVAL(b) * (b >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                               REDVAL(c) * (c >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                               REDVAL(d) * (d >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-                green = (ULONG)((GREENVAL(a) * (a >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                                 GREENVAL(b) * (b >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                                 GREENVAL(c) * (c >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                                 GREENVAL(d) * (d >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-                blue = (ULONG)((BLUEVAL(a) * (a >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                                BLUEVAL(b) * (b >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                                BLUEVAL(c) * (c >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                                BLUEVAL(d) * (d >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-                alpha = (INT)(((a >> 24) * (256 - (ULONG)xdiff) * (256 - (ULONG)ydiff) + \
-                               (b >> 24) * (ULONG)xdiff * (256 - (ULONG)ydiff) +         \
-                               (c >> 24) * (ULONG)ydiff * (256 - (ULONG)xdiff) +         \
-                               (d >> 24) * (ULONG)xdiff * (ULONG)ydiff) >> 16);
-
-                if (alpha)
-                {
-                    red /= (ULONG)alpha;
-                    green /= (ULONG)alpha;
-                    blue /= (ULONG)alpha;
-                }
-
-                red = BYTE_RANGE(red);
-                green = BYTE_RANGE(green);
-                blue = BYTE_RANGE(blue);
-                alpha = BYTE_RANGE(alpha);
-
-                *put++ = ASSEMBLECOLOR(red, green, blue) + ((ULONG)alpha << 24);
+                *put++ = gx_color_32argb_alpha_from_4colors(a, b, c, d, xdiff, ydiff);
             }
             else
             {

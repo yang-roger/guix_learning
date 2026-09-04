@@ -159,4 +159,141 @@ static inline GX_COLOR gx_color_32argb_blend(GX_COLOR fcolor, GX_UBYTE falpha, G
     return (GX_COLOR)ASSEMBLECOLOR_32ARGB(oalpha, fred, fgreen, fblue);
 }
 
+#define GX_CLAMP_MAX(val, max_val)     if ((val) > (max_val)) { val = (max_val); }
+
+#define GX_COLOR_VALUE_RAW_FROM_4COLORS(a_val, b_val, c_val, d_val,         \
+                                        a_coeff, b_coeff, c_coeff, d_coeff) \
+    ((GX_COLOR)((GX_COLOR)(a_val) * (a_coeff) +                             \
+                (GX_COLOR)(b_val) * (b_coeff) +                             \
+                (GX_COLOR)(c_val) * (c_coeff) +                             \
+                (GX_COLOR)(d_val) * (d_coeff)) >> 16)
+
+static inline void gx_color_32argb_raw_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d, INT xdiff, INT ydiff,
+                                                    INT& alpha, GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+{
+    INT a_coeff = (256 - xdiff) * (256 - ydiff);
+    INT b_coeff = xdiff * (256 - ydiff);
+    INT c_coeff = ydiff * (256 - xdiff);
+    INT d_coeff = xdiff * ydiff;
+
+    red = GX_COLOR_VALUE_RAW_FROM_4COLORS(REDVAL_24BPP(a), REDVAL_24BPP(b), REDVAL_24BPP(c), REDVAL_24BPP(d),
+                                          a_coeff, b_coeff, c_coeff, d_coeff);
+
+    green = GX_COLOR_VALUE_RAW_FROM_4COLORS(GREENVAL_24BPP(a), GREENVAL_24BPP(b), GREENVAL_24BPP(c), GREENVAL_24BPP(d),
+                                            a_coeff, b_coeff, c_coeff, d_coeff);
+
+    blue = GX_COLOR_VALUE_RAW_FROM_4COLORS(BLUEVAL_24BPP(a), BLUEVAL_24BPP(b), BLUEVAL_24BPP(c), BLUEVAL_24BPP(d),
+                                           a_coeff, b_coeff, c_coeff, d_coeff);
+
+    if ((alpha > 0) && (alpha < 0xff))
+    {
+        red = (red << 8) / (GX_COLOR)alpha;
+        green = (green << 8) / (GX_COLOR)alpha;
+        blue = (blue << 8) / (GX_COLOR)alpha;
+    }
+
+    GX_CLAMP_MAX(red, 255)
+    GX_CLAMP_MAX(green, 255)
+    GX_CLAMP_MAX(blue, 255)
+    GX_CLAMP_MAX(alpha, 255)
+}
+
+static inline GX_COLOR gx_color_32argb_raw_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d, INT xdiff, INT ydiff, INT alpha)
+{
+    GX_COLOR red;
+    GX_COLOR green;
+    GX_COLOR blue;
+
+    gx_color_32argb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
+
+    return (GX_COLOR)ASSEMBLECOLOR_32ARGB(alpha, red, green, blue);
+}
+
+// blends color and alpha after this function is called
+static inline GX_COLOR gx_color_32argb_raw_from_4colors_2(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d, INT xdiff, INT ydiff, INT& alpha)
+{
+    GX_COLOR red;
+    GX_COLOR green;
+    GX_COLOR blue;
+
+    gx_color_32argb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
+
+    return (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, red, green, blue);
+}
+
+#define GX_COLOR_VALUE_ALPHA_FROM_4COLORS(a_val, b_val, c_val, d_val,         \
+                                          a_alpha, b_alpha, c_alpha, d_alpha, \
+                                          a_coeff, b_coeff, c_coeff, d_coeff) \
+    ((GX_COLOR)((GX_COLOR)(a_val) * (a_alpha) * (a_coeff) +                   \
+                (GX_COLOR)(b_val) * (b_alpha) * (b_coeff) +                   \
+                (GX_COLOR)(c_val) * (c_alpha) * (c_coeff) +                   \
+                (GX_COLOR)(d_val) * (d_alpha) * (d_coeff)) >> 16)
+
+static inline void gx_color_32argb_alpha_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d, INT xdiff, INT ydiff,
+                                                      INT& alpha, GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+{
+    INT a_alpha = ALPHAVAL_32BPP(a);
+    INT b_alpha = ALPHAVAL_32BPP(b);
+    INT c_alpha = ALPHAVAL_32BPP(c);
+    INT d_alpha = ALPHAVAL_32BPP(d);
+
+    INT a_coeff = (256 - xdiff) * (256 - ydiff);
+    INT b_coeff = xdiff * (256 - ydiff);
+    INT c_coeff = ydiff * (256 - xdiff);
+    INT d_coeff = xdiff * ydiff;
+
+    red = GX_COLOR_VALUE_ALPHA_FROM_4COLORS(REDVAL_24BPP(a), REDVAL_24BPP(b), REDVAL_24BPP(c), REDVAL_24BPP(d),
+                                            a_alpha, b_alpha, c_alpha, d_alpha,
+                                            a_coeff, b_coeff, c_coeff, d_coeff);
+
+    green = GX_COLOR_VALUE_ALPHA_FROM_4COLORS(GREENVAL_24BPP(a), GREENVAL_24BPP(b), GREENVAL_24BPP(c), GREENVAL_24BPP(d),
+                                              a_alpha, b_alpha, c_alpha, d_alpha,
+                                              a_coeff, b_coeff, c_coeff, d_coeff);
+
+    blue = GX_COLOR_VALUE_ALPHA_FROM_4COLORS(BLUEVAL_24BPP(a), BLUEVAL_24BPP(b), BLUEVAL_24BPP(c), BLUEVAL_24BPP(d),
+                                             a_alpha, b_alpha, c_alpha, d_alpha,
+                                             a_coeff, b_coeff, c_coeff, d_coeff);
+
+    alpha = (INT)((GX_COLOR)((a_alpha) * (a_coeff) +
+                             (b_alpha) * (b_coeff) +
+                             (c_alpha) * (c_coeff) +
+                             (d_alpha) * (d_coeff)) >> 16);
+
+    if (alpha)
+    {
+        red /= (UINT)alpha;
+        green /= (UINT)alpha;
+        blue /= (UINT)alpha;
+    }
+
+    GX_CLAMP_MAX(red, 255)
+    GX_CLAMP_MAX(green, 255)
+    GX_CLAMP_MAX(blue, 255)
+    GX_CLAMP_MAX(alpha, 255)
+}
+
+static inline GX_COLOR gx_color_32argb_alpha_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d, INT xdiff, INT ydiff)
+{
+    INT alpha;
+    GX_COLOR red;
+    GX_COLOR green;
+    GX_COLOR blue;
+
+    gx_color_32argb_alpha_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
+
+    return (GX_COLOR)ASSEMBLECOLOR_32ARGB(alpha, red, green, blue);
+}
+
+// blends color and alpha after this function is called
+static inline GX_COLOR gx_color_32argb_alpha_from_4colors_2(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d, INT xdiff, INT ydiff, INT& alpha)
+{
+    GX_COLOR red;
+    GX_COLOR green;
+    GX_COLOR blue;
+
+    gx_color_32argb_alpha_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
+
+    return (GX_COLOR)ASSEMBLECOLOR_32ARGB(0xff, red, green, blue);
+}
+
 #endif
