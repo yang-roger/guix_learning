@@ -136,7 +136,7 @@ static void _gx_display_driver_332rgb_pixelmap_compressed_write(GX_DRAW_CONTEXT 
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE          *put;
 GX_UBYTE          *putrow;
 GX_UBYTE           count;

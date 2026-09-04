@@ -144,10 +144,10 @@ static void _gx_display_driver_32argb_pixelmap_compressed_alpha_write(GX_DRAW_CO
 {
 INT                yval;
 INT                xval;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_UBYTE           count;
 GX_COLOR           pixel;
-const GX_UBYTE *get_count;
+const GX_UBYTE    *get_count;
 GX_UBYTE           brush_alpha;
 GX_UBYTE           alpha;
 
@@ -282,12 +282,12 @@ static void _gx_display_driver_32argb_pixelmap_compressed_write(GX_DRAW_CONTEXT 
 {
 INT                yval;
 INT                xval;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_COLOR          *put;
 GX_COLOR          *putrow;
 GX_UBYTE           count;
 GX_COLOR           pixel;
-const GX_UBYTE *get_count;
+const GX_UBYTE    *get_count;
 GX_UBYTE           brush_alpha;
 
 GX_RECTANGLE      *clip = context->clip;

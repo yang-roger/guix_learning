@@ -300,8 +300,8 @@ static void _gx_display_driver_4bpp_horizontal_pixelmap_line_compressed_write(GX
 INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
-const GX_UBYTE *get = GX_NULL;
-const GX_UBYTE *get_count = GX_NULL;
+const GX_UBYTE    *get = GX_NULL;
+const GX_UBYTE    *get_count = GX_NULL;
 GX_UBYTE           pixel;
 GX_UBYTE           putmask;
 GX_UBYTE          *put;
@@ -506,8 +506,8 @@ static void _gx_display_driver_4bpp_horizontal_pixelmap_line_compressed_transpar
 INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
-const GX_UBYTE *get = GX_NULL;
-const GX_UBYTE *get_count = GX_NULL;
+const GX_UBYTE    *get = GX_NULL;
+const GX_UBYTE    *get_count = GX_NULL;
 GX_UBYTE           pixel;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;

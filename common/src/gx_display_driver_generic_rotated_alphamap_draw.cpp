@@ -70,7 +70,7 @@ static void  _gx_display_driver_generic_rotated_alphamap_raw_alpha_draw(GX_DRAW_
 INT                xval;
 INT                yval;
 GX_UBYTE          *getrowalpha;
-const GX_UBYTE *getalpha;
+const GX_UBYTE    *getalpha;
 GX_UBYTE           combined_alpha;
 GX_COLOR           fill_color;
 GX_RECTANGLE      *clip;
@@ -164,7 +164,7 @@ static void  _gx_display_driver_generic_rotated_alphamap_compressed_alpha_draw(G
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE           count;
 GX_UBYTE           falpha;
 GX_COLOR           fill_color;
@@ -319,7 +319,7 @@ static void  _gx_display_driver_generic_rotated_alphamap_raw_draw(GX_DRAW_CONTEX
 INT                xval;
 INT                yval;
 GX_UBYTE          *getrowalpha;
-const GX_UBYTE *getalpha;
+const GX_UBYTE    *getalpha;
 GX_COLOR           fill_color;
 GX_RECTANGLE      *clip;
 GX_RECTANGLE       rotated_clip;
@@ -410,7 +410,7 @@ static void  _gx_display_driver_generic_rotated_alphamap_compressed_draw(GX_DRAW
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE           count;
 GX_UBYTE           pixel;
 GX_COLOR           fill_color;

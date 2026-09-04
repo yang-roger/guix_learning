@@ -74,7 +74,7 @@ static void _gx_display_driver_565rgb_rotated_horizontal_pixelmap_line_raw_blend
 INT              xval;
 INT              offset;
 INT              pic_width;
-const USHORT *get;
+const USHORT    *get;
 USHORT           pixel;
 GX_PIXELMAP     *pixelmap;
 
@@ -151,8 +151,8 @@ static void _gx_display_driver_565rgb_rotated_horizontal_pixelmap_line_alpha_ble
                                                                                    GX_FILL_PIXELMAP_INFO *info, GX_UBYTE alpha)
 {
 INT                xval;
-const USHORT   *get;
-const GX_UBYTE *getalpha;
+const USHORT      *get;
+const GX_UBYTE    *getalpha;
 USHORT             color;
 GX_UBYTE           falpha;
 GX_UBYTE           combined_alpha;
@@ -244,9 +244,9 @@ INT              start_pos;
 INT              xval;
 USHORT           count;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 GX_PIXELMAP     *pixelmap;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     blend_func = _gx_display_driver_565rgb_pixel_blend;
     pixelmap = info->pixelmap;
@@ -370,10 +370,10 @@ INT                start_pos;
 GX_UBYTE           falpha;
 GX_UBYTE           combined_alpha;
 USHORT             pixel;
-const GX_UBYTE *get = GX_NULL;
-const USHORT   *getpixel;
+const GX_UBYTE    *get = GX_NULL;
+const USHORT      *getpixel;
 GX_PIXELMAP       *pixelmap;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
+void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
     pixelmap = info->pixelmap;
     blend_func = _gx_display_driver_565rgb_pixel_blend;
@@ -517,7 +517,7 @@ static void _gx_display_driver_565rgb_rotated_horizontal_pixelmap_line_raw_write
 INT              xval;
 INT              offset;
 INT              pic_width;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 USHORT          *put;
 GX_PIXELMAP     *pixelmap;
 
@@ -598,8 +598,8 @@ static void _gx_display_driver_565rgb_rotated_horizontal_pixelmap_line_alpha_wri
                                                                                    INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info)
 {
 INT                xval;
-const USHORT   *get;
-const GX_UBYTE *getalpha;
+const USHORT      *get;
+const GX_UBYTE    *getalpha;
 USHORT             color;
 GX_UBYTE           alpha;
 GX_PIXELMAP       *pixelmap;
@@ -683,7 +683,7 @@ INT              start_pos;
 INT              xval;
 USHORT           count;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 USHORT          *put;
 GX_PIXELMAP     *pixelmap;
 
@@ -811,8 +811,8 @@ GX_UBYTE           count;
 INT                start_pos;
 GX_UBYTE           alpha;
 USHORT             pixel;
-const GX_UBYTE *get = GX_NULL;
-const USHORT   *getpixel;
+const GX_UBYTE    *get = GX_NULL;
+const USHORT      *getpixel;
 GX_PIXELMAP       *pixelmap;
 void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 

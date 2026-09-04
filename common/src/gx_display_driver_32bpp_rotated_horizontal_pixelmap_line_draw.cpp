@@ -73,7 +73,7 @@ static void _gx_display_driver_32bpp_rotated_horizontal_pixelmap_line_alpha_blen
 {
 INT                xval;
 GX_COLOR           color;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_PIXELMAP       *pixelmap;
 GX_VALUE           pic_width;
 GX_VALUE           offset;
@@ -157,7 +157,7 @@ static void _gx_display_driver_32bpp_rotated_horizontal_pixelmap_line_raw_blend(
 INT                xval;
 INT                offset;
 INT                pic_width;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_COLOR           pixel;
 GX_PIXELMAP       *pixelmap;
 
@@ -239,8 +239,8 @@ INT                xval;
 GX_UBYTE           count;
 GX_COLOR           pixel;
 GX_PIXELMAP       *pixelmap;
-const GX_COLOR *get = GX_NULL;
-const GX_UBYTE *get_count = GX_NULL;
+const GX_COLOR    *get = GX_NULL;
+const GX_UBYTE    *get_count = GX_NULL;
 
     pixelmap = info->pixelmap;
 
@@ -369,8 +369,8 @@ INT                xval;
 GX_UBYTE           count;
 INT                start_pos;
 GX_COLOR           pixel;
-const GX_COLOR *get = GX_NULL;
-const GX_UBYTE *get_count = GX_NULL;
+const GX_COLOR    *get = GX_NULL;
+const GX_UBYTE    *get_count = GX_NULL;
 GX_PIXELMAP       *pixelmap;
 
     pixelmap = info->pixelmap;
@@ -502,7 +502,7 @@ static void _gx_display_driver_32bpp_rotated_horizontal_pixelmap_line_alpha_writ
 {
 INT                xval;
 GX_COLOR           color;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 UCHAR              alpha_value;
 GX_PIXELMAP       *pixelmap;
 GX_VALUE           pic_width;
@@ -591,7 +591,7 @@ static void _gx_display_driver_32bpp_rotated_horizontal_pixelmap_line_raw_write(
 INT                xval;
 INT                offset;
 INT                pic_width;
-const GX_COLOR *get;
+const GX_COLOR    *get;
 GX_COLOR          *put;
 GX_PIXELMAP       *pixelmap;
 
@@ -670,9 +670,9 @@ INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
 GX_COLOR           pixel;
-const GX_COLOR *get = GX_NULL;
+const GX_COLOR    *get = GX_NULL;
 GX_COLOR          *put;
-const GX_UBYTE *get_count = GX_NULL;
+const GX_UBYTE    *get_count = GX_NULL;
 GX_PIXELMAP       *pixelmap;
 
     pixelmap = info->pixelmap;
@@ -806,8 +806,8 @@ GX_UBYTE           count;
 INT                start_pos;
 GX_UBYTE           alpha_value;
 GX_COLOR           pixel;
-const GX_COLOR *get = GX_NULL;
-const GX_UBYTE *get_count = GX_NULL;
+const GX_COLOR    *get = GX_NULL;
+const GX_UBYTE    *get_count = GX_NULL;
 GX_PIXELMAP       *pixelmap;
 
     pixelmap = info->pixelmap;

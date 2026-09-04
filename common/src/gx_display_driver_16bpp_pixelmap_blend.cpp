@@ -227,10 +227,10 @@ static void _gx_display_driver_16bpp_pixelmap_compressed_blend(GX_DRAW_CONTEXT *
 {
 int              yval;
 int              xval;
-const USHORT *get;
+const USHORT    *get;
 USHORT           count;
 USHORT           pixel;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 GX_RECTANGLE    *clip = context->clip;
 
     blend_func = context->display->driver_pixel_blend;
@@ -355,7 +355,7 @@ static void _gx_display_driver_565rgb_palette_pixelmap_raw_blend(GX_DRAW_CONTEXT
 INT                xval;
 INT                yval;
 GX_UBYTE          *getrow;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_COLOR          *palette;
 USHORT             pixel;
 GX_UBYTE           r;
@@ -430,7 +430,7 @@ static void _gx_display_driver_565rgb_palette_pixelmap_transparent_blend(GX_DRAW
 INT                xval;
 INT                yval;
 GX_UBYTE          *getrow;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_COLOR          *palette;
 USHORT             pixel;
 GX_UBYTE           r;
@@ -511,7 +511,7 @@ INT              skipcount;
 INT              xval;
 INT              yval;
 USHORT          *getrow;
-const USHORT *get;
+const USHORT    *get;
 UCHAR            alpha_value;
 GX_UBYTE         combined_alpha;
 USHORT           pixel;

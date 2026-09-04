@@ -72,7 +72,7 @@ INT              xval;
 INT              offset;
 INT              pic_width;
 USHORT           color;
-const USHORT *get;
+const USHORT    *get;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
@@ -159,7 +159,7 @@ static void _gx_display_driver_4444argb_horizontal_pixelmap_line_raw_blend(GX_DR
 INT              xval;
 INT              offset;
 INT              pic_width;
-const USHORT *get;
+const USHORT    *get;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
@@ -243,7 +243,7 @@ INT              start_pos;
 INT              xval;
 USHORT           count;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
@@ -385,7 +385,7 @@ INT              start_pos;
 INT              xval;
 USHORT           count;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
@@ -512,7 +512,7 @@ INT              xval;
 INT              offset;
 INT              pic_width;
 USHORT           color;
-const USHORT *get;
+const USHORT    *get;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
@@ -598,7 +598,7 @@ static void _gx_display_driver_4444argb_horizontal_pixelmap_line_raw_write(GX_DR
 INT              xval;
 INT              offset;
 INT              pic_width;
-const USHORT *get;
+const USHORT    *get;
 USHORT          *put;
 GX_PIXELMAP     *pixelmap;
 
@@ -677,7 +677,7 @@ INT              start_pos;
 INT              xval;
 USHORT           count;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
@@ -813,7 +813,7 @@ INT              start_pos;
 INT              xval;
 USHORT           count;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 USHORT          *put;
 GX_PIXELMAP     *pixelmap;
 

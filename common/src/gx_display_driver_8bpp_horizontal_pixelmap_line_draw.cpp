@@ -71,7 +71,7 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_raw_blend(GX_DRAW_C
 INT                xval;
 INT                offset;
 INT                pic_width;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_PIXELMAP       *pixelmap;
 void               (*blend_func)(GX_DRAW_CONTEXT *, INT, INT, GX_COLOR, GX_UBYTE);
 
@@ -153,7 +153,7 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_compressed_blend(GX
 INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
-const GX_UBYTE *get = GX_NULL;
+const GX_UBYTE    *get = GX_NULL;
 GX_UBYTE           pixel;
 GX_PIXELMAP       *pixelmap;
 void               (*blend_func)(GX_DRAW_CONTEXT *, INT, INT, GX_COLOR, GX_UBYTE);
@@ -280,8 +280,8 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_alpha_blend(GX_DRAW
                                                                          INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info, GX_UBYTE alpha)
 {
 INT                xval;
-const GX_UBYTE *get;
-const GX_UBYTE *get_alpha;
+const GX_UBYTE    *get;
+const GX_UBYTE    *get_alpha;
 GX_UBYTE           falpha;
 GX_UBYTE           pixel;
 GX_PIXELMAP       *pixelmap;
@@ -380,7 +380,7 @@ INT              start_pos;
 GX_UBYTE         falpha;
 GX_UBYTE         combined_alpha;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *, INT, INT, GX_COLOR, GX_UBYTE);
 
@@ -517,7 +517,7 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_raw_write(GX_DRAW_C
 INT                xval;
 INT                offset;
 INT                pic_width;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
 
@@ -593,7 +593,7 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_compressed_write(GX
 INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
-const GX_UBYTE *get = GX_NULL;
+const GX_UBYTE    *get = GX_NULL;
 GX_UBYTE           pixel;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
@@ -719,7 +719,7 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_transparent_write(G
 INT                xval;
 INT                offset;
 INT                pic_width;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
 GX_UBYTE           pixel;
@@ -802,7 +802,7 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_compressed_transpar
 INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
-const GX_UBYTE *get = GX_NULL;
+const GX_UBYTE    *get = GX_NULL;
 GX_UBYTE           pixel;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
@@ -943,8 +943,8 @@ static void _gx_display_driver_8bpp_horizontal_pixelmap_line_alpha_write(GX_DRAW
                                                                          INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info)
 {
 INT                xval;
-const GX_UBYTE *get;
-const GX_UBYTE *get_alpha;
+const GX_UBYTE    *get;
+const GX_UBYTE    *get_alpha;
 GX_UBYTE           alpha;
 GX_UBYTE           pixel;
 GX_PIXELMAP       *pixelmap;
@@ -1036,7 +1036,7 @@ USHORT           count;
 INT              start_pos;
 GX_UBYTE         alpha;
 USHORT           pixel;
-const USHORT *get = GX_NULL;
+const USHORT    *get = GX_NULL;
 GX_PIXELMAP     *pixelmap;
 void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 

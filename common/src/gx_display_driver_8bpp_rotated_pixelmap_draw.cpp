@@ -64,7 +64,7 @@ INT                yval;
 GX_UBYTE          *putrow;
 GX_UBYTE          *getrow;
 GX_UBYTE          *put;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
@@ -153,7 +153,7 @@ static void _gx_display_driver_8bpp_rotated_pixelmap_compressed_write(GX_DRAW_CO
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE          *put;
 GX_UBYTE          *putrow;
 GX_UBYTE           count;
@@ -311,7 +311,7 @@ GX_UBYTE          *putrow;
 GX_UBYTE          *getrow;
 GX_UBYTE          *put;
 GX_UBYTE           inval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
@@ -407,7 +407,7 @@ static void _gx_display_driver_8bpp_rotated_pixelmap_compressed_transparent_writ
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE          *put;
 GX_UBYTE          *putrow;
 GX_UBYTE           count;

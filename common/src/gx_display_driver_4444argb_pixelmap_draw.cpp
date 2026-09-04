@@ -67,7 +67,7 @@ INT              skipcount;
 INT              xval;
 INT              yval;
 USHORT          *getrow;
-const USHORT *get;
+const USHORT    *get;
 USHORT           pixel;
 GX_UBYTE         alpha;
 GX_UBYTE         brush_alpha;
@@ -354,7 +354,7 @@ static void _gx_display_driver_4444argb_pixelmap_compressed_write(GX_DRAW_CONTEX
 {
 INT               yval;
 INT               xval;
-const USHORT  *get;
+const USHORT     *get;
 USHORT            count;
 USHORT            pixel;
 USHORT           *put;

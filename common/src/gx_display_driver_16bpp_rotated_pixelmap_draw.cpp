@@ -151,8 +151,8 @@ INT                xval;
 INT                yval;
 USHORT            *getrow;
 GX_UBYTE          *getrowalpha;
-const USHORT   *get;
-const GX_UBYTE *getalpha;
+const USHORT      *get;
+const GX_UBYTE    *getalpha;
 
 GX_RECTANGLE      *clip = context->clip;
 GX_RECTANGLE       rotated_clip;
@@ -243,7 +243,7 @@ static void _gx_display_driver_565rgb_rotated_pixelmap_compressed_write(GX_DRAW_
 {
 INT              yval;
 INT              xval;
-const USHORT *get;
+const USHORT    *get;
 USHORT          *put;
 USHORT          *putrow;
 USHORT           count;
@@ -397,8 +397,8 @@ static void _gx_display_driver_565rgb_rotated_pixelmap_compressed_alpha_write(GX
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
-const USHORT   *getpixel;
+const GX_UBYTE    *get;
+const USHORT      *getpixel;
 USHORT             count;
 USHORT             pixel;
 GX_UBYTE           falpha;
@@ -603,7 +603,7 @@ INT                yval;
 USHORT            *putrow;
 GX_UBYTE          *getrow;
 USHORT            *put;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_COLOR          *palette;
 GX_UBYTE           r;
 GX_UBYTE           g;
@@ -703,7 +703,7 @@ INT                yval;
 USHORT            *putrow;
 GX_UBYTE          *getrow;
 USHORT            *put;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_COLOR          *palette;
 GX_UBYTE           r;
 GX_UBYTE           g;
@@ -806,7 +806,7 @@ static void _gx_display_driver_565rgb_rotated_palette_pixelmap_transparent_compr
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 USHORT            *put;
 USHORT            *putrow;
 GX_COLOR          *palette;
@@ -1021,7 +1021,7 @@ static void _gx_display_driver_565rgb_rotated_palette_pixelmap_compressed_write(
 {
 INT                yval;
 INT                xval;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 USHORT            *put;
 USHORT            *putrow;
 GX_COLOR          *palette;
@@ -1223,7 +1223,7 @@ INT              skipcount;
 INT              xval;
 INT              yval;
 USHORT          *getrow;
-const USHORT *get;
+const USHORT    *get;
 UCHAR            alpha_value;
 USHORT           pixel;
 
@@ -1326,7 +1326,7 @@ static void _gx_display_driver_16bpp_rotated_4444argb_pixelmap_compressed_write(
 {
 INT              yval;
 INT              xval;
-const USHORT *get;
+const USHORT    *get;
 USHORT           count;
 USHORT           pixel;
 GX_UBYTE         alpha_value;

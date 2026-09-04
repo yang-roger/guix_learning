@@ -64,7 +64,7 @@ static void _gx_display_driver_8bpp_rotated_horizontal_pixelmap_line_raw_write(G
 INT                xval;
 INT                offset;
 INT                pic_width;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
 
@@ -142,7 +142,7 @@ static void _gx_display_driver_8bpp_rotated_horizontal_pixelmap_line_compressed_
 INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
-const GX_UBYTE *get = GX_NULL;
+const GX_UBYTE    *get = GX_NULL;
 GX_UBYTE           pixel;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
@@ -270,7 +270,7 @@ static void _gx_display_driver_8bpp_rotated_horizontal_pixelmap_line_transparent
 INT                xval;
 INT                offset;
 INT                pic_width;
-const GX_UBYTE *get;
+const GX_UBYTE    *get;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
 GX_UBYTE           pixel;
@@ -354,7 +354,7 @@ static void _gx_display_driver_8bpp_rotated_horizontal_pixelmap_line_compressed_
 INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
-const GX_UBYTE *get = GX_NULL;
+const GX_UBYTE    *get = GX_NULL;
 GX_UBYTE           pixel;
 GX_UBYTE          *put;
 GX_PIXELMAP       *pixelmap;
