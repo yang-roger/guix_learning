@@ -127,4 +127,36 @@ static inline GX_COLOR gx_color_24xrgb_blend(GX_COLOR fcolor, GX_UBYTE alpha, GX
     return gx_color_24xrgb_blend(fcolor, alpha, bcolor, balpha);
 }
 
+static inline GX_COLOR gx_color_32argb_blend(GX_COLOR fcolor, GX_UBYTE falpha, GX_COLOR bcolor)
+{
+    // no need to blend if falpha value is 255.
+    if (falpha == 255)
+    {
+        return fcolor;
+    }
+
+    // split foreground into red, green, and blue components
+    GX_UBYTE fred = REDVAL_32BPP(fcolor);
+    GX_UBYTE fgreen = GREENVAL_32BPP(fcolor);
+    GX_UBYTE fblue = BLUEVAL_32BPP(fcolor);
+
+    // split background color into alpha, red, green, and blue components
+    GX_UBYTE balpha = ALPHAVAL_32BPP(bcolor);
+    GX_UBYTE bred = REDVAL_32BPP(bcolor);
+    GX_UBYTE bgreen = GREENVAL_32BPP(bcolor);
+    GX_UBYTE bblue = BLUEVAL_32BPP(bcolor);
+
+    // background alpha is inverse of foreground alpha
+    INT combined_alpha = (falpha * balpha) / 255;
+
+    // blend foreground and background, each color channel
+    GX_UBYTE oalpha = (GX_UBYTE)(falpha + balpha - combined_alpha);
+    fred = (GX_UBYTE)((fred * falpha + bred * balpha - bred * combined_alpha) / oalpha);
+    fgreen = (GX_UBYTE)((fgreen * falpha + bgreen * balpha - bgreen * combined_alpha) / oalpha);
+    fblue = (GX_UBYTE)((fblue * falpha + bblue * balpha - bblue * combined_alpha) / oalpha);
+
+    // re-assemble into 32-bit color
+    return (GX_COLOR)ASSEMBLECOLOR_32ARGB(oalpha, fred, fgreen, fblue);
+}
+
 #endif

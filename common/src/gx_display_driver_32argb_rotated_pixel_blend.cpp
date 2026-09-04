@@ -61,12 +61,9 @@
 /**************************************************************************/
 void _gx_display_driver_32argb_rotated_pixel_blend(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha)
 {
-GX_UBYTE falpha, fred, fgreen, fblue;
-GX_UBYTE balpha, bred, bgreen, bblue;
-GX_UBYTE oalpha;
+GX_UBYTE falpha;
 ULONG    bcolor;
 ULONG   *put;
-INT      combined_alpha;
 
 
     falpha = ALPHAVAL_32BPP(fcolor);
@@ -75,7 +72,6 @@ INT      combined_alpha;
     /* Is the pixel non-transparent?  */
     if (falpha > 0)
     {
-
         /* Calculate address of pixel.  */
         put = (ULONG *)context->memory;
 
@@ -92,38 +88,10 @@ INT      combined_alpha;
         put += context->pitch * y;
         put += x;
 
-        /* No need to blend if alpha value is 255.  */
-        if (falpha == 255)
-        {
-            *put = (ULONG)fcolor;
-            return;
-        }
-
-        /* Split foreground into alpha, red, green, and blue components.  */
-        fred = REDVAL_32BPP(fcolor);
-        fgreen = GREENVAL_32BPP(fcolor);
-        fblue = BLUEVAL_32BPP(fcolor);
-
         /* Read background color.  */
         bcolor = *put;
 
-        /* Split background color into red, green, and blue components.  */
-        balpha = ALPHAVAL_32BPP(bcolor);
-        bred = REDVAL_32BPP(bcolor);
-        bgreen = GREENVAL_32BPP(bcolor);
-        bblue = BLUEVAL_32BPP(bcolor);
-
-        /* Background alpha is inverse of foreground alpha.  */
-        combined_alpha = (falpha * balpha) / 0xff;
-
-        /* Blend foreground and background, each color channel.  */
-        oalpha = (GX_UBYTE)(falpha + balpha - combined_alpha);
-        fred = (GX_UBYTE)((fred * falpha + bred * balpha - bred * combined_alpha) / oalpha);
-        fgreen = (GX_UBYTE)((fgreen * falpha + bgreen * balpha - bgreen * combined_alpha) / oalpha);
-        fblue = (GX_UBYTE)((fblue * falpha + bblue * balpha - bblue * combined_alpha) / oalpha);
-
-        /* Re-assemble into 16-bit color and write it out.  */
-        *put = (ULONG)ASSEMBLECOLOR_32ARGB(oalpha, fred, fgreen, fblue);
+        *put = gx_color_32argb_blend(fcolor, falpha, bcolor);
     }
 }
 
