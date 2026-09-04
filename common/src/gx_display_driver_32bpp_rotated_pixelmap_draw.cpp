@@ -1963,9 +1963,6 @@ GX_COLOR         pixel;
 GX_UBYTE         falpha;
 GX_UBYTE         brush_alpha;
 GX_UBYTE         combined_alpha;
-GX_UBYTE         r;
-GX_UBYTE         g;
-GX_UBYTE         b;
 GX_RECTANGLE    *clip = context->clip;
 GX_RECTANGLE     rotated_clip;
 void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
@@ -2038,7 +2035,7 @@ void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fc
                 falpha = (falpha >> 4) | falpha;
                 if (falpha)
                 {
-                    pixel = gx_color_32argb_from_4444argb(pixel);
+                    pixel = gx_color_32argb_from_4444argb((USHORT)pixel);
                     if (brush_alpha == 0xff)
                     {
                         combined_alpha = falpha;
@@ -2080,7 +2077,7 @@ void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fc
                             falpha = (falpha >> 4) | falpha;
                             if (falpha)
                             {
-                                pixel = gx_color_32argb_from_4444argb(pixel);
+                                pixel = gx_color_32argb_from_4444argb((USHORT)pixel);
                                 blend_func(context, xval, yval, pixel, falpha);
                             }
                         }
@@ -2101,7 +2098,7 @@ void           (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fc
                             if (falpha)
                             {
                                 combined_alpha = (GX_UBYTE)(falpha * brush_alpha / 255);
-                                pixel = gx_color_32argb_from_4444argb(pixel);
+                                pixel = gx_color_32argb_from_4444argb((USHORT)pixel);
                                 blend_func(context, xval, yval, pixel, combined_alpha);
                             }
                         }
