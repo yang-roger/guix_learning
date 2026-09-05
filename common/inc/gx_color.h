@@ -73,26 +73,26 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 #define GX_COLOR_565RGB_FROM_32RGB(c) \
-     (USHORT)((((c) >> 8) & 0xf800) | \
-              (((c) >> 5) & 0x07e0) | \
-              (((c) >> 3) & 0x001f))
+    (USHORT)((((c) >> 8) & 0xf800) |  \
+             (((c) >> 5) & 0x07e0) |  \
+             (((c) >> 3) & 0x001f))
 
 #define GX_COLOR_565RGB_FROM_4444ARGB(c) \
-    (GX_COLOR)((((c) & 0x0f00) << 4) |  \
-               (((c) & 0x00f0) << 3)  |  \
-               (((c) & 0x000f) << 1))
+    (USHORT)((((c) & 0x0f00) << 4) |     \
+             (((c) & 0x00f0) << 3) |     \
+             (((c) & 0x000f) << 1))
 
-#define GX_COLOR_24RGB_FROM_565RGB(c)   \
-     (GX_COLOR)((((c) & 0xf800) << 8) | \
-                (((c) & 0x07e0) << 5) | \
-                (((c) & 0x001f) << 3))
+#define GX_COLOR_24RGB_FROM_565RGB(c) \
+    (ULONG)((((c) & 0xf800) << 8) |   \
+            (((c) & 0x07e0) << 5) |   \
+            (((c) & 0x001f) << 3))
 
 #define GX_COLOR_24RGB_FROM_4444ARGB(c) \
-    (GX_COLOR)((((c) & 0x0f00) << 12) | \
-               (((c) & 0x00f0) << 8)  | \
-               (((c) & 0x000f) << 4))
+    (ULONG)((((c) & 0x0f00) << 12) |    \
+            (((c) & 0x00f0) << 8)  |    \
+            (((c) & 0x000f) << 4))
 
-static inline GX_COLOR gx_color_24rgb_from_4444argb(USHORT pixel)
+static inline ULONG gx_color_24rgb_from_4444argb(USHORT pixel)
 {
     GX_UBYTE r;
     GX_UBYTE g;
@@ -106,12 +106,12 @@ static inline GX_COLOR gx_color_24rgb_from_4444argb(USHORT pixel)
 }
 
 #define GX_COLOR_32ARGB_FROM_565RGB(c)  \
-    (GX_COLOR)(0xFF000000 | GX_COLOR_24RGB_FROM_565RGB(c))
+    (ULONG)(0xFF000000 | GX_COLOR_24RGB_FROM_565RGB(c))
 
 #define GX_COLOR_32ARGB_FROM_4444ARGB(c) \
-    (GX_COLOR)(0xFF000000 | GX_COLOR_24RGB_FROM_4444ARGB(c))
+    (ULONG)(0xFF000000 | GX_COLOR_24RGB_FROM_4444ARGB(c))
 
-static inline GX_COLOR gx_color_32argb_from_4444argb(USHORT pixel)
+static inline ULONG gx_color_32argb_from_4444argb(USHORT pixel)
 {
     GX_UBYTE r;
     GX_UBYTE g;
@@ -126,7 +126,7 @@ static inline GX_COLOR gx_color_32argb_from_4444argb(USHORT pixel)
 
 //----------------------------------------------------------------------------------------------------------------------
 
-static inline USHORT gx_color_565rgb_blend(USHORT fcolor, GX_UBYTE falpha, GX_COLOR bcolor, GX_UBYTE balpha)
+static inline USHORT gx_color_565rgb_blend(USHORT fcolor, GX_UBYTE falpha, USHORT bcolor, GX_UBYTE balpha)
 {
     // split foreground into red, green, and blue components
     GX_UBYTE fred = REDVAL_16BPP(fcolor);
@@ -147,7 +147,7 @@ static inline USHORT gx_color_565rgb_blend(USHORT fcolor, GX_UBYTE falpha, GX_CO
     return ASSEMBLECOLOR_16BPP(fred, fgreen, fblue);
 }
 
-static inline USHORT gx_color_565rgb_blend(USHORT fcolor, GX_UBYTE alpha, GX_COLOR bcolor)
+static inline USHORT gx_color_565rgb_blend(USHORT fcolor, GX_UBYTE alpha, USHORT bcolor)
 {
     // no need to blend if alpha value is 255
     if (alpha == 255)
@@ -161,7 +161,7 @@ static inline USHORT gx_color_565rgb_blend(USHORT fcolor, GX_UBYTE alpha, GX_COL
     return gx_color_565rgb_blend(fcolor, alpha, bcolor, balpha);
 }
 
-static inline USHORT gx_color_1555xrgb_blend(USHORT fcolor, GX_UBYTE falpha, GX_COLOR bcolor, GX_UBYTE balpha)
+static inline USHORT gx_color_1555xrgb_blend(USHORT fcolor, GX_UBYTE falpha, USHORT bcolor, GX_UBYTE balpha)
 {
     // split foreground into red, green, and blue components
     GX_UBYTE fred = REDVAL_1555XRGB(fcolor);
@@ -182,7 +182,7 @@ static inline USHORT gx_color_1555xrgb_blend(USHORT fcolor, GX_UBYTE falpha, GX_
     return ASSEMBLECOLOR_1555XRGB(fred, fgreen, fblue);
 }
 
-static inline USHORT gx_color_1555xrgb_blend(USHORT fcolor, GX_UBYTE alpha, GX_COLOR bcolor)
+static inline USHORT gx_color_1555xrgb_blend(USHORT fcolor, GX_UBYTE alpha, USHORT bcolor)
 {
     // no need to blend if alpha value is 255
     if (alpha == 255)
@@ -196,7 +196,7 @@ static inline USHORT gx_color_1555xrgb_blend(USHORT fcolor, GX_UBYTE alpha, GX_C
     return gx_color_1555xrgb_blend(fcolor, alpha, bcolor, balpha);
 }
 
-static inline GX_COLOR gx_color_24xrgb_blend(GX_COLOR fcolor, GX_UBYTE falpha, GX_COLOR bcolor, GX_UBYTE balpha)
+static inline ULONG gx_color_24xrgb_blend(ULONG fcolor, GX_UBYTE falpha, ULONG bcolor, GX_UBYTE balpha)
 {
     // split foreground into red, green, and blue components
     GX_UBYTE fred = REDVAL_24BPP(fcolor);
@@ -217,11 +217,11 @@ static inline GX_COLOR gx_color_24xrgb_blend(GX_COLOR fcolor, GX_UBYTE falpha, G
     return ASSEMBLECOLOR_32ARGB(0xff, fred, fgreen, fblue);
 }
 
-static inline GX_COLOR gx_color_24xrgb_blend(GX_COLOR fcolor, GX_UBYTE alpha, GX_COLOR bcolor)
+static inline ULONG gx_color_24xrgb_blend(ULONG fcolor, GX_UBYTE alpha, ULONG bcolor)
 {
     if (alpha == 255)
     {
-        return (GX_COLOR)(fcolor | 0xff000000);
+        return (ULONG)(fcolor | 0xff000000);
     }
 
     // background alpha is inverse of foreground alpha
@@ -230,7 +230,7 @@ static inline GX_COLOR gx_color_24xrgb_blend(GX_COLOR fcolor, GX_UBYTE alpha, GX
     return gx_color_24xrgb_blend(fcolor, alpha, bcolor, balpha);
 }
 
-static inline GX_COLOR gx_color_32argb_blend(GX_COLOR fcolor, GX_UBYTE falpha, GX_COLOR bcolor)
+static inline ULONG gx_color_32argb_blend(ULONG fcolor, GX_UBYTE falpha, ULONG bcolor)
 {
     // no need to blend if falpha value is 255.
     if (falpha == 255)
@@ -276,16 +276,16 @@ static inline GX_COLOR gx_color_32argb_blend(GX_COLOR fcolor, GX_UBYTE falpha, G
 
 #define GX_COLOR_VALUE_RAW_FROM_4COLORS(a_val, b_val, c_val, d_val,         \
                                         a_coeff, b_coeff, c_coeff, d_coeff) \
-    ((GX_COLOR)((GX_COLOR)(a_val) * (a_coeff) +                             \
-                (GX_COLOR)(b_val) * (b_coeff) +                             \
-                (GX_COLOR)(c_val) * (c_coeff) +                             \
-                (GX_COLOR)(d_val) * (d_coeff)) >> 16)
+    ((ULONG)((ULONG)(a_val) * (a_coeff) +                                   \
+             (ULONG)(b_val) * (b_coeff) +                                   \
+             (ULONG)(c_val) * (c_coeff) +                                   \
+             (ULONG)(d_val) * (d_coeff)) >> 16)
 
 // 565RGB
 
 static inline void gx_color_565rgb_raw_from_4colors(USHORT a, USHORT b, USHORT c, USHORT d,
                                                     INT xdiff, INT ydiff, INT& alpha,
-                                                    GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+                                                    ULONG& red, ULONG& green, ULONG& blue)
 {
     GX_COLOR_4_COEFF_GET(xdiff, ydiff)
 
@@ -309,9 +309,9 @@ static inline void gx_color_565rgb_raw_from_4colors(USHORT a, USHORT b, USHORT c
 
     if ((alpha > 0) && (alpha < 0xff))
     {
-        red = (red << 8) / (GX_COLOR)alpha;
-        green = (green << 8) / (GX_COLOR)alpha;
-        blue = (blue << 8) / (GX_COLOR)alpha;
+        red = (red << 8) / (ULONG)alpha;
+        green = (green << 8) / (ULONG)alpha;
+        blue = (blue << 8) / (ULONG)alpha;
     }
 
     GX_CLAMP_MAX(red, 0x1f)
@@ -323,9 +323,9 @@ static inline void gx_color_565rgb_raw_from_4colors(USHORT a, USHORT b, USHORT c
 static inline USHORT gx_color_565rgb_raw_from_4colors(USHORT a, USHORT b, USHORT c, USHORT d,
                                                       INT xdiff, INT ydiff, INT alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_565rgb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
@@ -335,9 +335,9 @@ static inline USHORT gx_color_565rgb_raw_from_4colors(USHORT a, USHORT b, USHORT
 static inline USHORT gx_color_565rgb_raw_from_4colors_2(USHORT a, USHORT b, USHORT c, USHORT d,
                                                         INT xdiff, INT ydiff, INT& alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_565rgb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
@@ -348,7 +348,7 @@ static inline USHORT gx_color_565rgb_raw_from_4colors_2(USHORT a, USHORT b, USHO
 
 static inline void gx_color_1555xrgb_raw_from_4colors(USHORT a, USHORT b, USHORT c, USHORT d,
                                                       INT xdiff, INT ydiff, INT& alpha,
-                                                      GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+                                                      ULONG& red, ULONG& green, ULONG& blue)
 {
     GX_COLOR_4_COEFF_GET(xdiff, ydiff)
 
@@ -372,9 +372,9 @@ static inline void gx_color_1555xrgb_raw_from_4colors(USHORT a, USHORT b, USHORT
 
     if ((alpha > 0) && (alpha < 0xff))
     {
-        red = (red << 8) / (GX_COLOR)alpha;
-        green = (green << 8) / (GX_COLOR)alpha;
-        blue = (blue << 8) / (GX_COLOR)alpha;
+        red = (red << 8) / (ULONG)alpha;
+        green = (green << 8) / (ULONG)alpha;
+        blue = (blue << 8) / (ULONG)alpha;
     }
 
     GX_CLAMP_MAX(red, 0x1f)
@@ -386,9 +386,9 @@ static inline void gx_color_1555xrgb_raw_from_4colors(USHORT a, USHORT b, USHORT
 static inline USHORT gx_color_1555xrgb_raw_from_4colors(USHORT a, USHORT b, USHORT c, USHORT d,
                                                         INT xdiff, INT ydiff, INT alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_1555xrgb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
@@ -398,9 +398,9 @@ static inline USHORT gx_color_1555xrgb_raw_from_4colors(USHORT a, USHORT b, USHO
 static inline USHORT gx_color_1555xrgb_raw_from_4colors_2(USHORT a, USHORT b, USHORT c, USHORT d,
                                                           INT xdiff, INT ydiff, INT& alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_1555xrgb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
@@ -409,9 +409,9 @@ static inline USHORT gx_color_1555xrgb_raw_from_4colors_2(USHORT a, USHORT b, US
 
 // 32ARGB
 
-static inline void gx_color_32argb_raw_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d,
+static inline void gx_color_32argb_raw_from_4colors(ULONG a, ULONG b, ULONG c, ULONG d,
                                                     INT xdiff, INT ydiff, INT& alpha,
-                                                    GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+                                                    ULONG& red, ULONG& green, ULONG& blue)
 {
     GX_COLOR_4_COEFF_GET(xdiff, ydiff)
 
@@ -435,9 +435,9 @@ static inline void gx_color_32argb_raw_from_4colors(GX_COLOR a, GX_COLOR b, GX_C
 
     if ((alpha > 0) && (alpha < 0xff))
     {
-        red = (red << 8) / (GX_COLOR)alpha;
-        green = (green << 8) / (GX_COLOR)alpha;
-        blue = (blue << 8) / (GX_COLOR)alpha;
+        red = (red << 8) / (ULONG)alpha;
+        green = (green << 8) / (ULONG)alpha;
+        blue = (blue << 8) / (ULONG)alpha;
     }
 
     GX_CLAMP_MAX(red, 255)
@@ -446,12 +446,12 @@ static inline void gx_color_32argb_raw_from_4colors(GX_COLOR a, GX_COLOR b, GX_C
     GX_CLAMP_MAX(alpha, 255)
 }
 
-static inline GX_COLOR gx_color_32argb_raw_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d,
-                                                        INT xdiff, INT ydiff, INT alpha)
+static inline ULONG gx_color_32argb_raw_from_4colors(ULONG a, ULONG b, ULONG c, ULONG d,
+                                                     INT xdiff, INT ydiff, INT alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_32argb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
@@ -459,12 +459,12 @@ static inline GX_COLOR gx_color_32argb_raw_from_4colors(GX_COLOR a, GX_COLOR b, 
 }
 
 // blends color and alpha after this function is called
-static inline GX_COLOR gx_color_32argb_raw_from_4colors_2(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d,
-                                                          INT xdiff, INT ydiff, INT& alpha)
+static inline ULONG gx_color_32argb_raw_from_4colors_2(ULONG a, ULONG b, ULONG c, ULONG d,
+                                                       INT xdiff, INT ydiff, INT& alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_32argb_raw_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
@@ -476,10 +476,10 @@ static inline GX_COLOR gx_color_32argb_raw_from_4colors_2(GX_COLOR a, GX_COLOR b
 #define GX_COLOR_VALUE_ALPHA_FROM_4COLORS(a_val, b_val, c_val, d_val,         \
                                           a_alpha, b_alpha, c_alpha, d_alpha, \
                                           a_coeff, b_coeff, c_coeff, d_coeff) \
-    ((GX_COLOR)((GX_COLOR)(a_val) * (a_alpha) * (a_coeff) +                   \
-                (GX_COLOR)(b_val) * (b_alpha) * (b_coeff) +                   \
-                (GX_COLOR)(c_val) * (c_alpha) * (c_coeff) +                   \
-                (GX_COLOR)(d_val) * (d_alpha) * (d_coeff)) >> 16)
+    ((ULONG)((ULONG)(a_val) * (a_alpha) * (a_coeff) +                         \
+             (ULONG)(b_val) * (b_alpha) * (b_coeff) +                         \
+             (ULONG)(c_val) * (c_alpha) * (c_coeff) +                         \
+             (ULONG)(d_val) * (d_alpha) * (d_coeff)) >> 16)
 
 // 565RGB
 
@@ -487,7 +487,7 @@ static inline void gx_color_565rgb_alpha_from_4colors(USHORT a, USHORT b, USHORT
                                                       INT xdiff, INT ydiff,
                                                       USHORT& a_alpha,
                                                       USHORT b_alpha, USHORT c_alpha, USHORT d_alpha,
-                                                      GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+                                                      ULONG& red, ULONG& green, ULONG& blue)
 {
     GX_COLOR_4_COEFF_GET(xdiff, ydiff)
 
@@ -534,9 +534,9 @@ static inline USHORT gx_color_565rgb_alpha_from_4colors_2(USHORT a, USHORT b, US
                                                           USHORT& a_alpha,
                                                           USHORT b_alpha, USHORT c_alpha, USHORT d_alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_565rgb_alpha_from_4colors(a, b, c, d, xdiff, ydiff,
                                        a_alpha, b_alpha, c_alpha, d_alpha,
@@ -551,7 +551,7 @@ static inline void gx_color_1555xrgb_alpha_from_4colors(USHORT a, USHORT b, USHO
                                                         INT xdiff, INT ydiff,
                                                         USHORT& a_alpha,
                                                         USHORT b_alpha, USHORT c_alpha, USHORT d_alpha,
-                                                        GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+                                                        ULONG& red, ULONG& green, ULONG& blue)
 {
     GX_COLOR_4_COEFF_GET(xdiff, ydiff)
 
@@ -598,9 +598,9 @@ static inline USHORT gx_color_1555xrgb_alpha_from_4colors_2(USHORT a, USHORT b, 
                                                             USHORT& a_alpha,
                                                             USHORT b_alpha, USHORT c_alpha, USHORT d_alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_1555xrgb_alpha_from_4colors(a, b, c, d, xdiff, ydiff,
                                          a_alpha, b_alpha, c_alpha, d_alpha,
@@ -615,7 +615,7 @@ static inline void gx_color_4444argb_alpha_from_4colors(USHORT a, USHORT b, USHO
                                                         INT xdiff, INT ydiff,
                                                         USHORT& a_alpha,
                                                         USHORT b_alpha, USHORT c_alpha, USHORT d_alpha,
-                                                        GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+                                                        ULONG& red, ULONG& green, ULONG& blue)
 {
     GX_COLOR_4_COEFF_GET(xdiff, ydiff)
 
@@ -661,9 +661,9 @@ static inline USHORT gx_color_4444argb_alpha_from_4colors(USHORT a, USHORT b, US
                                                           INT xdiff, INT ydiff,
                                                           USHORT a_alpha, USHORT b_alpha, USHORT c_alpha, USHORT d_alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_4444argb_alpha_from_4colors(a, b, c, d, xdiff, ydiff,
                                          a_alpha, b_alpha, c_alpha, d_alpha,
@@ -674,9 +674,9 @@ static inline USHORT gx_color_4444argb_alpha_from_4colors(USHORT a, USHORT b, US
 
 // 32ARGB
 
-static inline void gx_color_32argb_alpha_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d,
+static inline void gx_color_32argb_alpha_from_4colors(ULONG a, ULONG b, ULONG c, ULONG d,
                                                       INT xdiff, INT ydiff, INT& alpha,
-                                                      GX_COLOR& red, GX_COLOR& green, GX_COLOR& blue)
+                                                      ULONG& red, ULONG& green, ULONG& blue)
 {
     INT a_alpha = ALPHAVAL_32BPP(a);
     INT b_alpha = ALPHAVAL_32BPP(b);
@@ -723,13 +723,13 @@ static inline void gx_color_32argb_alpha_from_4colors(GX_COLOR a, GX_COLOR b, GX
     GX_CLAMP_MAX(alpha, 255)
 }
 
-static inline GX_COLOR gx_color_32argb_alpha_from_4colors(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d,
-                                                          INT xdiff, INT ydiff)
+static inline ULONG gx_color_32argb_alpha_from_4colors(ULONG a, ULONG b, ULONG c, ULONG d,
+                                                       INT xdiff, INT ydiff)
 {
     INT alpha;
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_32argb_alpha_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
@@ -737,12 +737,12 @@ static inline GX_COLOR gx_color_32argb_alpha_from_4colors(GX_COLOR a, GX_COLOR b
 }
 
 // blends color and alpha after this function is called
-static inline GX_COLOR gx_color_32argb_alpha_from_4colors_2(GX_COLOR a, GX_COLOR b, GX_COLOR c, GX_COLOR d,
-                                                            INT xdiff, INT ydiff, INT& alpha)
+static inline ULONG gx_color_32argb_alpha_from_4colors_2(ULONG a, ULONG b, ULONG c, ULONG d,
+                                                         INT xdiff, INT ydiff, INT& alpha)
 {
-    GX_COLOR red;
-    GX_COLOR green;
-    GX_COLOR blue;
+    ULONG red;
+    ULONG green;
+    ULONG blue;
 
     gx_color_32argb_alpha_from_4colors(a, b, c, d, xdiff, ydiff, alpha, red, green, blue);
 
