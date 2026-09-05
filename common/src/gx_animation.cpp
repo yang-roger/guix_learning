@@ -1535,9 +1535,6 @@ static UINT _gx_animation_slide_landing(GX_ANIMATION* animation)
 
     GX_RECTANGLE target_size;
 
-    INT shift_x = 0;
-    INT shift_y = 0;
-
     if (animation->slide_target_index_1 < 0)
     {
         // Sliding animation should have 1 target at least, this should not happen.
@@ -1565,34 +1562,40 @@ static UINT _gx_animation_slide_landing(GX_ANIMATION* animation)
         target_size.move_(canvas->display_offset_x, canvas->display_offset_y);
     }
 
+    INT shift_x = 0;
+    INT shift_y = 0;
+
     if (info.style & GX_ANIMATION_EASING_FUNC_MASK)
     {
-        animation->steps = (GX_UBYTE)(animation->steps - 1);
-
-        switch (animation->slide_direction)
+        if (animation->steps > 0)
         {
-        case GX_ANIMATION_SLIDE_LEFT:
-        case GX_ANIMATION_SLIDE_RIGHT:
-            _gx_utility_easing_function_calculate(info.style,
-                                                  info.start_position.x,
-                                                  parent->left_(),
-                                                  info.steps - animation->steps,
-                                                  info.steps,
-                                                  &shift_x);
+            animation->steps = (GX_UBYTE)(animation->steps - 1);
 
-            shift_x -= target_size.left;
-            break;
+            switch (animation->slide_direction)
+            {
+            case GX_ANIMATION_SLIDE_LEFT:
+            case GX_ANIMATION_SLIDE_RIGHT:
+                _gx_utility_easing_function_calculate(info.style,
+                                                      info.start_position.x,
+                                                      parent->left_(),
+                                                      info.steps - animation->steps,
+                                                      info.steps,
+                                                      &shift_x);
 
-        default:
-            _gx_utility_easing_function_calculate(info.style,
-                                                  info.start_position.y,
-                                                  parent->top_(),
-                                                  info.steps - animation->steps,
-                                                  info.steps,
-                                                  &shift_y);
+                shift_x -= target_size.left;
+                break;
 
-            shift_y -= target_size.top;
-            break;
+            default:
+                _gx_utility_easing_function_calculate(info.style,
+                                                      info.start_position.y,
+                                                      parent->top_(),
+                                                      info.steps - animation->steps,
+                                                      info.steps,
+                                                      &shift_y);
+
+                shift_y -= target_size.top;
+                break;
+            }
         }
     }
     else
