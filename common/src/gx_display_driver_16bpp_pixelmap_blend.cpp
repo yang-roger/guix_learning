@@ -358,9 +358,7 @@ GX_UBYTE          *getrow;
 const GX_UBYTE    *get;
 GX_COLOR          *palette;
 USHORT             pixel;
-GX_UBYTE           r;
-GX_UBYTE           g;
-GX_UBYTE           b;
+GX_COLOR           color;
 
 GX_RECTANGLE      *clip = context->clip;
 
@@ -376,10 +374,8 @@ GX_RECTANGLE      *clip = context->clip;
 
         for (xval = clip->left; xval <= clip->right; xval++)
         {
-            r = (GX_UBYTE)(REDVAL_32BPP(palette[*get]) >> 3);
-            g = (GX_UBYTE)(GREENVAL_32BPP(palette[*get]) >> 2);
-            b = (GX_UBYTE)(BLUEVAL_32BPP(palette[*get++]) >> 3);
-            pixel = (USHORT)ASSEMBLECOLOR_16BPP(r, g, b);
+            color = palette[*get++];
+            pixel = GX_COLOR_565RGB_FROM_32RGB(color);
             _gx_display_driver_565rgb_pixel_blend(context, xval, yval, pixel, alpha);
         }
         getrow += pixelmap->width;
@@ -433,9 +429,7 @@ GX_UBYTE          *getrow;
 const GX_UBYTE    *get;
 GX_COLOR          *palette;
 USHORT             pixel;
-GX_UBYTE           r;
-GX_UBYTE           g;
-GX_UBYTE           b;
+GX_COLOR           color;
 
 GX_RECTANGLE      *clip = context->clip;
 
@@ -454,10 +448,8 @@ GX_RECTANGLE      *clip = context->clip;
         {
             if ((*get) != pixelmap->transparent_color)
             {
-                r = (GX_UBYTE)(REDVAL_32BPP(palette[*get]) >> 3);
-                g = (GX_UBYTE)(GREENVAL_32BPP(palette[*get]) >> 2);
-                b = (GX_UBYTE)(BLUEVAL_32BPP(palette[*get]) >> 3);
-                pixel = (USHORT)ASSEMBLECOLOR_16BPP(r, g, b);
+                color = palette[*get];
+                pixel = GX_COLOR_565RGB_FROM_32RGB(color);
                 _gx_display_driver_565rgb_pixel_blend(context, xval, yval, pixel, alpha);
             }
             get++;

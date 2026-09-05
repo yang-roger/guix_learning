@@ -19,21 +19,6 @@
 /**                                                                       */
 /**************************************************************************/
 
-#define _COLOR_FORMAT_ 565rgb
-#define PIXEL_LOC      USHORT
-
-#define REDVAL(_c)     (GX_UBYTE)(((_c) >> 11) & 0x1f)
-#define GREENVAL(_c)   (GX_UBYTE)(((_c) >> 5) & 0x3f)
-#define BLUEVAL(_c)    (GX_UBYTE)(((_c)) & 0x1f)
-
-#define ASSEMBLECOLOR(_r, _g, _b) \
-    ((((_r) & 0x1f) << 11) |      \
-     (((_g) & 0x3f) << 5) |       \
-     (((_b) & 0x1f)))
-
-
-
-
 #include "gx_display.h"
 
 #include "gx_context.h"
@@ -78,10 +63,6 @@
 /**************************************************************************/
 void _gx_display_driver_565rgb_pixel_blend(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha)
 {
-GX_UBYTE fred, fgreen, fblue;
-GX_UBYTE bred, bgreen, bblue;
-GX_UBYTE balpha;
-
 USHORT   bcolor;
 USHORT  *put;
 
@@ -92,36 +73,9 @@ USHORT  *put;
         put = (USHORT *)context->memory;
         GX_CALCULATE_PUTROW(put, x, y, context);
 
-        /* No need to blend if alpha value is 255. */
-        if (alpha == 255)
-        {
-            *put = (USHORT)fcolor;
-            return;
-        }
-
-        /* split foreground into red, green, and blue components */
-        fred = REDVAL(fcolor);
-        fgreen = GREENVAL(fcolor);
-        fblue = BLUEVAL(fcolor);
-
         /* read background color */
         bcolor = *put;
 
-        /* split background color into red, green, and blue components */
-        bred = REDVAL(bcolor);
-        bgreen = GREENVAL(bcolor);
-        bblue = BLUEVAL(bcolor);
-
-        /* background alpha is inverse of foreground alpha */
-        balpha = (GX_UBYTE)(256 - alpha);
-
-        /* blend foreground and background, each color channel */
-        fred = (GX_UBYTE)(((bred * balpha) + (fred * alpha)) >> 8);
-        fgreen = (GX_UBYTE)(((bgreen * balpha) + (fgreen * alpha)) >> 8);
-        fblue = (GX_UBYTE)(((bblue * balpha) + (fblue * alpha)) >> 8);
-
-        /* re-assemble into 16-bit color and write it out */
-        *put = (USHORT)ASSEMBLECOLOR(fred, fgreen, fblue);
+        *put = gx_color_565rgb_blend((USHORT)fcolor, alpha, bcolor);
     }
 }
-

@@ -19,19 +19,6 @@
 /**                                                                       */
 /**************************************************************************/
 
-#define ALPHAVAL(_c) (GX_UBYTE)(((_c) >> 12) & 0x0f)
-#define REDVAL(_c)   (GX_UBYTE)(((_c) >> 8) & 0x0f)
-#define GREENVAL(_c) (GX_UBYTE)(((_c) >> 4) & 0x0f)
-#define BLUEVAL(_c)  (GX_UBYTE)(((_c)) & 0x0f)
-
-#define ASSEMBLECOLOR(_a, _r, _g, _b) \
-    ((((_a) & 0x0f) << 12) |          \
-     (((_r) & 0x0f) << 8) |           \
-     (((_g) & 0x0f) << 4) |           \
-     (((_b) & 0x0f)))
-
-
-
 #include "gx_display.h"
 
 #include "gx_utility.h"
@@ -88,9 +75,7 @@ INT           srcxres;
 INT           srcyres;
 INT           cosv;
 INT           sinv;
-USHORT        red;
-USHORT        green;
-USHORT        blue;
+USHORT        pixel;
 INT           idxminx;
 INT           idxmaxx;
 INT           idxmaxy;
@@ -183,10 +168,10 @@ USHORT        alpha[4] = {0};
                     b = *(get + 1);
                     c = *(get + pixelmap->width);
                     d = *(get + pixelmap->width + 1);
-                    alpha[0] = ALPHAVAL(a);
-                    alpha[1] = ALPHAVAL(b);
-                    alpha[2] = ALPHAVAL(c);
-                    alpha[3] = ALPHAVAL(d);
+                    alpha[0] = ALPHAVAL_4444ARGB(a);
+                    alpha[1] = ALPHAVAL_4444ARGB(b);
+                    alpha[2] = ALPHAVAL_4444ARGB(c);
+                    alpha[3] = ALPHAVAL_4444ARGB(d);
                 }
                 else
                 {
@@ -203,47 +188,47 @@ USHORT        alpha[4] = {0};
                         if (yy >= 0)
                         {
                             b = *(get + yy * pixelmap->width);
-                            alpha[1] = ALPHAVAL(b);
+                            alpha[1] = ALPHAVAL_4444ARGB(b);
                         }
 
                         if (yy < pixelmap->height - 1)
                         {
                             d = *(get + (yy + 1) * pixelmap->width);
-                            alpha[3] = ALPHAVAL(d);
+                            alpha[3] = ALPHAVAL_4444ARGB(d);
                         }
                     }
                     else if (yy == -1)
                     {
                         /* handle top edge.  */
                         c = *(get + xx);
-                        alpha[2] = ALPHAVAL(c);
+                        alpha[2] = ALPHAVAL_4444ARGB(c);
 
                         if (xx < pixelmap->width - 1)
                         {
                             d = *(get + xx + 1);
-                            alpha[3] = ALPHAVAL(d);
+                            alpha[3] = ALPHAVAL_4444ARGB(d);
                         }
                     }
                     else if (xx == pixelmap->width - 1)
                     {
                         /* handle right edget. */
                         a = *(get + yy * pixelmap->width + xx);
-                        alpha[0] = ALPHAVAL(a);
+                        alpha[0] = ALPHAVAL_4444ARGB(a);
 
                         if (yy < pixelmap->height - 1)
                         {
                             c = *(get + (yy + 1) * pixelmap->width + xx);
-                            alpha[2] = ALPHAVAL(c);
+                            alpha[2] = ALPHAVAL_4444ARGB(c);
                         }
                     }
                     else
                     {
                         /* handle bottom edge. */
                         a = *(get + yy * pixelmap->width + xx);
-                        alpha[0] = ALPHAVAL(a);
+                        alpha[0] = ALPHAVAL_4444ARGB(a);
 
                         b = *(get + yy * pixelmap->width + xx + 1);
-                        alpha[1] = ALPHAVAL(b);
+                        alpha[1] = ALPHAVAL_4444ARGB(b);
                     }
 
                     if (!a)
@@ -267,39 +252,10 @@ USHORT        alpha[4] = {0};
                     }
                 }
 
-                red = (USHORT)((REDVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                REDVAL(b) * alpha[1] * xdiff * (256 - ydiff) +
-                                REDVAL(c) * alpha[2] * ydiff * (256 - xdiff) +
-                                REDVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
+                pixel = gx_color_4444argb_alpha_from_4colors(a, b, c, d, xdiff, ydiff,
+                                                             alpha[0], alpha[1], alpha[2], alpha[3]);
 
-                green = (USHORT)((GREENVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                  GREENVAL(b) * alpha[1] * xdiff * (256 - ydiff) +
-                                  GREENVAL(c) * alpha[2] * ydiff * (256 - xdiff) +
-                                  GREENVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
-
-                blue = (USHORT)((BLUEVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                 BLUEVAL(b) * alpha[1] * xdiff * (256 - ydiff) +
-                                 BLUEVAL(c) * alpha[2] * ydiff * (256 - xdiff) +
-                                 BLUEVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
-
-                alpha[0] = (USHORT)((alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                     alpha[1] * xdiff * (256 - ydiff) +
-                                     alpha[2] * ydiff * (256 - xdiff) +
-                                     alpha[3] * xdiff * ydiff) >> 16);
-
-                if (alpha[0])
-                {
-                    red /= alpha[0];
-                    green /= alpha[0];
-                    blue /= alpha[0];
-                }
-
-                red = red > 15 ? 15 : red;
-                green = green > 15 ? 15 : green;
-                blue = blue > 15 ? 15 : blue;
-                alpha[0] = alpha[0] > 15 ? 15 : alpha[0];
-
-                blend_func(context, x + newxpos, y + newypos, (GX_COLOR)ASSEMBLECOLOR(alpha[0], red, green, blue), (GX_UBYTE)0xff);
+                blend_func(context, x + newxpos, y + newypos, (GX_COLOR)pixel, (GX_UBYTE)0xff);
             }
         }
     }

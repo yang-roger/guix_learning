@@ -24,19 +24,6 @@
 #include "gx_utility.h"
 #include "gx_canvas.h"
 
-
-#define ALPHAVAL(_c) (GX_UBYTE)(((_c) >> 12) & 0xf)
-#define REDVAL(_c)   (GX_UBYTE)(((_c) >> 8) & 0xf)
-#define GREENVAL(_c) (GX_UBYTE)(((_c) >> 4) & 0xf)
-#define BLUEVAL(_c)  (GX_UBYTE)((_c) & 0xf)
-
-#define ASSEMBLECOLOR(_a, _r, _g, _b) \
-    ((((_a) & 0xf) << 12)   |         \
-     (((_r) & 0xf) << 8)   |          \
-     (((_g) & 0xf) << 4)    |         \
-     ((_b) & 0xf))
-
-
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
@@ -83,6 +70,7 @@ USHORT      *read;
 USHORT      *read_start;
 USHORT      *write;
 USHORT      *write_start;
+GX_UBYTE     alpha;
 USHORT       fcolor;
 GX_UBYTE     falpha;
 GX_UBYTE     fred;
@@ -102,17 +90,12 @@ INT          col;
 
     if (gx_rectangle_intersect_(dirty, composite->dirty_area, &overlap))
     {
+        alpha = canvas->alpha;
 
         read_start = (USHORT *)canvas->memory;
-
-        /* index into starting row */
         read_start += (overlap.top - dirty.top) * canvas->x_resolution;
-
-        /* index into pixel */
-
         read_start += overlap.left - dirty.left;
 
-        /* calculate the write pointer */
         write_start = (USHORT *)composite->memory;
         write_start += overlap.top * composite->x_resolution;
         write_start += overlap.left;
@@ -128,23 +111,21 @@ INT          col;
                 fcolor = *read++;
 
                 /* split foreground into red, green, and blue components */
-                falpha = ALPHAVAL(fcolor);
-                falpha = (GX_UBYTE)(falpha | (falpha << 4));
-                fred = REDVAL(fcolor);
-                fgreen = GREENVAL(fcolor);
-                fblue = BLUEVAL(fcolor);
+                ALPHAVAL_4444ARGB_EXT(falpha, fcolor);
+                fred = REDVAL_4444ARGB(fcolor);
+                fgreen = GREENVAL_4444ARGB(fcolor);
+                fblue = BLUEVAL_4444ARGB(fcolor);
 
-                combined_alpha = (GX_UBYTE)((falpha * canvas->alpha) >> 8);
+                combined_alpha = (GX_UBYTE)((falpha * alpha) >> 8);
 
                 /* read background color */
                 bcolor = *write;
 
                 /* split background color into alpha, red, green, and blue components */
-                balpha = ALPHAVAL(bcolor);
-                balpha = (GX_UBYTE)(balpha | (balpha << 4));
-                bred = REDVAL(bcolor);
-                bgreen = GREENVAL(bcolor);
-                bblue = BLUEVAL(bcolor);
+                ALPHAVAL_4444ARGB_EXT(balpha, bcolor);
+                bred = REDVAL_4444ARGB(bcolor);
+                bgreen = GREENVAL_4444ARGB(bcolor);
+                bblue = BLUEVAL_4444ARGB(bcolor);
 
                 /* background alpha is inverse of foreground alpha */
                 inv_alpha = (GX_UBYTE)(256 - combined_alpha);
@@ -156,7 +137,7 @@ INT          col;
                 fblue = (GX_UBYTE)(((bblue * inv_alpha) + (fblue * combined_alpha)) >> 8);
 
                 /* re-assemble into 16-bit color and write it out */
-                *write++ = (USHORT)ASSEMBLECOLOR(falpha, fred, fgreen, fblue);
+                *write++ = ASSEMBLECOLOR_4444ARGB(falpha, fred, fgreen, fblue);
             }
             write_start += composite->x_resolution;
             read_start += canvas->x_resolution;

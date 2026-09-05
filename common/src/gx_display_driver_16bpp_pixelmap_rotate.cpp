@@ -19,17 +19,6 @@
 /**                                                                       */
 /**************************************************************************/
 
-#define REDVAL(_c)   (GX_UBYTE)(((_c) >> 11) & 0x1f)
-#define GREENVAL(_c) (GX_UBYTE)(((_c) >> 5) & 0x3f)
-#define BLUEVAL(_c)  (GX_UBYTE)(((_c)) & 0x1f)
-
-#define ASSEMBLECOLOR(_r, _g, _b) \
-    ((((_r) & 0x1f) << 11) |      \
-     (((_g) & 0x3f) << 5) |       \
-     (((_b) & 0x1f)))
-
-
-
 #include "gx_display.h"
 
 #include "gx_context.h"
@@ -87,9 +76,7 @@ INT           srcyres;
 INT           cosv;
 INT           sinv;
 INT           alpha;
-USHORT        red;
-USHORT        green;
-USHORT        blue;
+USHORT        color;
 INT           idxminx;
 INT           idxmaxx;
 INT           idxmaxy;
@@ -246,34 +233,9 @@ void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR col
                     alpha >>= 8;
                 }
 
-                red = (USHORT)((REDVAL(a) * (256 - xdiff) * (256 - ydiff) +
-                                REDVAL(b) * xdiff * (256 - ydiff) +
-                                REDVAL(c) * ydiff * (256 - xdiff) +
-                                REDVAL(d) * xdiff * ydiff) >> 16);
+                color = gx_color_565rgb_raw_from_4colors_2(a, b, c, d, xdiff, ydiff, alpha);
 
-                green = (USHORT)((GREENVAL(a) * (256 - xdiff) * (256 - ydiff) +
-                                  GREENVAL(b) * xdiff * (256 - ydiff) +
-                                  GREENVAL(c) * ydiff * (256 - xdiff) +
-                                  GREENVAL(d) * xdiff * ydiff) >> 16);
-
-                blue = (USHORT)((BLUEVAL(a) * (256 - xdiff) * (256 - ydiff) +
-                                 BLUEVAL(b) * xdiff * (256 - ydiff) +
-                                 BLUEVAL(c) * ydiff * (256 - xdiff) +
-                                 BLUEVAL(d) * xdiff * ydiff) >> 16);
-
-                if ((alpha > 0) && (alpha < 0xff))
-                {
-                    red = (USHORT)((red << 8) / alpha);
-                    green = (USHORT)((green << 8) / alpha);
-                    blue = (USHORT)((blue << 8) / alpha);
-                }
-
-                red = red > 31 ? 31 : red;
-                green = green > 63 ? 63 : green;
-                blue = blue > 31 ? 31 : blue;
-                alpha = alpha > 255 ? 255 : alpha;
-
-                blend_func(context, x + newxpos, y + newypos, (GX_COLOR)ASSEMBLECOLOR(red, green, blue), (GX_UBYTE)alpha);
+                blend_func(context, x + newxpos, y + newypos, (GX_COLOR)color, (GX_UBYTE)alpha);
             }
         }
     }
@@ -329,9 +291,7 @@ INT           srcxres;
 INT           srcyres;
 INT           cosv;
 INT           sinv;
-USHORT        red;
-USHORT        green;
-USHORT        blue;
+USHORT        color;
 INT           idxminx;
 INT           idxmaxx;
 INT           idxmaxy;
@@ -514,39 +474,10 @@ void          (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR col
                     }
                 }
 
-                red = (USHORT)((REDVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                REDVAL(b) * alpha[1] * xdiff * (256 - ydiff) +
-                                REDVAL(c) * alpha[2] * ydiff * (256 - xdiff) +
-                                REDVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
+                color = gx_color_565rgb_alpha_from_4colors_2(a, b, c, d, xdiff, ydiff,
+                                                             alpha[0], alpha[1], alpha[2], alpha[3]);
 
-                green = (USHORT)((GREENVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                  GREENVAL(b) * alpha[1] * xdiff * (256 - ydiff) +
-                                  GREENVAL(c) * alpha[2] * ydiff * (256 - xdiff) +
-                                  GREENVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
-
-                blue = (USHORT)((BLUEVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                 BLUEVAL(b) * alpha[1] * xdiff * (256 - ydiff) +
-                                 BLUEVAL(c) * alpha[2] * ydiff * (256 - xdiff) +
-                                 BLUEVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
-
-                alpha[0] = (USHORT)((alpha[0] * (256 - xdiff) * (256 - ydiff) +
-                                     alpha[1] * xdiff * (256 - ydiff) +
-                                     alpha[2] * ydiff * (256 - xdiff) +
-                                     alpha[3] * xdiff * ydiff) >> 16);
-
-                if (alpha[0])
-                {
-                    red /= alpha[0];
-                    green /= alpha[0];
-                    blue /= alpha[0];
-                }
-
-                red = red > 31 ? 31 : red;
-                green = green > 63 ? 63 : green;
-                blue = blue > 31 ? 31 : blue;
-                alpha[0] = alpha[0] > 255 ? 255 : alpha[0];
-
-                blend_func(context, x + newxpos, y + newypos, (GX_COLOR)ASSEMBLECOLOR(red, green, blue), (GX_UBYTE)alpha[0]);
+                blend_func(context, x + newxpos, y + newypos, (GX_COLOR)color, (GX_UBYTE)alpha[0]);
             }
         }
     }

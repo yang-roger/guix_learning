@@ -19,25 +19,6 @@
 /**                                                                       */
 /**************************************************************************/
 
-#define _COLOR_FORMAT_ 565rgb /*what's this for??*/
-#define PIXEL_LOC      USHORT
-
-#define ALPHAVAL(_c)   (GX_UBYTE)(((_c) >> 12) & 0xf)
-#define REDVAL(_c)     (GX_UBYTE)(((_c) >> 8) & 0xf)
-#define GREENVAL(_c)   (GX_UBYTE)(((_c) >> 4) & 0xf)
-#define BLUEVAL(_c)    (GX_UBYTE)((_c) & 0xf)
-
-#define ASSEMBLECOLOR_4444ARGB(_a, _r, _g, _b) \
-    (((_a) << 12)   |          \
-     ((_r) << 8)    |          \
-     ((_g) << 4)    |          \
-     ((_b) & 0xf))
-
-#define ExtendToByte(_a)  _a |= (GX_UBYTE)(_a << 4)
-
-
-
-
 #include "gx_display.h"
 
 #include "gx_context.h"
@@ -90,8 +71,8 @@ USHORT   bcolor;
 USHORT  *put;
 
 
-    falpha = ALPHAVAL(fcolor);
-    falpha = (GX_UBYTE)(falpha | (falpha << 4));
+    ALPHAVAL_4444ARGB_EXT(falpha, fcolor);
+
     combined_alpha = falpha * alpha;
     combined_alpha /= 255;
 
@@ -111,25 +92,18 @@ USHORT  *put;
         }
 
         /* split foreground into red, green, and blue components */
-        fred = REDVAL(fcolor);
-        ExtendToByte(fred);
-        fgreen = GREENVAL(fcolor);
-        ExtendToByte(fgreen);
-        fblue = BLUEVAL(fcolor);
-        ExtendToByte(fblue);
+        REDVAL_4444ARGB_EXT(fred, fcolor);
+        GREENVAL_4444ARGB_EXT(fgreen, fcolor);
+        BLUEVAL_4444ARGB_EXT(fblue, fcolor);
 
         /* read background color */
         bcolor = *put;
 
         /* split background color into red, green, and blue components */
-        balpha = ALPHAVAL(bcolor);
-        ExtendToByte(balpha);
-        bred = REDVAL(bcolor);
-        ExtendToByte(bred);
-        bgreen = GREENVAL(bcolor);
-        ExtendToByte(bgreen);
-        bblue = BLUEVAL(bcolor);
-        ExtendToByte(bblue);
+        ALPHAVAL_4444ARGB_EXT(balpha, bcolor);
+        REDVAL_4444ARGB_EXT(bred, bcolor);
+        GREENVAL_4444ARGB_EXT(bgreen, bcolor);
+        BLUEVAL_4444ARGB_EXT(bblue, bcolor);
 
         /* background alpha is inverse of foreground alpha */
         inv_alpha = (GX_UBYTE)(256 - combined_alpha);
@@ -139,7 +113,6 @@ USHORT  *put;
         fred = (GX_UBYTE)(((bred * inv_alpha) + (fred * combined_alpha)) >> 12);
         fgreen = (GX_UBYTE)(((bgreen * inv_alpha) + (fgreen * combined_alpha)) >> 12);
         fblue = (GX_UBYTE)(((bblue * inv_alpha) + (fblue * combined_alpha)) >> 12);
-
 
         /* re-assemble into 16-bit color and write it out */
         *put = (USHORT)ASSEMBLECOLOR_4444ARGB(falpha, fred, fgreen, fblue);

@@ -23,18 +23,7 @@
 
 #include "gx_utility_math.h"
 #include "gx_system.h"
-
-
-#define REDVAL(_c)     (GX_UBYTE)(((_c) >> 11) & 0x1f)
-#define GREENVAL(_c)   (GX_UBYTE)(((_c) >> 5) & 0x3f)
-#define BLUEVAL(_c)    (GX_UBYTE)(((_c)) & 0x1f)
-
-#define ASSEMBLECOLOR(_r, _g, _b)                     \
-    (USHORT)((((_r) & 0x1f) << 11)                  | \
-             (((_g) & 0x3f) << 5)                   | \
-             ((_b) & 0x1f))
-
-#define BYTE_RANGE(_c) _c > 255 ? 255 : _c
+#include "gx_color.h"
 
 /**************************************************************************/
 /*                                                                        */
@@ -88,9 +77,6 @@ INT      y;
 INT      xx;
 INT      yy;
 USHORT   neighbor_pixels[2][2];
-GX_COLOR red;
-GX_COLOR green;
-GX_COLOR blue;
 
     /* Calculate scale ratio and enlarge it by 256 times to keep precision.  */
     xradio = ((src->width) << 8) / width;
@@ -173,28 +159,12 @@ GX_COLOR blue;
                 }
             }
 
-
             /* Calulate pixel values by interpolating 4 neighboring pixels. */
-            red = (REDVAL(neighbor_pixels[0][0]) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                   REDVAL(neighbor_pixels[0][1]) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                   REDVAL(neighbor_pixels[1][0]) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                   REDVAL(neighbor_pixels[1][1]) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-            green = (GREENVAL(neighbor_pixels[0][0]) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                     GREENVAL(neighbor_pixels[0][1]) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                     GREENVAL(neighbor_pixels[1][0]) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                     GREENVAL(neighbor_pixels[1][1]) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-            blue = (BLUEVAL(neighbor_pixels[0][0]) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                    BLUEVAL(neighbor_pixels[0][1]) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                    BLUEVAL(neighbor_pixels[1][0]) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                    BLUEVAL(neighbor_pixels[1][1]) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-            red = BYTE_RANGE(red);
-            green = BYTE_RANGE(green);
-            blue = BYTE_RANGE(blue);
-
-            *put++ = ASSEMBLECOLOR(red, green, blue);
+            *put++ = gx_color_565rgb_raw_from_4colors(neighbor_pixels[0][0],
+                                                      neighbor_pixels[0][1],
+                                                      neighbor_pixels[1][0],
+                                                      neighbor_pixels[1][1],
+                                                      xdiff, ydiff, 0);
         }
     }
 
@@ -255,10 +225,7 @@ INT       y;
 INT       xx;
 INT       yy;
 USHORT    neighbor_pixels[2][2];
-GX_COLOR  alpha[4];
-GX_COLOR  red;
-GX_COLOR  green;
-GX_COLOR  blue;
+USHORT    alpha[4];
 
     /* Calculate scale ratio and enlarge it by 256 times to keep precision.  */
     xradio = ((src->width) << 8) / width;
@@ -373,39 +340,12 @@ GX_COLOR  blue;
             }
 
             /* Calulate pixel values by interpolating 4 neighboring pixels. */
-            red = (REDVAL(neighbor_pixels[0][0]) * (alpha[0]) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                   REDVAL(neighbor_pixels[0][1]) * (alpha[1]) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                   REDVAL(neighbor_pixels[1][0]) * (alpha[2]) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                   REDVAL(neighbor_pixels[1][1]) * (alpha[3]) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-            green = (GREENVAL(neighbor_pixels[0][0]) * (alpha[0]) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                     GREENVAL(neighbor_pixels[0][1]) * (alpha[1]) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                     GREENVAL(neighbor_pixels[1][0]) * (alpha[2]) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                     GREENVAL(neighbor_pixels[1][1]) * (alpha[3]) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-            blue = (BLUEVAL(neighbor_pixels[0][0]) * (alpha[0]) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                    BLUEVAL(neighbor_pixels[0][1]) * (alpha[1]) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                    BLUEVAL(neighbor_pixels[1][0]) * (alpha[2]) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                    BLUEVAL(neighbor_pixels[1][1]) * (alpha[3]) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-            alpha[0] = ((alpha[0]) * (256 - (GX_COLOR)xdiff) * (256 - (GX_COLOR)ydiff) + \
-                        (alpha[1]) * (GX_COLOR)xdiff * (256 - (GX_COLOR)ydiff) +         \
-                        (alpha[2]) * (GX_COLOR)ydiff * (256 - (GX_COLOR)xdiff) +         \
-                        (alpha[3]) * (GX_COLOR)xdiff * (GX_COLOR)ydiff) >> 16;
-
-            if (alpha[0])
-            {
-                red /= alpha[0];
-                green /= alpha[0];
-                blue /= alpha[0];
-            }
-
-            alpha[0] = BYTE_RANGE(alpha[0]);
-            red = BYTE_RANGE(red);
-            green = BYTE_RANGE(green);
-            blue = BYTE_RANGE(blue);
-
-            *put++ = ASSEMBLECOLOR(red, green, blue);
+            *put++ = gx_color_565rgb_alpha_from_4colors_2(neighbor_pixels[0][0],
+                                                          neighbor_pixels[0][1],
+                                                          neighbor_pixels[1][0],
+                                                          neighbor_pixels[1][1],
+                                                          xdiff, ydiff,
+                                                          alpha[0], alpha[1], alpha[2], alpha[3]);
             *putalpha++ = (GX_UBYTE)alpha[0];
         }
     }
@@ -520,7 +460,6 @@ INT       srcxres;
 INT       srcyres;
 INT       cosv;
 INT       sinv;
-USHORT    red, green, blue;
 INT       idxminx, idxmaxx, idxmaxy;
 INT      *mx;
 INT      *my;
@@ -704,34 +643,7 @@ INT       xdiff, ydiff;
                     alpha >>= 8;
                 }
 
-                red = (USHORT)((REDVAL(a) * (256 - xdiff) * (256 - ydiff) + \
-                                REDVAL(b) * xdiff * (256 - ydiff) +         \
-                                REDVAL(c) * ydiff * (256 - xdiff) +         \
-                                REDVAL(d) * xdiff * ydiff) >> 16);
-
-                green = (USHORT)((GREENVAL(a) * (256 - xdiff) * (256 - ydiff) + \
-                                  GREENVAL(b) * xdiff * (256 - ydiff) +         \
-                                  GREENVAL(c) * ydiff * (256 - xdiff) +         \
-                                  GREENVAL(d) * xdiff * ydiff) >> 16);
-
-                blue = (USHORT)((BLUEVAL(a) * (256 - xdiff) * (256 - ydiff) + \
-                                 BLUEVAL(b) * xdiff * (256 - ydiff) +         \
-                                 BLUEVAL(c) * ydiff * (256 - xdiff) +         \
-                                 BLUEVAL(d) * xdiff * ydiff) >> 16);
-
-                if (alpha && (alpha < 0xff))
-                {
-                    red   = (USHORT)((red << 8) / alpha);
-                    green = (USHORT)((green << 8) / alpha);
-                    blue  = (USHORT)((blue << 8) / alpha);
-                }
-
-                red = red > 31 ? 31 : red;
-                green = green > 63 ? 63 : green;
-                blue = blue > 31 ? 31 : blue;
-                alpha = alpha > 255 ? 255 : alpha;
-
-                *put++ = ASSEMBLECOLOR(red, green, blue);
+                *put++ = gx_color_565rgb_raw_from_4colors_2(a, b, c, d, xdiff, ydiff, alpha);
                 *putalpha++ = (GX_UBYTE)alpha;
             }
             else
@@ -796,7 +708,6 @@ INT       srcxres;
 INT       srcyres;
 INT       cosv;
 INT       sinv;
-USHORT    red, green, blue;
 INT       idxminx, idxmaxx, idxmaxy;
 INT      *mx;
 INT      *my;
@@ -1012,38 +923,8 @@ INT       xdiff, ydiff;
                     }
                 }
 
-                red = (USHORT)((REDVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) + \
-                                REDVAL(b) * alpha[1] * xdiff * (256 - ydiff) +         \
-                                REDVAL(c) * alpha[2] * ydiff * (256 - xdiff) +         \
-                                REDVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
-
-                green = (USHORT)((GREENVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) + \
-                                  GREENVAL(b) * alpha[1] * xdiff * (256 - ydiff) +         \
-                                  GREENVAL(c) * alpha[2] * ydiff * (256 - xdiff) +         \
-                                  GREENVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
-
-                blue = (USHORT)((BLUEVAL(a) * alpha[0] * (256 - xdiff) * (256 - ydiff) + \
-                                 BLUEVAL(b) * alpha[1] * xdiff * (256 - ydiff) +         \
-                                 BLUEVAL(c) * alpha[2] * ydiff * (256 - xdiff) +         \
-                                 BLUEVAL(d) * alpha[3] * xdiff * ydiff) >> 16);
-
-                alpha[0] = (USHORT)((alpha[0] * (256 - xdiff) * (256 - ydiff) + \
-                                     alpha[1] * xdiff * (256 - ydiff) +         \
-                                     alpha[2] * ydiff * (256 - xdiff) +         \
-                                     alpha[3] * xdiff * ydiff) >> 16);
-
-                if (alpha[0])
-                {
-                    red /= alpha[0];
-                    green /=  alpha[0];
-                    blue /= alpha[0];
-                }
-
-                red = red > 31 ? 31 : red;
-                green = green > 63 ? 63 : green;
-                blue = blue > 31 ? 31 : blue;
-
-                *put++ = ASSEMBLECOLOR(red, green, blue);
+                *put++ = gx_color_565rgb_alpha_from_4colors_2(a, b, c, d, xdiff, ydiff,
+                                                              alpha[0], alpha[1], alpha[2], alpha[3]);
                 *putalpha++ = (GX_UBYTE)alpha[0];
             }
             else

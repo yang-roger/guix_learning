@@ -24,20 +24,6 @@
 #include "gx_utility.h"
 #include "gx_canvas.h"
 
-
-#define REDVAL(_c)   (GX_UBYTE)(((_c) >> 11) & 0x1f)
-#define GREENVAL(_c) (GX_UBYTE)(((_c) >> 5) & 0x3f)
-#define BLUEVAL(_c)  (GX_UBYTE)(((_c)) & 0x1f)
-
-
-/* Define macros for assembling a 16-bit r:g:b value from 3 components.  */
-
-#define ASSEMBLECOLOR(_r, _g, _b) \
-    ((((_r) & 0x1f) << 11) |      \
-     (((_g) & 0x3f) << 5) |       \
-     (((_b) & 0x1f)))
-
-
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
@@ -85,11 +71,9 @@ USHORT      *read_start;
 USHORT      *write;
 USHORT      *write_start;
 USHORT       fcolor;
-GX_UBYTE     fred, fgreen, fblue;
-GX_UBYTE     bred, bgreen, bblue;
+USHORT       bcolor;
 GX_UBYTE     alpha, balpha;
 
-USHORT       bcolor;
 INT          row;
 INT          col;
 
@@ -138,26 +122,10 @@ INT          col;
                 /* read the foreground color */
                 fcolor = *read++;
 
-                /* split foreground into red, green, and blue components */
-                fred = REDVAL(fcolor);
-                fgreen = GREENVAL(fcolor);
-                fblue = BLUEVAL(fcolor);
-
                 /* read background color */
                 bcolor = *write;
 
-                /* split background color into red, green, and blue components */
-                bred = REDVAL(bcolor);
-                bgreen = GREENVAL(bcolor);
-                bblue = BLUEVAL(bcolor);
-
-                /* blend foreground and background, each color channel */
-                fred = (GX_UBYTE)(((bred * balpha) + (fred * alpha)) >> 8);
-                fgreen = (GX_UBYTE)(((bgreen * balpha) + (fgreen * alpha)) >> 8);
-                fblue = (GX_UBYTE)(((bblue * balpha) + (fblue * alpha)) >> 8);
-
-                /* re-assemble into 16-bit color and write it out */
-                *write++ = (USHORT)ASSEMBLECOLOR(fred, fgreen, fblue);
+                *write++ = gx_color_565rgb_blend(fcolor, alpha, bcolor, balpha);
             }
             write_start += composite->y_resolution;
             read_start += canvas->y_resolution;
