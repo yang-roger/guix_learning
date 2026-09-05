@@ -68,7 +68,7 @@ GX_UBYTE   *glyph_row;
 GX_UBYTE   *glyph_data;
 UINT        row;
 UINT        col;
-UINT        pixel_width = 0;
+UINT        pixel_width;
 GX_COLOR    text_color;
 UINT        y_height;
 GX_UBYTE    alpha1;
@@ -82,10 +82,6 @@ GX_UBYTE    brush_alpha = 0xff;
     }
 #endif
 
-    text_color =  context->brush.line_color;
-    pixel_width = (UINT)(draw_area->right - draw_area->left + 1);
-
-    /* pickup pointer to current display driver */
     display = context->display;
 
     if (display->driver_pixel_blend == GX_NULL)
@@ -102,6 +98,8 @@ GX_UBYTE    brush_alpha = 0xff;
 
     glyph_row += map_offset->x;
 
+    text_color =  context->brush.line_color;
+    pixel_width = (UINT)(draw_area->right - draw_area->left + 1);
     y_height = (UINT)(draw_area->bottom - draw_area->top + 1);
 
     if (brush_alpha == 0xff)
@@ -117,10 +115,11 @@ GX_UBYTE    brush_alpha = 0xff;
                 if (alpha1 > 0)
                 {
                     display->driver_pixel_blend(context,
-                                                           draw_area->left + (GX_VALUE)col,
-                                                           draw_area->top + (GX_VALUE)row,
-                                                           text_color, (GX_UBYTE)alpha1);
+                                                draw_area->left + (GX_VALUE)col,
+                                                draw_area->top + (GX_VALUE)row,
+                                                text_color, alpha1);
                 }
+
                 glyph_data++;
             }
             glyph_row += glyph->width;
@@ -141,9 +140,9 @@ GX_UBYTE    brush_alpha = 0xff;
                 if (alpha1 > 0)
                 {
                     display->driver_pixel_blend(context,
-                                                           draw_area->left + (GX_VALUE)col,
-                                                           draw_area->top + (GX_VALUE)row,
-                                                           text_color, (GX_UBYTE)alpha1);
+                                                draw_area->left + (GX_VALUE)col,
+                                                draw_area->top + (GX_VALUE)row,
+                                                text_color, alpha1);
                 }
 
                 glyph_data++;
