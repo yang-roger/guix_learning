@@ -1,0 +1,133 @@
+/***************************************************************************
+ * Copyright (c) 2024 Microsoft Corporation
+ * Copyright (c) 2026 Eclipse ThreadX contributors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which is available at
+ * https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: MIT
+ **************************************************************************/
+
+/* This is a small demo of the high-performance GUIX graphics framework. */
+
+#include <stdio.h>
+#include "gx_api.h"
+#include "all_widgets_332rgb_resources.h"
+#include "all_widgets_332rgb_specifications.h"
+
+GX_UBYTE          alpha_value = 255;
+GX_BOOL           sprite_move_down = GX_TRUE;
+
+extern VOID        memory_free(VOID *mem);
+GX_RESOURCE_ID     map_id = GX_PIXELMAP_ID_ROTATE_APPLE;
+
+void move_sprite(void);
+
+
+
+UINT sprite_event_handler(GX_WINDOW *window, GX_EVENT *event_ptr)
+{
+    switch (event_ptr->type)
+    {
+    case GX_EVENT_SHOW:
+        next_button_handler(window, event_ptr);
+        gx_widget_show(&sprite_screen.sprite_screen_sprite);
+        break;
+
+    case GX_SIGNAL(ID_ALPHA_SLIDER, GX_EVENT_SLIDER_VALUE):
+        alpha_value = (GX_UBYTE)event_ptr->payload.longdata;
+        gx_system_dirty_mark(&sprite_screen.sprite_screen_apple_window);
+        break;
+
+    case GX_SIGNAL(ID_BIRD_SPRITE, GX_EVENT_SPRITE_COMPLETE):
+        gx_widget_hide(&sprite_screen.sprite_screen_sprite);
+        move_sprite();
+        gx_widget_show(&sprite_screen.sprite_screen_sprite);
+        break;
+
+    default:
+        return next_button_handler(window, event_ptr);
+    }
+
+    return 0;
+}
+
+void move_sprite(void)
+{
+    GX_RECTANGLE size;
+    GX_SPRITE *sprite = &sprite_screen.sprite_screen_sprite;
+
+    size = sprite->size;
+
+    if (sprite_move_down)
+    {
+        gx_utility_rectangle_shift(&size, 100, 117);
+        sprite_move_down = GX_FALSE;
+    }
+    else
+    {
+        gx_utility_rectangle_shift(&size, 100, -57);
+        sprite_move_down = GX_TRUE;
+    }
+    if (size.bottom > sprite_screen.size.bottom)
+    {
+        size.top -= sprite_screen.size.bottom;
+        size.bottom -= sprite_screen.size.bottom;
+    }
+    if (size.top < sprite_screen.size.top)
+    {
+        size.top += sprite_screen.size.bottom;
+        size.bottom += sprite_screen.size.bottom;
+    }
+
+
+    if (size.right > sprite_screen.size.right)
+    {
+        size.left -= sprite_screen.size.right;
+        size.right -= sprite_screen.size.right;
+    }
+    gx_widget_resize(sprite, &size);
+}
+
+VOID apple_window_draw(GX_WINDOW *window)
+{
+    GX_PIXELMAP *map;
+    GX_PIXELMAP scaled_map;
+    int         width;
+    int         height;
+    int         xpos;
+    int         ypos;
+
+    gx_context_pixelmap_get(map_id, &map);
+
+    width = (alpha_value * map->width) >> 8;
+    height = (alpha_value * map->height) >> 8;
+
+    if ((width == 0) || (height == 0))
+    {
+        return;
+    }
+
+    if (gx_utility_pixelmap_resize(map, &scaled_map, width, height) == GX_SUCCESS)
+    {
+        xpos = window->size.left;
+        ypos = window->size.top;
+
+        xpos += (map->width - width) >> 1;
+        ypos += (map->height - height) >> 1;
+
+        gx_canvas_pixelmap_blend(xpos, ypos, &scaled_map, alpha_value);
+
+        if (scaled_map.data)
+        {
+            memory_free((VOID *)scaled_map.data);
+        }
+
+        if (scaled_map.aux_data)
+        {
+            memory_free((VOID *)scaled_map.aux_data);
+        }
+    }
+
+}

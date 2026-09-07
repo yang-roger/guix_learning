@@ -1,0 +1,17 @@
+.vs/
+
+*.obj
+*.idb
+*.pdb
+*.ilk
+*.user
+*.suo
+*.ncb
+*.intermediate.manifest
+
+**/Debug*/*.exe
+**/Release*/*.exe
+
+mt.dep
+BuildLog.htm
+gx++.lib

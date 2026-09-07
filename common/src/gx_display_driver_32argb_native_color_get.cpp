@@ -1,0 +1,65 @@
+/***************************************************************************
+ * Copyright (c) 2024 Microsoft Corporation
+ * Copyright (c) 2026 Eclipse ThreadX contributors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which is available at
+ * https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: MIT
+ **************************************************************************/
+
+
+/**************************************************************************/
+/**************************************************************************/
+/**                                                                       */
+/** GUIX Component                                                        */
+/**                                                                       */
+/**   Display Management (Display)                                        */
+/**                                                                       */
+/**************************************************************************/
+
+#include "gx_display.h"
+
+/**************************************************************************/
+/*                                                                        */
+/*  FUNCTION                                               RELEASE        */
+/*                                                                        */
+/*    _gx_display_driver_32argb_native_color_get                          */
+/*                                                           6.1          */
+/*  AUTHOR                                                                */
+/*                                                                        */
+/*    Kenneth Maxwell, Microsoft Corporation                              */
+/*                                                                        */
+/*  DESCRIPTION                                                           */
+/*                                                                        */
+/*    32-bit xrgb format display driver color conversion routine          */
+/*                                                                        */
+/*  INPUT                                                                 */
+/*                                                                        */
+/*    display                               The associated display        */
+/*    rawcolor                              Raw Color value to be         */
+/*                                            converted                   */
+/*                                                                        */
+/*  OUTPUT                                                                */
+/*                                                                        */
+/*    GX_COLOR                              Color value in the display    */
+/*                                            color format                */
+/*                                                                        */
+/*  CALLS                                                                 */
+/*                                                                        */
+/*    None                                                                */
+/*                                                                        */
+/*  CALLED BY                                                             */
+/*                                                                        */
+/*    GUIX Internal Code                                                  */
+/*                                                                        */
+/**************************************************************************/
+GX_COLOR  _gx_display_driver_32argb_native_color_get(GX_DISPLAY *display, GX_COLOR rawcolor)
+{
+
+    GX_PARAMETER_NOT_USED(display);
+
+    return(rawcolor);
+}
+
