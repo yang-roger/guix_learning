@@ -252,11 +252,7 @@ void _gx_system_all_canvas_dirty(void)
         if (root->is_visible_())
         {
             root->dirty_mark_();
-
-            for (GX_WIDGET* child = root->first_child; child; child = child->next)
-            {
-                child->dirty_mark_();
-            }
+            root->dirty_children_();
         }
     }
 }

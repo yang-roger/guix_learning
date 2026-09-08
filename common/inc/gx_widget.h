@@ -194,6 +194,7 @@ public:
     UINT dirty_mark_(const GX_RECTANGLE* area);
     UINT dirty_mark_();
     void dirty_mark_if_visible_();
+    void dirty_children_();
 
     void text_id_draw_(UINT color_id, UINT font_id, UINT text_id, INT x_offset, INT y_offset);
     void text_draw_ext_(UINT color_id, UINT font_id, const GX_STRING* string, INT x_offset, INT y_offset);
@@ -331,6 +332,13 @@ inline void GX_WIDGET::dirty_mark_if_visible_()
     }
 }
 
+inline void GX_WIDGET::dirty_children_()
+{
+    for (GX_WIDGET* child = first_child; child; child = child->next)
+    {
+        child->dirty_mark_();
+    }
+}
 
 /* Define widget management function prototypes.  */
 
