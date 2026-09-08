@@ -27,7 +27,7 @@
 #include "gx_canvas.h"
 #include "gx_window_root.h"
 
-static void pen_position_map_to_root_window_(GX_POINT& pen_pos, const GX_WINDOW_ROOT* root)
+static inline void pen_position_map_to_root_window_(GX_POINT& pen_pos, const GX_WINDOW_ROOT* root)
 {
     pen_pos.x = (GX_VALUE)(pen_pos.x - root->canvas->display_offset_x);
     pen_pos.y = (GX_VALUE)(pen_pos.y - root->canvas->display_offset_y);
