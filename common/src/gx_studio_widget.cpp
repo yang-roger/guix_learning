@@ -78,7 +78,7 @@ UINT gx_studio_display_config(const GX_STUDIO_DISPLAY_INFO* display_info,
                           display_info->canvas, GX_STYLE_NONE, 0, &size);
     if (return_root)
     {
-    *    return_root = display_info->root_window;
+        *return_root = display_info->root_window;
     }
 
     return GX_SUCCESS;
