@@ -1,13 +1,13 @@
 /***************************************************************************
-*  Copyright (c) 2024 Microsoft Corporation
-*  Copyright (c) 2026 Eclipse ThreadX contributors
-*
-*  This program and the accompanying materials are made available under the
-*  terms of the MIT License which is available at
-*  https://opensource.org/licenses/MIT.
-*
-*  SPDX-License-Identifier: MIT
-**** **********************************************************************/
+ * Copyright (c) 2024 Microsoft Corporation
+ * Copyright (c) 2026 Eclipse ThreadX contributors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the MIT License which is available at
+ * https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: MIT
+ **************************************************************************/
 
 #include "gx_studio_widget.h"
 
@@ -1286,8 +1286,8 @@ UINT gx_studio_named_widget_create_from_table(const char* name, GX_WIDGET* paren
 
     if (new_widget)
     {
-       * new_widget = widget;
+        *new_widget = widget;
     }
 
-    return GX_NULL;
+    return status;
 }
