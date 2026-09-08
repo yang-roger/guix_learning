@@ -53,7 +53,7 @@ struct GX_THEME;
 
 #define GX_LANGUAGE_HEADER_NAME_SIZE 64
 
-/* Degine binary resource header type. */
+/* Define binary resource header type. */
 struct GX_RESOURCE_HEADER
 {
     USHORT magic_number;
