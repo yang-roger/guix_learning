@@ -1411,9 +1411,9 @@ static inline void gx_canvas_draw_radius_(INT xcenter, INT ycenter, UINT r, INT 
     _gx_canvas_line_draw((GX_VALUE)xcenter, (GX_VALUE)ycenter, point.x, point.y);
 }
 
-typedef void (*gx_arc_draw_fptr)(GX_DRAW_CONTEXT* context, INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
+typedef void GX_ARC_DRAW_FUNCTION(GX_DRAW_CONTEXT* context, INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
 
-static gx_arc_draw_fptr gx_arc_draw_function_get_(UINT brush_width, UINT brush_style, const GX_DISPLAY* display)
+static GX_ARC_DRAW_FUNCTION* gx_arc_draw_function_get_(UINT brush_width, UINT brush_style, const GX_DISPLAY* display)
 {
     if (brush_width == 1)
     {
@@ -2289,7 +2289,7 @@ UINT _gx_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT 
 
     GX_DISPLAY* display = context->display;
 
-    gx_arc_draw_fptr outline_function = gx_arc_draw_function_get_(brush_width, brush.style, display);
+    GX_ARC_DRAW_FUNCTION* outline_function = gx_arc_draw_function_get_(brush_width, brush.style, display);
 
     gx_canvas_angle_normalize_(start_angle, end_angle);
 
@@ -2392,7 +2392,7 @@ UINT _gx_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT 
 
     GX_DISPLAY* display = context->display;
 
-    gx_arc_draw_fptr outline_function = gx_arc_draw_function_get_(brush_width, brush.style, display);
+    GX_ARC_DRAW_FUNCTION* outline_function = gx_arc_draw_function_get_(brush_width, brush.style, display);
 
     gx_canvas_angle_normalize_(start_angle, end_angle);
 
