@@ -58,34 +58,23 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_16bpp_vertical_pattern_line_draw(GX_DRAW_CONTEXT *context, INT ystart, INT yend, INT xpos)
+void _gx_display_driver_16bpp_vertical_pattern_line_draw(GX_DRAW_CONTEXT* context, INT ystart, INT yend, INT xpos)
 {
-INT     row;
-USHORT *put;
-USHORT *rowstart;
-ULONG   pattern;
-ULONG   mask;
-USHORT  on_color;
-USHORT  off_color;
+    // pick up the requested pattern and mask
+    ULONG pattern = context->brush.line_pattern;
+    ULONG mask = context->brush.pattern_mask;
+    USHORT on_color = (USHORT)context->brush.line_color;
+    USHORT off_color = (USHORT)context->brush.fill_color;
 
-INT     len = yend - ystart + 1;
+    // pick up starting address of canvas memory
+    USHORT* put = (USHORT*)context->memory;
+    GX_CALCULATE_PUTROW(put, xpos, ystart, context);
 
-    /* pick up starting address of canvas memory */
-    rowstart =  (USHORT *)context->memory;
+    INT length = yend - ystart + 1;
 
-    GX_CALCULATE_PUTROW(rowstart, xpos, ystart, context);
-
-    /* pick up the requested pattern and mask */
-    pattern = context->brush.line_pattern;
-    mask = context->brush.pattern_mask;
-    on_color = (USHORT)context->brush.line_color;
-    off_color = (USHORT)context->brush.fill_color;
-
-    /* draw line from top to bottom */
-    for (row = 0; row < len; row++)
+    // draw line from top to bottom
+    for (INT row = 0; row < length; ++row)
     {
-        put = rowstart;
-
         if (pattern & mask)
         {
             *put = on_color;
@@ -101,10 +90,10 @@ INT     len = yend - ystart + 1;
             mask = 0x80000000;
         }
 
-        /* advance to the next scaneline */
-        rowstart +=  context->pitch;
+        put += context->pitch;
     }
-    /* save current masks value back to brush */
+
+    // save current masks value back to brush
     context->brush.pattern_mask = mask;
 }
 
