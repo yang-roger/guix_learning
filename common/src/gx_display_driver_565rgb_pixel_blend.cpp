@@ -61,20 +61,16 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_565rgb_pixel_blend(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha)
+void _gx_display_driver_565rgb_pixel_blend(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha)
 {
-USHORT   bcolor;
-USHORT  *put;
-
-    /* Is the pixel non-transparent? */
     if (alpha > 0)
     {
-        /* calculate address of pixel */
-        put = (USHORT *)context->memory;
+        // calculate address of pixel
+        USHORT* put = (USHORT*)context->memory;
         GX_CALCULATE_PUTROW(put, x, y, context);
 
-        /* read background color */
-        bcolor = *put;
+        // read background color
+        USHORT bcolor = *put;
 
         *put = gx_color_565rgb_blend((USHORT)fcolor, alpha, bcolor);
     }
