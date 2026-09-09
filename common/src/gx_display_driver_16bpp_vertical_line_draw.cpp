@@ -61,21 +61,13 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_16bpp_vertical_line_draw(GX_DRAW_CONTEXT *context, INT ystart, INT yend, INT xpos, INT width, GX_COLOR color)
+void _gx_display_driver_16bpp_vertical_line_draw(GX_DRAW_CONTEXT* context, INT ystart, INT yend, INT xpos, INT width, GX_COLOR color)
 {
-INT     row;
-INT     column;
-USHORT *put;
-USHORT *rowstart;
-INT     len = yend - ystart + 1;
 #if defined GX_BRUSH_ALPHA_SUPPORT
-GX_UBYTE alpha;
-
-    alpha = context->brush.alpha;
+    GX_UBYTE alpha = context->brush.alpha;
     if (alpha == 0)
     {
-        /* Nothing to drawn. Just return. */
-        return;
+        return; // Nothing to drawn. Just return.
     }
     if (alpha != 0xff)
     {
@@ -84,23 +76,23 @@ GX_UBYTE alpha;
     }
 #endif
 
-    /* pick up starting address of canvas memory */
-    rowstart = (USHORT *)context->memory;
-
+    // pick up starting address of canvas memory
+    USHORT* rowstart = (USHORT*)context->memory;
     GX_CALCULATE_PUTROW(rowstart, xpos, ystart, context);
 
-    /* draw line from top to bottom */
-    for (row = 0; row < len; row++)
-    {
-        put = rowstart;
+    INT length = yend - ystart + 1;
 
-        /* draw line width from left to right */
-        for (column = 0; column < width; column++)
+    // draw 1-pixel height line from top to bottom
+    for (INT row = 0; row < length; ++row)
+    {
+        USHORT* put = rowstart;
+
+        // draw line width from left to right
+        for (INT column = 0; column < width; ++column)
         {
             *put++ = (USHORT)color;
         }
 
-        /* advance to the next scaneline */
         rowstart += context->pitch;
     }
 }
