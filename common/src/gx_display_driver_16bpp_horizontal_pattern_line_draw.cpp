@@ -58,35 +58,24 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_16bpp_horizontal_pattern_line_draw(GX_DRAW_CONTEXT *context, INT xstart, INT xend, INT ypos)
+void _gx_display_driver_16bpp_horizontal_pattern_line_draw(GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT ypos)
 {
-INT     column;
-USHORT *put;
-USHORT *rowstart;
-ULONG   pattern;
-ULONG   mask;
-USHORT  on_color;
-USHORT  off_color;
+    // draw 1-pixel height lines to fill width
 
-INT     len = xend - xstart + 1;
+    // pick up the requested pattern and mask
+    ULONG pattern = context->brush.line_pattern;
+    ULONG mask = context->brush.pattern_mask;
+    USHORT on_color = (USHORT)context->brush.line_color;
+    USHORT off_color = (USHORT)context->brush.fill_color;
 
-    /* pick up start address of canvas memory */
-    rowstart = (USHORT *)context->memory;
+    // pick up start address of canvas memory
+    USHORT* put = (USHORT*)context->memory;
+    GX_CALCULATE_PUTROW(put, xstart, ypos, context);
 
-    GX_CALCULATE_PUTROW(rowstart, xstart, ypos, context);
-
-    /* draw 1-pixel hi lines to fill width */
-
-    /* pick up the requested pattern and mask */
-    pattern = context->brush.line_pattern;
-    mask = context->brush.pattern_mask;
-    on_color = (USHORT)context->brush.line_color;
-    off_color = (USHORT)context->brush.fill_color;
-
-    put = rowstart;
+    INT length = xend - xstart + 1;
 
     /* draw one line, left to right */
-    for (column = 0; column < len; column++)
+    for (INT column = 0; column < length; ++column)
     {
         if (pattern & mask)
         {
@@ -96,6 +85,7 @@ INT     len = xend - xstart + 1;
         {
             *put++ = off_color;
         }
+
         mask >>= 1;
         if (!mask)
         {
@@ -103,7 +93,7 @@ INT     len = xend - xstart + 1;
         }
     }
 
-    /* save current masks value back to brush */
+    // save current masks value back to brush
     context->brush.pattern_mask = mask;
 }
 
