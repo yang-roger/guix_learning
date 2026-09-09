@@ -1624,14 +1624,14 @@ UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX
         }
     }
 
-    bool simple_line = false;
+    bool easy_line = false;
 
     if ((brush_width == 1) || !(brush.style & GX_BRUSH_ROUND))
     {
         // brush is 1 pixel wide or not round, check for horizontal or vertical
         if ((x_start == x_end) || (y_start == y_end))
         {
-            simple_line = true;
+            easy_line = true;
         }
     }
 
@@ -1657,7 +1657,7 @@ UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX
         }
     }
 
-    if (simple_line)
+    if (easy_line)
     {
         if (!brush.line_pattern)
         {
@@ -1703,7 +1703,7 @@ UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX
 
         context->clip = &clip_rect;
 
-        if (simple_line)
+        if (easy_line)
         {
             if (y_start == y_end) // horizontal_line
             {
@@ -1782,7 +1782,7 @@ UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX
                 }
             }
         }
-        else // !simple_line
+        else // !easy_line
         {
             if (anti_aliased)
             {
