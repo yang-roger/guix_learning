@@ -59,45 +59,34 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_16bpp_canvas_copy(GX_CANVAS *canvas, GX_CANVAS *composite)
+void _gx_display_driver_16bpp_canvas_copy(GX_CANVAS* canvas, GX_CANVAS* composite)
 {
-GX_RECTANGLE dirty;
-GX_RECTANGLE overlap;
-USHORT      *read;
-USHORT      *write;
-INT          width;
-INT          row;
-
 #ifdef GX_ENABLE_CANVAS_PARTIAL_FRAME_BUFFER
     if (canvas->status & GX_CANVAS_PARTIAL_FRAME_BUFFER)
     {
-        /* Not supported. */
-        return;
+        return; // Not supported.
     }
 #endif
 
+    GX_RECTANGLE dirty;
     canvas->display_area_(&dirty);
 
+    GX_RECTANGLE overlap;
     if (gx_rectangle_intersect_(dirty, composite->dirty_area, &overlap))
     {
-        width = overlap.right - overlap.left + 1;
-        read = (USHORT *)canvas->memory;
-
-        /* index into starting row */
+        USHORT* read = (USHORT*)canvas->memory;
         read += (overlap.top - dirty.top) * canvas->x_resolution;
-
-        /* index into pixel */
-
         read += overlap.left - dirty.left;
 
-        /* calculate the write pointer */
-        write = (USHORT *)composite->memory;
+        USHORT* write = (USHORT*)composite->memory;
         write += overlap.top * composite->x_resolution;
         write += overlap.left;
 
-        for (row = overlap.top; row <= overlap.bottom; row++)
+        size_t width_in_bytes = overlap.width_() * sizeof(USHORT);
+
+        for (INT row = overlap.top; row <= overlap.bottom; ++row)
         {
-            memcpy(write, read, (size_t)(width * 2)); /* Use case of memcpy is verified. */
+            memcpy(write, read, width_in_bytes); // Use case of memcpy is verified.
 
             write += composite->x_resolution;
             read += canvas->x_resolution;
