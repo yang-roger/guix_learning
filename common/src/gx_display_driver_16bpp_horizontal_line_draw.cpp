@@ -62,24 +62,14 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_16bpp_horizontal_line_draw(GX_DRAW_CONTEXT *context, INT xstart, INT xend, INT ypos, INT width, GX_COLOR color)
+void _gx_display_driver_16bpp_horizontal_line_draw(GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT ypos, INT width, GX_COLOR color)
 {
-INT     row;
-INT     column;
-USHORT *put;
-USHORT *rowstart;
-INT     len = xend - xstart + 1;
-
 #if defined GX_BRUSH_ALPHA_SUPPORT
-GX_UBYTE alpha;
-
-    alpha = context->brush.alpha;
+    GX_UBYTE alpha = context->brush.alpha;
     if (alpha == 0)
     {
-        /* Nothing to drawn. Just return. */
-        return;
+        return; // Nothing to drawn. Just return.
     }
-
     if (alpha != 0xff)
     {
         _gx_display_driver_horizontal_line_alpha_draw(context, xstart, xend, ypos, width, color, alpha);
@@ -87,21 +77,23 @@ GX_UBYTE alpha;
     }
 #endif
 
-    /* pick up start address of canvas memory */
-    rowstart = (USHORT *)context->memory;
-
+    // pick up start address of canvas memory
+    USHORT* rowstart = (USHORT*)context->memory;
     GX_CALCULATE_PUTROW(rowstart, xstart, ypos, context);
 
-    /* draw 1-pixel hi lines to fill width */
-    for (row = 0; row < width; row++)
-    {
-        put = rowstart;
+    INT length = xend - xstart + 1;
 
-        /* draw one line, left to right */
-        for (column = 0; column < len; column++)
+    // draw 1-pixel height lines to fill width
+    for (INT row = 0; row < width; ++row)
+    {
+        USHORT* put = rowstart;
+
+        // draw one line, left to right
+        for (INT column = 0; column < length; ++column)
         {
             *put++ = (USHORT)color;
         }
+
         rowstart += context->pitch;
     }
 
