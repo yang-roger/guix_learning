@@ -85,6 +85,17 @@ UINT GX_WINDOW::close_()
     return GX_SUCCESS;
 }
 
+void GX_WINDOW::client_children_scroll_shift_(GX_VALUE x_scroll, GX_VALUE y_scroll)
+{
+    for (GX_WIDGET* child = first_child; child; child = child->next)
+    {
+        if (child->is_client_())
+        {
+            child->scroll_shift_(x_scroll, y_scroll, GX_TRUE);
+        }
+    }
+}
+
 void GX_WINDOW::scroll_(GX_VALUE x_scroll, GX_VALUE y_scroll)
 {
     if (!is_visible_())
@@ -102,13 +113,7 @@ void GX_WINDOW::scroll_(GX_VALUE x_scroll, GX_VALUE y_scroll)
         }
     }
 
-    for (GX_WIDGET* child = first_child; child; child = child->next)
-    {
-        if (child->is_client_())
-        {
-            child->scroll_shift_(x_scroll, y_scroll, GX_TRUE);
-        }
-    }
+    client_children_scroll_shift_(x_scroll, y_scroll);
 
     if (has_transparent_nonclient_child)
     {

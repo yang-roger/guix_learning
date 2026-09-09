@@ -79,6 +79,9 @@ struct GX_WINDOW : public GX_WIDGET
     void draw_();
     UINT event_process_(GX_EVENT* event_ptr);
 
+protected:
+    void client_children_scroll_shift_(GX_VALUE x_scroll, GX_VALUE y_scroll);
+
 private:
     void view_add_(const GX_RECTANGLE& rect);
     bool view_fold_(const GX_RECTANGLE& rect);

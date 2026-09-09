@@ -325,13 +325,7 @@ void GX_TREE_VIEW::scroll_(GX_VALUE x_scroll, GX_VALUE y_scroll)
     x_shift = (GX_VALUE)(x_shift + x_scroll);
     y_shift = (GX_VALUE)(y_shift + y_scroll);
 
-    for (GX_WIDGET* child = first_child; child; child = child->next)
-    {
-        if (child->is_client_())
-        {
-            child->scroll_shift_(x_scroll, y_scroll, GX_TRUE);
-        }
-    }
+    client_children_scroll_shift_(x_scroll, y_scroll);
 
     block_move_(&block, x_scroll, y_scroll);
 
