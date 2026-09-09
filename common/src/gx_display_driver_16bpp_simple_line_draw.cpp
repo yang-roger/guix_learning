@@ -19,10 +19,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-
 #define PIXEL_WRITE(loc, val) (*(loc) = ((USHORT)val))
-
-
 
 #include "gx_display_driver.h"
 
@@ -69,40 +66,24 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_16bpp_simple_line_draw(GX_DRAW_CONTEXT *context, INT xstart, INT ystart, INT xend, INT yend)
+void _gx_display_driver_16bpp_simple_line_draw(GX_DRAW_CONTEXT* context, INT xstart, INT ystart, INT xend, INT yend)
 {
-INT           curx;
-INT           cury;
-INT           x_sign;
-INT           y_sign;
-INT           decision;
-INT           nextx;
-INT           nexty;
-INT           y_increment;
-GX_POINT      mid_point;
-GX_RECTANGLE  half_rectangle;
-GX_RECTANGLE  half_over;
-INT           sign;
-INT           steps;
-
-USHORT       *put;
-USHORT       *next_put;
-
-GX_BOOL       clipped = GX_TRUE;
-INT           dx = GX_ABS(xend - xstart);
-INT           dy = GX_ABS(yend - ystart);
-
-GX_RECTANGLE *clip = context->clip;
-GX_COLOR      linecolor = context->brush.line_color;
+    INT           curx;
+    INT           cury;
+    INT           nextx;
+    INT           nexty;
+    INT           decision;
+    INT           y_increment;
+    GX_POINT      mid_point;
+    GX_RECTANGLE  half_rectangle;
+    INT           sign;
+    INT           steps;
 
 #if defined GX_BRUSH_ALPHA_SUPPORT
-GX_UBYTE alpha;
-
-    alpha = context->brush.alpha;
+    GX_UBYTE alpha = context->brush.alpha;
     if (alpha == 0)
     {
-        /* Nothing to drawn. Just return. */
-        return;
+        return; // Nothing to drawn. Just return.
     }
     if (alpha != 0xff)
     {
@@ -111,13 +92,17 @@ GX_UBYTE alpha;
     }
 #endif
 
+    INT dx = GX_ABS(xend - xstart);
+    INT dy = GX_ABS(yend - ystart);
+
     if (((dx >= dy && (xstart > xend)) || ((dy > dx) && ystart > yend)))
     {
         GX_SWAP_VALS(xend, xstart);
         GX_SWAP_VALS(yend, ystart);
     }
-    x_sign = (xend - xstart) / dx;
-    y_sign = (yend - ystart) / dy;
+
+    INT x_sign = (xend - xstart) / dx;
+    INT y_sign = (yend - ystart) / dy;
 
     if (y_sign > 0)
     {
@@ -128,35 +113,31 @@ GX_UBYTE alpha;
         y_increment = 0 - context->pitch;
     }
 
-    put = (USHORT *)(context->memory);
+    USHORT* put = (USHORT*)(context->memory);
     GX_CALCULATE_PUTROW(put, xstart, ystart, context);
 
-    next_put = (USHORT *)(context->memory);
+    USHORT* next_put = (USHORT*)(context->memory);
     GX_CALCULATE_PUTROW(next_put, xend, yend, context);
 
-    if (clip->contain_point_((GX_VALUE)xstart, (GX_VALUE)ystart) &&
-        clip->contain_point_((GX_VALUE)xend, (GX_VALUE)yend))
-    {
-        clipped = GX_FALSE;
-    }
+    GX_COLOR linecolor = context->brush.line_color;
+    GX_RECTANGLE* clip = context->clip;
 
-    if (clipped)
+    if (!clip->contain_point_((GX_VALUE)xstart, (GX_VALUE)ystart) ||
+        !clip->contain_point_((GX_VALUE)xend, (GX_VALUE)yend))
     {
-        /* here if we must do clipping in the inner loop, because one
-           or both of the end points are outside clipping rectangle */
+        // here if we must do clipping in the inner loop, because one
+        // or both of the end points are outside clipping rectangle
 
-        /* Calculate the middle point of the line.  */
+        // Calculate the middle point of the line.
         mid_point.x = (GX_VALUE)((xend + xstart) >> 1);
         mid_point.y = (GX_VALUE)((yend + ystart) >> 1);
 
-        /* Judge the clip in which side.  */
+        // Judge the clip in which side.
         if (clip->contain_point_(mid_point))
         {
-
-            /* the clip in two sides.  */
+            // the clip in two sides.
             if (dx >= dy)
             {
-                /* walk out the clipping point.  */
                 for (curx = xstart, cury = ystart, decision = (dx >> 1); curx < mid_point.x;
                      curx++, decision += dy)
                 {
@@ -173,8 +154,10 @@ GX_UBYTE alpha;
                     {
                         break;
                     }
+
                     put++;
                 }
+
                 for (; curx <= mid_point.x;
                      curx++, decision += dy)
                 {
@@ -184,9 +167,11 @@ GX_UBYTE alpha;
                         cury += y_sign;
                         put += y_increment;
                     }
+
                     PIXEL_WRITE(put, linecolor);
                     put++;
                 }
+
                 for (nextx = xend, nexty = yend, decision = (dx >> 1); nextx > mid_point.x;
                      nextx--, decision += dy)
                 {
@@ -196,12 +181,14 @@ GX_UBYTE alpha;
                         nexty -= y_sign;
                         next_put -= y_increment;
                     }
+
                     if (nextx <= clip->right &&
                         nexty >= clip->top &&
                         nexty <= clip->bottom)
                     {
                         break;
                     }
+
                     next_put--;
                 }
 
@@ -214,6 +201,7 @@ GX_UBYTE alpha;
                         nexty -= y_sign;
                         next_put -= y_increment;
                     }
+
                     PIXEL_WRITE(next_put, linecolor);
                     next_put--;
                 }
@@ -229,12 +217,14 @@ GX_UBYTE alpha;
                         nextx -= x_sign;
                         next_put -= x_sign;
                     }
+
                     if (nextx >= clip->left &&
                         nextx <= clip->right &&
                         nexty <= clip->bottom)
                     {
                         break;
                     }
+
                     next_put -= context->pitch;
                 }
 
@@ -247,11 +237,11 @@ GX_UBYTE alpha;
                         nextx -= x_sign;
                         next_put -= x_sign;
                     }
+
                     PIXEL_WRITE(next_put, linecolor);
                     next_put -= context->pitch;
                 }
 
-                /* walk out the clipping point.  */
                 for (curx = xstart, cury = ystart, decision = (dy >> 1); cury < mid_point.y;
                      cury++, decision += dx)
                 {
@@ -268,8 +258,10 @@ GX_UBYTE alpha;
                     {
                         break;
                     }
+
                     put += context->pitch;
                 }
+
                 for (; cury <= mid_point.y;
                      cury++, decision += dx)
                 {
@@ -279,6 +271,7 @@ GX_UBYTE alpha;
                         curx += x_sign;
                         put += x_sign;
                     }
+
                     PIXEL_WRITE(put, linecolor);
                     put += context->pitch;
                 }
@@ -286,7 +279,7 @@ GX_UBYTE alpha;
         }
         else
         {
-            /* The clip stay at one side.  */
+            // The clip stay at one side.
             if (dx >= dy)
             {
                 half_rectangle.left = (GX_VALUE)xstart;
@@ -302,7 +295,7 @@ GX_UBYTE alpha;
                     half_rectangle.bottom = (GX_VALUE)ystart;
                 }
 
-                if (gx_rectangle_intersect_(*clip, half_rectangle, &half_over))
+                if (gx_rectangle_intersect_(*clip, half_rectangle))
                 {
                     curx = xstart;
                     cury = ystart;
@@ -319,6 +312,7 @@ GX_UBYTE alpha;
                     y_sign = 0 - y_sign;
                     put = next_put;
                 }
+
                 for (decision = (dx >> 1); steps > 0; curx += sign, decision += dy, steps--)
                 {
                     if (decision >= dx)
@@ -335,6 +329,7 @@ GX_UBYTE alpha;
                     {
                         PIXEL_WRITE(put, linecolor);
                     }
+
                     put += sign;
                 }
             }
@@ -353,7 +348,7 @@ GX_UBYTE alpha;
                     half_rectangle.left = mid_point.x;
                 }
 
-                if (gx_rectangle_intersect_(*clip, half_rectangle, &half_over))
+                if (gx_rectangle_intersect_(*clip, half_rectangle))
                 {
                     curx = xstart;
                     cury = ystart;
@@ -380,6 +375,7 @@ GX_UBYTE alpha;
                         curx += x_sign;
                         put += x_sign;
                     }
+
                     if (curx >= clip->left &&
                         curx <= clip->right &&
                         cury >= clip->top &&
@@ -387,6 +383,7 @@ GX_UBYTE alpha;
                     {
                         PIXEL_WRITE(put, linecolor);
                     }
+
                     put += y_increment;
                 }
             }
@@ -394,18 +391,17 @@ GX_UBYTE alpha;
     }
     else
     {
-        /* here if both line ends lie within clipping rectangle, we can
-           run a faster inner loop */
+        // here if both line ends lie within clipping rectangle, we can
+        // run a faster inner loop
         if (dx >= dy)
         {
-            put = (USHORT *)(context->memory) + ystart * context->pitch + xstart;
-            next_put = (USHORT *)(context->memory) + yend * context->pitch + xend;
+            put = (USHORT*)(context->memory) + ystart * context->pitch + xstart;
+            next_put = (USHORT*)(context->memory) + yend * context->pitch + xend;
 
             for (curx = xstart, cury = ystart, nextx = xend, nexty = yend,
                  decision = (dx >> 1); curx <= nextx; curx++, nextx--,
                  decision += dy)
             {
-
                 if (decision >= dx)
                 {
                     decision -= dx;
@@ -415,6 +411,7 @@ GX_UBYTE alpha;
                     put += y_increment;
                     next_put -= y_increment;
                 }
+
                 PIXEL_WRITE(put, linecolor);
                 PIXEL_WRITE(next_put, linecolor);
 
@@ -424,7 +421,6 @@ GX_UBYTE alpha;
         }
         else
         {
-
             for (curx = xstart, cury = ystart, nextx = xend, nexty = yend,
                  decision = (dy >> 1); cury <= nexty; cury++, nexty--,
                  decision += dx)
@@ -438,6 +434,7 @@ GX_UBYTE alpha;
                     put += x_sign;
                     next_put -= x_sign;
                 }
+
                 PIXEL_WRITE(put, linecolor);
                 PIXEL_WRITE(next_put, linecolor);
 
