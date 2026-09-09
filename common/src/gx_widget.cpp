@@ -1671,23 +1671,32 @@ void GX_WIDGET::background_draw_(GX_RESOURCE_ID upper_color,
 
     if (fill && !(style & GX_STYLE_TRANSPARENT))
     {
-        GX_RECTANGLE fillrect;
-        client_area_get_(&fillrect);
+        GX_RECTANGLE client_rect;
+        client_area_get_(&client_rect);
 
         context->brush_set_(upper_color, upper_color, GX_BRUSH_SOLID_FILL);
         context->brush.width = 0;
 
         if (upper_color != lower_color)
         {
-            fillrect.bottom = (GX_VALUE)(fillrect.top + height_() / 2 - 1);
-            _gx_canvas_rectangle_draw(&fillrect);
+            GX_RECTANGLE fill_rect;
+
+            fill_rect.left = client_rect.left;
+            fill_rect.right = client_rect.right;
+
+            fill_rect.top = client_rect.top;
+            fill_rect.bottom = (GX_VALUE)(client_rect.top + client_rect.height_() / 2 - 1);
+            _gx_canvas_rectangle_draw(&fill_rect);
 
             context->fill_color_set_(lower_color);
-            fillrect.top = (GX_VALUE)(fillrect.bottom + 1);
-            fillrect.bottom = (GX_VALUE)(bottom_() - 1);
+            fill_rect.top = (GX_VALUE)(fill_rect.bottom + 1);
+            fill_rect.bottom = client_rect.bottom;
+            _gx_canvas_rectangle_draw(&fill_rect);
         }
-
-        _gx_canvas_rectangle_draw(&fillrect);
+        else
+        {
+            _gx_canvas_rectangle_draw(&client_rect);
+        }
     }
 }
 
