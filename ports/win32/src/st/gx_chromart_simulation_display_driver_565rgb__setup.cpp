@@ -16,25 +16,31 @@
 /**                                                                       */
 /** GUIX Component                                                        */
 /**                                                                       */
-/**   Display Management (Display)                                        */
+/**   ST Simulation Display Management (Display)                          */
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
 
+/* Include necessary system files.  */
+
+#include "gx_display_driver.h"
+
+
+extern VOID _gx_chromart_simulation_display_driver_565rgb_pixelmap_draw(GX_DRAW_CONTEXT *context,
+                                                                        INT xpos, INT ypos, GX_PIXELMAP *pixelmap);
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
-/*    _gx_display_driver_1555xrgb_setup                                   */
-/*                                                           6.1          */
+/*    _gx_chromart_simulation_display_driver_565rgb_setup                 */
+/*                                                           6.1.3        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Kenneth Maxwell, Microsoft Corporation                              */
 /*                                                                        */
 /*  DESCRIPTION                                                           */
 /*                                                                        */
-/*    Generic 16-bit 1555XRGB color format display driver setup routine.  */
+/*    This function initiates ST simuation display driver.                */
 /*                                                                        */
 /*  INPUT                                                                 */
 /*                                                                        */
@@ -45,8 +51,7 @@
 /*                                                                        */
 /*  OUTPUT                                                                */
 /*                                                                        */
-/*    _gx_display_driver_565rgb_setup       565rgb format display driver  */
-/*                                            setup routine               */
+/*    None                                                                */
 /*                                                                        */
 /*  CALLS                                                                 */
 /*                                                                        */
@@ -54,26 +59,16 @@
 /*                                                                        */
 /*  CALLED BY                                                             */
 /*                                                                        */
-/*    GUIX Internal Code                                                  */
+/*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_1555xrgb_setup(GX_DISPLAY *display, void *aux_data,
-                                       void (*toggle_function)(GX_CANVAS *canvas,
-                                                               GX_RECTANGLE *dirty_area))
+VOID _gx_chromart_simulation_display_driver_565rgb_setup(GX_DISPLAY *display, VOID *aux_data,
+                                                         VOID (*toggle_function)(GX_CANVAS *canvas,
+                                                                                 GX_RECTANGLE *dirty_area))
 {
+    /* Call generic 565rgb display driver setup. */
     _gx_display_driver_565rgb_setup(display, aux_data, toggle_function);
 
-    display->color_format = GX_COLOR_FORMAT_1555XRGB;
-    display->driver_native_color_get                = _gx_display_driver_1555xrgb_native_color_get;
-    display->driver_canvas_blend                    = _gx_display_driver_1555xrgb_canvas_blend;
-    display->driver_pixel_blend                     = _gx_display_driver_1555xrgb_pixel_blend;
-    display->driver_pixelmap_rotate                 = _gx_display_driver_1555xrgb_pixelmap_rotate;
-    display->driver_pixelmap_draw                   = _gx_display_driver_1555xrgb_pixelmap_draw;
-    display->driver_pixelmap_blend                  = _gx_display_driver_1555xrgb_pixelmap_blend;
-
-#if defined(GX_SOFTWARE_DECODER_SUPPORT)
-    display->driver_jpeg_draw                       = _gx_display_driver_1555xrgb_jpeg_draw;
-    display->driver_png_draw                        = _gx_display_driver_1555xrgb_png_draw;
-#endif
+    display->driver_pixelmap_draw                 = _gx_chromart_simulation_display_driver_565rgb_pixelmap_draw;
 }
 

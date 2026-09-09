@@ -41,9 +41,9 @@
 #ifndef GX_DAVE2D_SIMULATION_DISPLAY_H
 #define GX_DAVE2D_SIMULATION_DISPLAY_H
 
+#include "gx_display_driver.h"
 #include "gx_system.h"
 #include "gx_utility.h"
-#include "gx_display.h"
 #include "gx_canvas.h"
 
 VOID _gx_dave2d_simulation_display_driver_16bpp_compressed_glyph_1bit_draw(GX_DRAW_CONTEXT *context, GX_RECTANGLE *draw_area,

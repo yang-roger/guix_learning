@@ -20,7 +20,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 #if defined(GX_MOUSE_SUPPORT)
 #if !defined(GX_HARDWARE_MOUSE_SUPPORT)

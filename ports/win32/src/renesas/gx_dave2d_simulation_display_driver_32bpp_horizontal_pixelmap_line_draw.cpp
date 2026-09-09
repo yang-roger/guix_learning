@@ -73,7 +73,7 @@ INT                xval;
 GX_UBYTE           count;
 GX_UBYTE           alpha_value;
 GX_COLOR           pixel;
-GX_CONST GX_UBYTE *get;
+GX_CONST GX_UBYTE *get = GX_NULL;
 GX_BOOL            has_alpha;
 GX_PIXELMAP       *pixelmap;
 VOID               (*write_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color);

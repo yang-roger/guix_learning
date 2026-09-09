@@ -19,7 +19,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 #include "gx_context.h"
 #include "gx_canvas.h"

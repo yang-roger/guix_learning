@@ -606,6 +606,7 @@ INT           buffer_size;
 
     pre_unit = GX_NULL;
     unit = arabic_unit;
+    pre_bidi_unit = GX_NULL;
     bidi_unit = context->unit_list;
 
     /* Start shaping. */

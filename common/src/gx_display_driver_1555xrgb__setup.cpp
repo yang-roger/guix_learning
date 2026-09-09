@@ -20,13 +20,13 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
-/*    _gx_display_driver_332rgb_setup                                     */
+/*    _gx_display_driver_1555xrgb_setup                                   */
 /*                                                           6.1          */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -34,7 +34,7 @@
 /*                                                                        */
 /*  DESCRIPTION                                                           */
 /*                                                                        */
-/*    Generic 8-bit 332RGB color format display driver setup routine.     */
+/*    Generic 16-bit 1555XRGB color format display driver setup routine.  */
 /*                                                                        */
 /*  INPUT                                                                 */
 /*                                                                        */
@@ -45,7 +45,8 @@
 /*                                                                        */
 /*  OUTPUT                                                                */
 /*                                                                        */
-/*    None                                                                */
+/*    _gx_display_driver_565rgb_setup       565rgb format display driver  */
+/*                                            setup routine               */
 /*                                                                        */
 /*  CALLS                                                                 */
 /*                                                                        */
@@ -56,37 +57,23 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_332rgb_setup(GX_DISPLAY *display, void *aux_data,
-                                     void (*toggle_function)(GX_CANVAS *canvas,
-                                                             GX_RECTANGLE *dirty_area))
+void _gx_display_driver_1555xrgb_setup(GX_DISPLAY* display, void* aux_data,
+                                       GX_CANVAS_TOGGLE_FUNCTION* toggle_function)
 {
-    _gx_display_driver_8bit_palette_setup(display, aux_data, toggle_function);
+    _gx_display_driver_565rgb_setup(display, aux_data, toggle_function);
 
-    display->color_format                         = GX_COLOR_FORMAT_8BIT_PACKED_PIXEL;
-    display->driver_native_color_get              = _gx_display_driver_332rgb_native_color_get;
-    display->driver_pixelmap_draw                 = _gx_display_driver_332rgb_pixelmap_draw;
-    display->driver_alphamap_draw                 = _gx_display_driver_generic_alphamap_draw;
-    display->driver_anti_aliased_line_draw        = _gx_display_driver_generic_aliased_line_draw;
-    display->driver_anti_aliased_wide_line_draw   = _gx_display_driver_generic_aliased_wide_line_draw;
+    display->color_format                           = GX_COLOR_FORMAT_1555XRGB;
 
-#if defined(GX_ARC_DRAWING_SUPPORT)
-    display->driver_anti_aliased_circle_draw      = _gx_display_driver_generic_aliased_circle_draw;
-    display->driver_anti_aliased_ellipse_draw     = _gx_display_driver_generic_aliased_ellipse_draw;
-    display->driver_anti_aliased_arc_draw         = _gx_display_driver_generic_aliased_arc_draw;
-    display->driver_anti_aliased_wide_circle_draw = _gx_display_driver_generic_aliased_wide_circle_draw;
-    display->driver_anti_aliased_wide_ellipse_draw = _gx_display_driver_generic_aliased_wide_ellipse_draw;
-    display->driver_anti_aliased_wide_arc_draw    = _gx_display_driver_generic_aliased_wide_arc_draw;
+    display->driver_native_color_get                = _gx_display_driver_1555xrgb_native_color_get;
+    display->driver_canvas_blend                    = _gx_display_driver_1555xrgb_canvas_blend;
+    display->driver_pixel_blend                     = _gx_display_driver_1555xrgb_pixel_blend;
+    display->driver_pixelmap_rotate                 = _gx_display_driver_1555xrgb_pixelmap_rotate;
+    display->driver_pixelmap_draw                   = _gx_display_driver_1555xrgb_pixelmap_draw;
+    display->driver_pixelmap_blend                  = _gx_display_driver_1555xrgb_pixelmap_blend;
 
+#if defined(GX_SOFTWARE_DECODER_SUPPORT)
+    display->driver_jpeg_draw                       = _gx_display_driver_1555xrgb_jpeg_draw;
+    display->driver_png_draw                        = _gx_display_driver_1555xrgb_png_draw;
 #endif
-
-    display->driver_horizontal_pixelmap_line_draw = _gx_display_driver_332rgb_horizontal_pixelmap_line_draw;
-    display->driver_pixel_blend                   = _gx_display_driver_332rgb_pixel_blend;
-    display->driver_pixelmap_blend                = _gx_display_driver_8bpp_pixelmap_blend;
-    display->driver_pixelmap_rotate               = _gx_display_driver_332rgb_pixelmap_rotate;
-    display->driver_4bit_glyph_draw               = _gx_display_driver_generic_glyph_4bit_draw;
-    display->driver_8bit_glyph_draw               = GX_NULL;
-    display->driver_8bit_compressed_glyph_draw    = GX_NULL;
-    display->driver_4bit_compressed_glyph_draw    = GX_NULL;
-    display->driver_1bit_compressed_glyph_draw    = GX_NULL;
 }
 

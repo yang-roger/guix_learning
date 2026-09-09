@@ -90,7 +90,7 @@ GX_UBYTE *glyph_data;
 UINT      row;
 GX_VALUE  pixel_per_row;
 GX_VALUE  pixel_in_first_byte;
-GX_VALUE  pixel_in_last_byte;
+GX_VALUE  pixel_in_last_byte = 0;
 GX_COLOR  text_color;
 UINT      y_height;
 GX_UBYTE  alpha;

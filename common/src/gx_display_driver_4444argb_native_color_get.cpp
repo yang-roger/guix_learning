@@ -19,7 +19,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 /**************************************************************************/
 /*                                                                        */
@@ -55,13 +55,11 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-GX_COLOR _gx_display_driver_4444argb_native_color_get(GX_DISPLAY *display, GX_COLOR rawcolor)
+GX_COLOR _gx_display_driver_4444argb_native_color_get(GX_DISPLAY* /*display*/, GX_COLOR rawcolor)
 {
-GX_COLOR native;
-
-    GX_PARAMETER_NOT_USED(display);
-
-    native = (GX_COLOR)(((rawcolor & 0xf0000000) >> 16) | ((rawcolor & 0x00f00000) >> 12) | ((rawcolor & 0x00f000) >> 8) | ((rawcolor & 0x000000f0) >> 4));
-    return(native);
+    return (GX_COLOR)(((rawcolor & 0xf0000000) >> 16) |
+                      ((rawcolor & 0x00f00000) >> 12) |
+                      ((rawcolor & 0x0000f000) >> 8)  |
+                      ((rawcolor & 0x000000f0) >> 4));
 }
 

@@ -20,17 +20,17 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 #if defined(GX_MOUSE_SUPPORT) && !defined(GX_HARDWARE_MOUSE_SUPPORT)
-static GX_COLOR mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESOLUTION] = { 0 };
+static GX_COLOR mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESOLUTION] = {0};
 #endif
 
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
-/*    _gx_display_driver_24xrgb_setup                                     */
+/*    _gx_display_driver_32argb_setup                                     */
 /*                                                           6.1.3        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -38,7 +38,7 @@ static GX_COLOR mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESO
 /*                                                                        */
 /*  DESCRIPTION                                                           */
 /*                                                                        */
-/*    Generic 32-bit XRGB color format display driver setup routine.      */
+/*    Generic 32-bit ARGB color format display driver setup routine.      */
 /*                                                                        */
 /*  INPUT                                                                 */
 /*                                                                        */
@@ -60,9 +60,8 @@ static GX_COLOR mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESO
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_24xrgb_setup(GX_DISPLAY *display, void *aux_data,
-                                     void (*toggle_function)(GX_CANVAS *canvas,
-                                                             GX_RECTANGLE *dirty_area))
+void _gx_display_driver_32argb_setup(GX_DISPLAY* display, void* aux_data,
+                                     GX_CANVAS_TOGGLE_FUNCTION* toggle_function)
 {
     /* Default initiate and complete function to null for general condition. */
     display->driver_drawing_initiate              = GX_NULL;
@@ -73,7 +72,7 @@ void _gx_display_driver_24xrgb_setup(GX_DISPLAY *display, void *aux_data,
     display->mouse_position_set                   = GX_NULL;
     display->mouse_enable                         = GX_NULL;
 #else
-    display->mouse.capture_memory        = (GX_UBYTE *)mouse_capture_memory;
+    display->mouse.capture_memory        = (GX_UBYTE*)mouse_capture_memory;
     display->mouse.status                = 0;
 
     display->mouse.position.x   = display->width / 2;
@@ -90,17 +89,18 @@ void _gx_display_driver_24xrgb_setup(GX_DISPLAY *display, void *aux_data,
 #endif
 
     /* these functions are generic, same for every color depth, but will be overridden for hardware mouse */
-    display->mouse.cursor_info           = GX_NULL;
+    display->mouse.cursor_info                    = GX_NULL;
     display->mouse_define                         = _gx_display_driver_generic_mouse_define;
 #endif
 
     display->rotation_angle                       = 0;
-    display->driver_data                          = (void *)aux_data;
+    display->driver_data                          = (void*)aux_data;
     display->accelerator                          = GX_NULL;
     display->layer_services                       = GX_NULL;
     display->driver_callback_assign               = GX_NULL;
 
-    display->color_format                         = GX_COLOR_FORMAT_24XRGB;
+    display->color_format                         = GX_COLOR_FORMAT_32ARGB;
+
     display->driver_canvas_copy                   = _gx_display_driver_32bpp_canvas_copy;
     display->driver_simple_line_draw              = _gx_display_driver_32bpp_simple_line_draw;
     display->driver_horizontal_line_draw          = _gx_display_driver_32bpp_horizontal_line_draw;
@@ -111,9 +111,9 @@ void _gx_display_driver_24xrgb_setup(GX_DISPLAY *display, void *aux_data,
     display->driver_pixel_write                   = _gx_display_driver_32bpp_pixel_write;
     display->driver_block_move                    = _gx_display_driver_32bpp_block_move;
 
-    display->driver_native_color_get              = _gx_display_driver_24xrgb_native_color_get;
+    display->driver_native_color_get              = _gx_display_driver_32argb_native_color_get;
     display->driver_row_pitch_get                 = _gx_display_driver_32bpp_row_pitch_get;
-    display->driver_pixelmap_draw                 = _gx_display_driver_24xrgb_pixelmap_draw;
+    display->driver_pixelmap_draw                 = _gx_display_driver_32argb_pixelmap_draw;
     display->driver_pixelmap_rotate               = _gx_display_driver_32bpp_pixelmap_rotate;
     display->driver_alphamap_draw                 = _gx_display_driver_generic_alphamap_draw;
     display->driver_simple_wide_line_draw         = _gx_display_driver_generic_simple_wide_line_draw;
@@ -124,7 +124,6 @@ void _gx_display_driver_24xrgb_setup(GX_DISPLAY *display, void *aux_data,
     display->driver_anti_aliased_wide_line_draw   = _gx_display_driver_generic_aliased_wide_line_draw;
 
 #if defined(GX_ARC_DRAWING_SUPPORT)
-
     display->driver_anti_aliased_circle_draw      = _gx_display_driver_generic_aliased_circle_draw;
     display->driver_anti_aliased_ellipse_draw     = _gx_display_driver_generic_aliased_ellipse_draw;
     display->driver_circle_draw                   = _gx_display_driver_generic_circle_draw;
@@ -147,8 +146,8 @@ void _gx_display_driver_24xrgb_setup(GX_DISPLAY *display, void *aux_data,
     display->driver_buffer_toggle                 = toggle_function;
 
     display->driver_canvas_blend                  = _gx_display_driver_24xrgb_canvas_blend;
-    display->driver_pixel_blend                   = _gx_display_driver_24xrgb_pixel_blend;
-    display->driver_pixelmap_blend                = _gx_display_driver_24xrgb_pixelmap_blend;
+    display->driver_pixel_blend                   = _gx_display_driver_32argb_pixel_blend;
+    display->driver_pixelmap_blend                = _gx_display_driver_32argb_pixelmap_blend;
 
     display->driver_8bit_glyph_draw               = _gx_display_driver_generic_glyph_8bit_draw;
     display->driver_4bit_glyph_draw               = _gx_display_driver_generic_glyph_4bit_draw;

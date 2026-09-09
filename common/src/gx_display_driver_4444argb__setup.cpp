@@ -20,7 +20,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 /**************************************************************************/
 /*                                                                        */
@@ -58,12 +58,13 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_4444argb_setup(GX_DISPLAY *display, void *aux_data,
-                                       void (*toggle_function)(GX_CANVAS *canvas,
-                                                               GX_RECTANGLE *dirty_area))
+void _gx_display_driver_4444argb_setup(GX_DISPLAY* display, void* aux_data,
+                                       GX_CANVAS_TOGGLE_FUNCTION* toggle_function)
 {
     _gx_display_driver_565rgb_setup(display, aux_data, toggle_function);
+
     display->color_format                           = GX_COLOR_FORMAT_4444ARGB;
+
     display->driver_native_color_get                = _gx_display_driver_4444argb_native_color_get;
     display->driver_pixelmap_draw                   = _gx_display_driver_4444argb_pixelmap_draw;
     display->driver_pixelmap_blend                  = _gx_display_driver_4444argb_pixelmap_blend;

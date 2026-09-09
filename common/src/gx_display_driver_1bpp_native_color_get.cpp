@@ -19,7 +19,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 /**************************************************************************/
 /*                                                                        */
@@ -54,10 +54,8 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-GX_COLOR _gx_display_driver_1bpp_native_color_get(GX_DISPLAY *display, GX_COLOR rawcolor)
+GX_COLOR _gx_display_driver_1bpp_native_color_get(GX_DISPLAY* /*display*/, GX_COLOR rawcolor)
 {
-    GX_PARAMETER_NOT_USED(display);
-
     if ((((rawcolor >> 16) & 0xff) < 0x80) &&
         (((rawcolor >> 8) & 0xff) < 0x80)  &&
         ((rawcolor & 0xff) < 0x80))

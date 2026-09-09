@@ -1,4 +1,4 @@
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 #include "gx_canvas.h"
 #include "gx_pixelmap.h"

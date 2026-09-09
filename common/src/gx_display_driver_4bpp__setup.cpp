@@ -1,3 +1,4 @@
+
 /***************************************************************************
  * Copyright (c) 2024 Microsoft Corporation
  * Copyright (c) 2026 Eclipse ThreadX contributors
@@ -19,18 +20,18 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 
 #if defined(GX_MOUSE_SUPPORT) && !defined(GX_HARDWARE_MOUSE_SUPPORT)
-static GX_UBYTE mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESOLUTION / 64] = { 0 };
+static GX_UBYTE mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESOLUTION / 4] = { 0 };
 #endif
 
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
-/*    _gx_display_driver_monochrome_setup                                 */
+/*    _gx_display_driver_4bpp_grayscale_setup                             */
 /*                                                           6.1.3        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -38,13 +39,13 @@ static GX_UBYTE mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESO
 /*                                                                        */
 /*  DESCRIPTION                                                           */
 /*                                                                        */
-/*    Display driver setup routine for the monochrome color format.       */
+/*    Generic 4bpp color format display driver setup routine.             */
 /*                                                                        */
 /*  INPUT                                                                 */
 /*                                                                        */
-/*    display                               Display control block         */
-/*    aux_data                              Driver-specific auxiliary data*/
-/*    toggle_function                       Driver-specific toggle        */
+/*    display                               The display control block     */
+/*    aux_data                              Driver-defined auxiliary data */
+/*    toggle_function                       Driver-defined screen toggle  */
 /*                                            function                    */
 /*                                                                        */
 /*  OUTPUT                                                                */
@@ -57,12 +58,11 @@ static GX_UBYTE mouse_capture_memory[GX_MOUSE_MAX_RESOLUTION * GX_MOUSE_MAX_RESO
 /*                                                                        */
 /*  CALLED BY                                                             */
 /*                                                                        */
-/*    Application Code                                                    */
+/*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void     _gx_display_driver_monochrome_setup(GX_DISPLAY *display, void *aux_data,
-                                             void (*toggle_function)(GX_CANVAS *canvas,
-                                                                     GX_RECTANGLE *dirty_area))
+void _gx_display_driver_4bpp_grayscale_setup(GX_DISPLAY* display, void* aux_data,
+                                             GX_CANVAS_TOGGLE_FUNCTION* toggle_function)
 {
     /* Default initiate and complete function to null for general condition. */
     display->driver_drawing_initiate              = GX_NULL;
@@ -73,15 +73,15 @@ void     _gx_display_driver_monochrome_setup(GX_DISPLAY *display, void *aux_data
     display->mouse_position_set                   = GX_NULL;
     display->mouse_enable                         = GX_NULL;
 #else
-    display->mouse.capture_memory        = (GX_UBYTE *)mouse_capture_memory;
+    display->mouse.capture_memory        = (GX_UBYTE*)mouse_capture_memory;
     display->mouse.status                = 0;
 
     display->mouse.position.x   = display->width / 2;
     display->mouse.position.y   = display->height / 2;
 
     /* these functions are specific to the display color format, and will be NULL for hardware mouse */
-    display->mouse_capture                        = _gx_display_driver_1bpp_mouse_capture;
-    display->mouse_restore                        = _gx_display_driver_1bpp_mouse_restore;
+    display->mouse_capture                        = _gx_display_driver_4bpp_mouse_capture;
+    display->mouse_restore                        = _gx_display_driver_4bpp_mouse_restore;
     display->mouse_draw                           = _gx_display_driver_generic_mouse_draw;
     display->driver_drawing_initiate              = _gx_display_driver_generic_drawing_initiate;
     display->driver_drawing_complete              = _gx_display_driver_generic_drawing_complete;
@@ -90,39 +90,39 @@ void     _gx_display_driver_monochrome_setup(GX_DISPLAY *display, void *aux_data
 #endif
 
     /* these functions are generic, same for every color depth, but will be overridden for hardware mouse */
-    display->mouse.cursor_info           = GX_NULL;
+    display->mouse.cursor_info                    = GX_NULL;
     display->mouse_define                         = _gx_display_driver_generic_mouse_define;
 #endif
 
     display->rotation_angle                       = 0;
-    display->driver_data                          = (void *)aux_data;
+    display->driver_data                          = (void*)aux_data;
     display->accelerator                          = GX_NULL;
     display->layer_services                       = GX_NULL;
     display->driver_callback_assign               = GX_NULL;
 
-    display->color_format                         = GX_COLOR_FORMAT_MONOCHROME;
-    display->driver_canvas_copy                   = _gx_display_driver_1bpp_canvas_copy;
-    display->driver_simple_line_draw              = _gx_display_driver_1bpp_simple_line_draw;
-    display->driver_horizontal_line_draw          = _gx_display_driver_1bpp_horizontal_line_draw;
-    display->driver_vertical_line_draw            = _gx_display_driver_1bpp_vertical_line_draw;
-    display->driver_horizontal_pattern_line_draw  = _gx_display_driver_1bpp_horizontal_pattern_line_draw;
-    display->driver_horizontal_pixelmap_line_draw = _gx_display_driver_1bpp_horizontal_pixelmap_line_draw;
-    display->driver_vertical_pattern_line_draw    = _gx_display_driver_1bpp_vertical_pattern_line_draw;
-    display->driver_pixel_write                   = _gx_display_driver_1bpp_pixel_write;
-    display->driver_block_move                    = _gx_display_driver_1bpp_block_move;
+    display->color_format                         = GX_COLOR_FORMAT_4BIT_GRAY;
+    display->driver_canvas_copy                   = _gx_display_driver_4bpp_canvas_copy;
+    display->driver_simple_line_draw              = _gx_display_driver_4bpp_simple_line_draw;
+    display->driver_horizontal_line_draw          = _gx_display_driver_4bpp_horizontal_line_draw;
+    display->driver_vertical_line_draw            = _gx_display_driver_4bpp_vertical_line_draw;
+    display->driver_horizontal_pattern_line_draw  = _gx_display_driver_4bpp_horizontal_pattern_line_draw;
+    display->driver_vertical_pattern_line_draw    = _gx_display_driver_4bpp_vertical_pattern_line_draw;
+    display->driver_horizontal_pixelmap_line_draw = _gx_display_driver_4bpp_horizontal_pixelmap_line_draw;
+    display->driver_pixel_write                   = _gx_display_driver_4bpp_pixel_write;
 
-    display->driver_native_color_get              = _gx_display_driver_1bpp_native_color_get;
-    display->driver_row_pitch_get                 = _gx_display_driver_1bpp_row_pitch_get;
-    display->driver_pixelmap_draw                 = _gx_display_driver_1bpp_pixelmap_draw;
-    display->driver_pixelmap_rotate               = _gx_display_driver_1bpp_pixelmap_rotate;
+    display->driver_native_color_get              = _gx_display_driver_4bpp_native_color_get;
+    display->driver_row_pitch_get                 = _gx_display_driver_4bpp_row_pitch_get;
+    display->driver_block_move                    = _gx_display_driver_4bpp_block_move;
+    display->driver_pixelmap_draw                 = _gx_display_driver_4bpp_pixelmap_draw;
+
     display->driver_alphamap_draw                 = GX_NULL;
+    display->driver_anti_aliased_line_draw        = GX_NULL;
+    display->driver_anti_aliased_wide_line_draw   = GX_NULL;
+    display->driver_pixelmap_rotate               = _gx_display_driver_4bpp_pixelmap_rotate;
 
     display->driver_simple_wide_line_draw         = _gx_display_driver_generic_simple_wide_line_draw;
     display->driver_polygon_draw                  = _gx_display_driver_generic_polygon_draw;
     display->driver_polygon_fill                  = _gx_display_driver_generic_polygon_fill;
-
-    display->driver_anti_aliased_line_draw        = GX_NULL;
-    display->driver_anti_aliased_wide_line_draw   = GX_NULL;
 
 #if defined(GX_ARC_DRAWING_SUPPORT)
     display->driver_anti_aliased_circle_draw      = GX_NULL;
@@ -143,19 +143,21 @@ void     _gx_display_driver_monochrome_setup(GX_DISPLAY *display, void *aux_data
     display->driver_wide_arc_draw                 = _gx_display_driver_generic_wide_arc_draw;
 #endif
 
-    display->driver_1bit_glyph_draw               = _gx_display_driver_1bpp_glyph_1bpp_draw;
-    display->driver_4bit_glyph_draw               = GX_NULL;
     display->driver_8bit_glyph_draw               = GX_NULL;
-    display->driver_8bit_compressed_glyph_draw    = GX_NULL;
-    display->driver_4bit_compressed_glyph_draw    = GX_NULL;
-    display->driver_1bit_compressed_glyph_draw    = GX_NULL;
+    display->driver_4bit_glyph_draw               = _gx_display_driver_4bpp_glyph_4bit_draw;
+    display->driver_1bit_glyph_draw               = _gx_display_driver_4bpp_glyph_1bit_draw;
+
 
     display->driver_palette_set                   = GX_NULL;
     display->driver_buffer_toggle                 = toggle_function;
 
     display->driver_canvas_blend                  = GX_NULL;
-    display->driver_pixelmap_blend                = GX_NULL;
     display->driver_pixel_blend                   = GX_NULL;
+    display->driver_pixelmap_blend                = GX_NULL;
+
+    display->driver_8bit_compressed_glyph_draw    = GX_NULL;
+    display->driver_4bit_compressed_glyph_draw    = GX_NULL;
+    display->driver_1bit_compressed_glyph_draw    = GX_NULL;
 
 #if defined(GX_SOFTWARE_DECODER_SUPPORT)
     display->driver_jpeg_draw                     = GX_NULL;

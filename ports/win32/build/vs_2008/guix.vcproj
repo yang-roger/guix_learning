@@ -323,6 +323,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_24xrgb__setup.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_24xrgb_pixelmap_blend.cpp"
 						>
 					</File>
@@ -331,19 +335,15 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_24xrgb_rotated__setup.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_24xrgb_rotated_pixelmap_blend.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_24xrgb_rotated_pixelmap_draw.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_24xrgb_rotated_setup.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_24xrgb_setup.cpp"
 						>
 					</File>
 					<File
@@ -371,7 +371,15 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_565rgb__setup.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_565rgb_horizontal_pixelmap_line_draw.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_565rgb_rotated__setup.cpp"
 						>
 					</File>
 					<File
@@ -379,15 +387,7 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_565rgb_rotated_setup.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_565rgb_setup.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_8bit_palette_setup.cpp"
+						RelativePath="..\..\src\renesas\gx_dave2d_simulation_display_driver_8bit_palette__setup.cpp"
 						>
 					</File>
 					<File
@@ -464,6 +464,22 @@
 					</File>
 					<File
 						RelativePath="..\..\src\renesas\gx_win32_dave2d_display_driver_8bit_palette.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="st"
+					>
+					<File
+						RelativePath="..\..\src\st\gx_chromart_simulation_display_driver_565rgb__setup.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\st\gx_chromart_simulation_display_driver_565rgb_pixelmap_draw.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\st\gx_win32_chromart_display_driver_565rgb.cpp"
 						>
 					</File>
 				</Filter>
@@ -872,6 +888,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_1555xrgb__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_1555xrgb_canvas_blend.cpp"
 					>
 				</File>
@@ -893,10 +913,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_1555xrgb_png_draw.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_1555xrgb_setup.cpp"
 					>
 				</File>
 				<File
@@ -1000,6 +1016,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_1bpp__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_1bpp_block_move.cpp"
 					>
 				</File>
@@ -1064,6 +1084,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_24xrgb__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_24xrgb_canvas_blend.cpp"
 					>
 				</File>
@@ -1096,6 +1120,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_24xrgb_rotated__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_24xrgb_rotated_canvas_blend.cpp"
 					>
 				</File>
@@ -1112,11 +1140,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_24xrgb_rotated_setup.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_24xrgb_setup.cpp"
+					RelativePath="..\..\..\..\common\src\gx_display_driver_32argb__setup.cpp"
 					>
 				</File>
 				<File
@@ -1136,15 +1160,11 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_32argb_rotated__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_32argb_rotated_pixel_blend.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_32argb_rotated_setup.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_32argb_setup.cpp"
 					>
 				</File>
 				<File
@@ -1252,6 +1272,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_332rgb__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_332rgb_native_color_get.cpp"
 					>
 				</File>
@@ -1268,7 +1292,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_332rgb_setup.cpp"
+					RelativePath="..\..\..\..\common\src\gx_display_driver_4444argb__setup.cpp"
 					>
 				</File>
 				<File
@@ -1296,7 +1320,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_4444argb_setup.cpp"
+					RelativePath="..\..\..\..\common\src\gx_display_driver_4bpp__setup.cpp"
 					>
 				</File>
 				<File
@@ -1313,10 +1337,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_4bpp_glyph_4bit_draw.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_4bpp_grayscale_setup.cpp"
 					>
 				</File>
 				<File
@@ -1372,6 +1392,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_565rgb__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_565rgb_canvas_blend.cpp"
 					>
 				</File>
@@ -1400,6 +1424,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\common\src\gx_display_driver_565rgb_rotated__setup.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_565rgb_rotated_canvas_blend.cpp"
 					>
 				</File>
@@ -1424,11 +1452,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_565rgb_rotated_setup.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_565rgb_setup.cpp"
+					RelativePath="..\..\..\..\common\src\gx_display_driver_8bit_palette__setup.cpp"
 					>
 				</File>
 				<File
@@ -1436,11 +1460,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_8bit_palette_rotated_setup.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_8bit_palette_setup.cpp"
+					RelativePath="..\..\..\..\common\src\gx_display_driver_8bit_palette_rotated__setup.cpp"
 					>
 				</File>
 				<File
@@ -1749,10 +1769,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\..\common\src\gx_display_driver_generic_wide_line_points_calculate.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\common\src\gx_display_driver_monochrome_setup.cpp"
 					>
 				</File>
 				<File

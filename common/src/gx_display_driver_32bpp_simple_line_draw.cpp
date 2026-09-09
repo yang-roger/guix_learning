@@ -23,7 +23,7 @@
 
 
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 #include "gx_utility.h"
 #include "gx_context.h"

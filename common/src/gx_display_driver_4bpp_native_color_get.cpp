@@ -19,7 +19,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 /**************************************************************************/
 /*                                                                        */
@@ -54,15 +54,14 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-GX_COLOR _gx_display_driver_4bpp_native_color_get(GX_DISPLAY *display, GX_COLOR rawcolor)
+GX_COLOR _gx_display_driver_4bpp_native_color_get(GX_DISPLAY* /*display*/, GX_COLOR rawcolor)
 {
-GX_COLOR native;
-
-    GX_PARAMETER_NOT_USED(display);
+    GX_COLOR native;
 
     /* Gray = (0.2989 * R) + (0.5870 * G) + (0.1140 * B) */
     native = (GX_UBYTE)(((INT)((rawcolor & 0xff0000) >> 16) * 2989 + (INT)((rawcolor & 0xff00) >> 8) * 5870 + (INT)(rawcolor & 0xff) * 1140) / 10000);
     native >>= 4;
+
     return native;
 }
 

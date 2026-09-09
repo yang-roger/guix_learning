@@ -67,13 +67,10 @@ UINT GX_DISPLAY::create_(const GX_CHAR* name,
     this->height = height;
 
     // Call the display driver setup function. This function initializes the underlying
-    //   hardware and sets up all the primitive drawing function pointers.
+    // hardware and sets up all the primitive drawing function pointers.
     UINT result = display_driver_setup(this);
-
-    // Determine if the display driver setup was successful.
-    if (result)
+    if (result != GX_SUCCESS)
     {
-        /* Error setting up display driver - call system error handler.  */
         _gx_system_error_process(GX_SYSTEM_DRIVER_SETUP_ERROR);
 
         return GX_SYSTEM_ERROR;
@@ -84,7 +81,7 @@ UINT GX_DISPLAY::create_(const GX_CHAR* name,
 
     // Place the display on the list of created displays.
 
-    _gx_system_display_created_count++;
+    ++_gx_system_display_created_count;
 
     if (_gx_system_display_created_list)
     {
@@ -370,15 +367,11 @@ void GX_DISPLAY::canvas_dirty_()
     GX_WINDOW_ROOT* root = _gx_system_root_window_created_list;
     while (root)
     {
-        if ((root->status & GX_STATUS_VISIBLE) &&
+        if (root->is_visible_() &&
             gx_root_window_in_display_(root, this))
         {
-            _gx_system_dirty_mark(root);
-
-            for (GX_WIDGET* win = root->first_child; win; win = win->next)
-            {
-                _gx_system_dirty_mark(win);
-            }
+            root->dirty_mark_();
+            root->dirty_children_();
         }
 
         root = (GX_WINDOW_ROOT*)root->next;
@@ -511,53 +504,6 @@ UINT _gx_display_delete(GX_DISPLAY* display, void (*display_driver_cleanup)(GX_D
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
-/*    _gx_display_canvas_dirty                                            */
-/*                                                           6.1          */
-/*  AUTHOR                                                                */
-/*                                                                        */
-/*    Kenneth Maxwell, Microsoft Corporation                              */
-/*                                                                        */
-/*  DESCRIPTION                                                           */
-/*                                                                        */
-/*    This function marks all root windows as dirty. This is done when    */
-/*    the system resources are changed so that we re-draw everything.     */
-/*                                                                        */
-/*  INPUT                                                                 */
-/*                                                                        */
-/*    display                               Display control block         */
-/*                                                                        */
-/*  OUTPUT                                                                */
-/*                                                                        */
-/*    None                                                                */
-/*                                                                        */
-/*  CALLS                                                                 */
-/*                                                                        */
-/*     _gx_system_dirty_mark                Mark the widget dirty         */
-/*                                                                        */
-/*  CALLED BY                                                             */
-/*                                                                        */
-/*    _gx_display_color_set                                               */
-/*    _gx_display_color_table_set                                         */
-/*    _gx_display_font_table_set                                          */
-/*    _gx_display_pixelmap_table_set                                      */
-/*                                                                        */
-/**************************************************************************/
-void _gx_display_canvas_dirty(GX_DISPLAY* display)
-{
-    display->canvas_dirty_();
-}
-
-/**************************************************************************/
-
-UINT _gx_display_color_get(GX_DISPLAY* display, GX_RESOURCE_ID id, GX_COLOR* return_color)
-{
-    return display->color_get_(id, return_color);
-}
-
-/**************************************************************************/
-/*                                                                        */
-/*  FUNCTION                                               RELEASE        */
-/*                                                                        */
 /*    _gx_display_color_set                                               */
 /*                                                           6.1          */
 /*  AUTHOR                                                                */
@@ -632,13 +578,6 @@ UINT _gx_display_color_set(GX_DISPLAY* display, GX_RESOURCE_ID id, GX_COLOR colo
 UINT _gx_display_color_table_set(GX_DISPLAY* display, GX_COLOR* color_table, INT number_of_colors)
 {
     return display->color_table_set_(color_table, number_of_colors);
-}
-
-/**************************************************************************/
-
-UINT _gx_display_font_get(GX_DISPLAY* display, GX_RESOURCE_ID id, GX_FONT** return_font)
-{
-    return display->font_get_(id, return_font);
 }
 
 /**************************************************************************/
@@ -799,13 +738,6 @@ UINT _gx_display_language_direction_table_set(GX_DISPLAY* display, const GX_UBYT
     return display->language_direction_table_set_(language_direction_table, num_languages);
 }
 #endif // GX_DYNAMIC_BIDI_TEXT_SUPPORT
-
-/**************************************************************************/
-
-UINT _gx_display_pixelmap_get(GX_DISPLAY* display, GX_RESOURCE_ID id, GX_PIXELMAP** return_pixelmap)
-{
-    return display->pixelmap_get_(id, return_pixelmap);
-}
 
 /**************************************************************************/
 /*                                                                        */

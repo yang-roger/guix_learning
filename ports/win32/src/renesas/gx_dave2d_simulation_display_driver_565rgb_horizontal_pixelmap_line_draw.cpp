@@ -70,7 +70,7 @@ INT                start_pos;
 INT                xval;
 GX_UBYTE           count;
 USHORT             pixel;
-GX_CONST GX_UBYTE *get;
+GX_CONST GX_UBYTE *get = GX_NULL;
 USHORT            *put;
 GX_PIXELMAP       *pixelmap;
 

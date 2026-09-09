@@ -19,7 +19,7 @@
 /**                                                                       */
 /**************************************************************************/
 
-#include "gx_display.h"
+#include "gx_display_driver.h"
 
 /**************************************************************************/
 /*                                                                        */
@@ -55,7 +55,7 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-GX_COLOR _gx_display_driver_8bit_palette_native_color_get(GX_DISPLAY *display, GX_COLOR rawcolor)
+GX_COLOR _gx_display_driver_8bit_palette_native_color_get(GX_DISPLAY* display, GX_COLOR rawcolor)
 {
 ULONG     nearest_dist = 0x7fffffff;
 ULONG     dist;
