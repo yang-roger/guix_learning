@@ -62,68 +62,57 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_565rgb_canvas_blend(GX_CANVAS *canvas, GX_CANVAS *composite)
+void _gx_display_driver_565rgb_canvas_blend(GX_CANVAS* canvas, GX_CANVAS* composite)
 {
-GX_RECTANGLE dirty;
-GX_RECTANGLE overlap;
-USHORT      *read;
-USHORT      *read_start;
-USHORT      *write;
-USHORT      *write_start;
-USHORT       fcolor;
-USHORT       bcolor;
-GX_UBYTE     alpha, balpha;
-
-INT          row;
-INT          col;
-
 #ifdef GX_ENABLE_CANVAS_PARTIAL_FRAME_BUFFER
     if (canvas->status & GX_CANVAS_PARTIAL_FRAME_BUFFER)
     {
-        /* Not supported. */
-        return;
+        return; // Not supported.
     }
 #endif
 
+    GX_RECTANGLE dirty;
     canvas->display_area_(&dirty);
 
+    GX_RECTANGLE overlap;
     if (gx_rectangle_intersect_(dirty, composite->dirty_area, &overlap))
     {
-        alpha = canvas->alpha;
-        balpha = (GX_UBYTE)(256 - alpha);
+        USHORT* read;
+        USHORT* write;
+        USHORT  fcolor;
+        USHORT  bcolor;
 
-        read_start = (USHORT *)canvas->memory;
+        GX_UBYTE alpha = canvas->alpha;
+        GX_UBYTE balpha = (GX_UBYTE)(256 - alpha);
 
-        /* index into starting row */
+        USHORT* read_start = (USHORT*)canvas->memory;
         read_start += (overlap.top - dirty.top) * canvas->x_resolution;
-
-        /* index into pixel */
-
         read_start += overlap.left - dirty.left;
 
-        /* calculate the write pointer */
-        write_start = (USHORT *)composite->memory;
+        USHORT* write_start = (USHORT*)composite->memory;
         write_start += overlap.top * composite->x_resolution;
         write_start += overlap.left;
 
-        for (row = overlap.top; row <= overlap.bottom; row++)
+        for (INT row = overlap.top; row <= overlap.bottom; ++row)
         {
             read = read_start;
             write = write_start;
 
-            for (col = overlap.left; col <= overlap.right; col++)
+            for (INT col = overlap.left; col <= overlap.right; ++col)
             {
-                /* read the foreground color */
+                // read foreground color
                 fcolor = *read++;
 
-                /* read background color */
+                // read background color
                 bcolor = *write;
 
                 *write++ = gx_color_565rgb_blend(fcolor, alpha, bcolor, balpha);
             }
+
             write_start += composite->x_resolution;
             read_start += canvas->x_resolution;
         }
     }
 }
+
 
