@@ -57,13 +57,12 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_16bpp_pixel_write(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color)
+void _gx_display_driver_16bpp_pixel_write(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR color)
 {
-USHORT *put = (USHORT *)context->memory;
+    USHORT* put = (USHORT*)context->memory;
 
     GX_CALCULATE_PUTROW(put, x, y, context);
 
-    /* write the pixel value */
     *put = (USHORT)color;
 }
 
