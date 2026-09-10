@@ -55,14 +55,8 @@
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-GX_COLOR _gx_display_driver_332rgb_native_color_get(GX_DISPLAY *display, GX_COLOR rawcolor)
+GX_COLOR _gx_display_driver_332rgb_native_color_get(GX_DISPLAY* /*display*/, GX_COLOR rawcolor)
 {
-GX_COLOR native;
-
-
-    GX_PARAMETER_NOT_USED(display);
-
-    native = ((rawcolor & 0xe00000) >> 16) | ((rawcolor & 0x00e000) >> 11) | ((rawcolor & 0x0000c0) >> 6);
-    return native;
+    return ((rawcolor & 0xe00000) >> 16) | ((rawcolor & 0x00e000) >> 11) | ((rawcolor & 0x0000c0) >> 6);
 }
 
