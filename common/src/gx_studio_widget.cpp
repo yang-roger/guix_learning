@@ -11,8 +11,6 @@
 
 #include "gx_studio_widget.h"
 
-#include <string.h>
-
 //--------------------------------------------------------------------------------------------------
 // Display
 
@@ -158,6 +156,8 @@ static GX_WIDGET* gx_studio_action_target_find(GX_WIDGET* current, const GX_STUD
     return target;
 }
 
+#if (GX_ANIMATION_POOL_SIZE > 0)
+
 static GX_WIDGET* gx_studio_action_parent_find(GX_WIDGET* current, const GX_STUDIO_ACTION* action)
 {
     GX_WIDGET* parent = GX_NULL;
@@ -224,6 +224,8 @@ static VOID gx_studio_animation_execute(GX_WIDGET* current, const GX_STUDIO_ACTI
         }
     }
 }
+
+#endif // (GX_ANIMATION_POOL_SIZE > 0)
 
 UINT gx_studio_auto_event_handler(GX_WIDGET* widget, GX_EVENT* event_ptr, const GX_STUDIO_EVENT_PROCESS* record)
 {
@@ -326,9 +328,11 @@ UINT gx_studio_auto_event_handler(GX_WIDGET* widget, GX_EVENT* event_ptr, const 
                     }
                     break;
 
+#if (GX_ANIMATION_POOL_SIZE > 0)
                 case GX_ACTION_TYPE_ANIMATION:
                     gx_studio_animation_execute(widget, action);
                     break;
+#endif
 
                 case GX_ACTION_TYPE_WINDOW_EXECUTE:
                     if ((action->flags & GX_ACTION_FLAG_POP_TARGET) ||

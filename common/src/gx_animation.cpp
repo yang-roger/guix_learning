@@ -21,6 +21,8 @@
 
 #include "gx_animation.h"
 
+#if (GX_ANIMATION_POOL_SIZE > 0)
+
 #include "gx_utility.h"
 #include "gx_system.h"
 #include "gx_display.h"
@@ -59,7 +61,6 @@
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_create(GX_ANIMATION* animation)
 {
     memset(animation, 0, sizeof(GX_ANIMATION));
@@ -68,7 +69,6 @@ UINT _gx_animation_create(GX_ANIMATION* animation)
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -108,8 +108,6 @@ UINT _gx_animation_create(GX_ANIMATION* animation)
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
-
 static void _gx_animation_delete_helper(GX_ANIMATION* animation)
 {
     _gx_animation_stop(animation);
@@ -149,8 +147,6 @@ UINT _gx_animation_delete(GX_ANIMATION* target, GX_WIDGET* parent)
     return GX_SUCCESS;
 }
 
-#endif /* (GX_ANIMATION_POOL_SIZE > 0) */
-
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
@@ -185,7 +181,6 @@ UINT _gx_animation_delete(GX_ANIMATION* target, GX_WIDGET* parent)
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_canvas_define(GX_ANIMATION* animation, GX_CANVAS* canvas)
 {
     if (animation->status != GX_ANIMATION_IDLE)
@@ -197,7 +192,6 @@ UINT _gx_animation_canvas_define(GX_ANIMATION* animation, GX_CANVAS* canvas)
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -233,7 +227,6 @@ UINT _gx_animation_canvas_define(GX_ANIMATION* animation, GX_CANVAS* canvas)
 /*    _gx_animation_slide_landing                                         */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static void _gx_animation_complete_event_send(GX_ANIMATION* animation)
 {
     const GX_ANIMATION_INFO& info = animation->info;
@@ -256,7 +249,6 @@ static void _gx_animation_complete_event_send(GX_ANIMATION* animation)
         _gx_system_event_send(&complete_event);
     }
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -297,7 +289,6 @@ static void _gx_animation_complete_event_send(GX_ANIMATION* animation)
 /*    _gx_animation_update                                                */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static void _gx_animation_complete(GX_ANIMATION* animation)
 {
     _gx_animation_stop(animation);
@@ -385,7 +376,6 @@ static void _gx_animation_complete(GX_ANIMATION* animation)
         _gx_system_animation_free(animation);
     }
 }
-#endif
 
 /**************************************************************************/
 static GX_WINDOW_ROOT* _gx_system_canvas_root_window_find(const GX_CANVAS* canvas)
@@ -463,7 +453,6 @@ static void _gx_animation_root_window_show(GX_WINDOW_ROOT* root,
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_start(GX_ANIMATION* animation, GX_ANIMATION_INFO* info)
 {
     UINT status = GX_SUCCESS;
@@ -559,7 +548,6 @@ UINT _gx_animation_start(GX_ANIMATION* animation, GX_ANIMATION_INFO* info)
 
     return status;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -595,7 +583,6 @@ UINT _gx_animation_start(GX_ANIMATION* animation, GX_ANIMATION_INFO* info)
 /*    _gx_animation_update                                                */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_stop(GX_ANIMATION* animation)
 {
     UINT status = GX_SUCCESS;
@@ -631,10 +618,9 @@ UINT _gx_animation_stop(GX_ANIMATION* animation)
 
     return status;
 }
-#endif
 
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
+
 static void _gx_animation_update_alpha(GX_ANIMATION* animation, const GX_ANIMATION_INFO& info)
 {
     INT test_alpha;
@@ -668,10 +654,8 @@ static void _gx_animation_update_alpha(GX_ANIMATION* animation, const GX_ANIMATI
     }
 #endif
 }
-#endif
 
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static void _gx_animation_update_position(GX_ANIMATION* animation, const GX_ANIMATION_INFO& info)
 {
     GX_WIDGET* target = info.target;
@@ -751,7 +735,6 @@ static void _gx_animation_update_position(GX_ANIMATION* animation, const GX_ANIM
         }
     }
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -790,7 +773,6 @@ static void _gx_animation_update_position(GX_ANIMATION* animation, const GX_ANIM
 /*    _gx_system_timer_update               Update active system timers   */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 void _gx_animation_update(void)
 {
     GX_ANIMATION* next_animation;
@@ -837,7 +819,6 @@ void _gx_animation_update(void)
         }
     }
 }
-#endif
 
 /**************************************************************************/
 
@@ -912,7 +893,6 @@ static inline void _gx_widget_client_block_move(GX_WIDGET* widget, INT shift_x, 
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_drag_enable(GX_ANIMATION* animation, GX_WIDGET* widget, GX_ANIMATION_INFO* info)
 {
     if (animation->status != GX_ANIMATION_IDLE)
@@ -937,7 +917,6 @@ UINT _gx_animation_drag_enable(GX_ANIMATION* animation, GX_WIDGET* widget, GX_AN
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -974,7 +953,6 @@ UINT _gx_animation_drag_enable(GX_ANIMATION* animation, GX_WIDGET* widget, GX_AN
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_drag_disable(GX_ANIMATION* animation, GX_WIDGET* widget)
 {
     // Restore the widget's original event process function
@@ -983,7 +961,6 @@ UINT _gx_animation_drag_disable(GX_ANIMATION* animation, GX_WIDGET* widget)
 
     return _gx_animation_stop(animation);
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -1018,7 +995,6 @@ UINT _gx_animation_drag_disable(GX_ANIMATION* animation, GX_WIDGET* widget)
 /*    _gx_animation_drag_event_check                                      */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static UINT _gx_animation_drag_tracking_start(GX_ANIMATION* animation, GX_POINT penpos)
 {
     const GX_ANIMATION_INFO& info = animation->info;
@@ -1199,7 +1175,6 @@ static UINT _gx_animation_drag_tracking_start(GX_ANIMATION* animation, GX_POINT 
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 static inline bool _gx_animation_direction_changed(GX_UBYTE direction, INT delta)
@@ -1259,7 +1234,6 @@ static inline GX_WIDGET* _gx_animation_target_2_get(const GX_ANIMATION* animatio
 /*    _gx_animation_drag_event_check                                      */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static UINT _gx_animation_drag_tracking(GX_ANIMATION* animation, GX_POINT penpos)
 {
     const GX_ANIMATION_INFO& info = animation->info;
@@ -1370,7 +1344,6 @@ static UINT _gx_animation_drag_tracking(GX_ANIMATION* animation, GX_POINT penpos
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -1405,14 +1378,12 @@ static UINT _gx_animation_drag_tracking(GX_ANIMATION* animation, GX_POINT penpos
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_landing_speed_set(GX_ANIMATION* animation, USHORT shift_per_step)
 {
     animation->landing_speed = shift_per_step;
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -1447,7 +1418,6 @@ UINT _gx_animation_landing_speed_set(GX_ANIMATION* animation, USHORT shift_per_s
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static UINT _gx_animation_slide_landing_start(GX_ANIMATION* animation)
 {
     GX_WIDGET* target;
@@ -1488,7 +1458,6 @@ static UINT _gx_animation_slide_landing_start(GX_ANIMATION* animation)
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -1527,7 +1496,6 @@ static UINT _gx_animation_slide_landing_start(GX_ANIMATION* animation)
 /*    _gx_animation_drag_event_check                                      */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static UINT _gx_animation_slide_landing(GX_ANIMATION* animation)
 {
     const GX_ANIMATION_INFO& info = animation->info;
@@ -1714,7 +1682,6 @@ static UINT _gx_animation_slide_landing(GX_ANIMATION* animation)
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 static void _gx_animation_slide_direction_back(GX_ANIMATION* animation)
@@ -1797,7 +1764,6 @@ static void _gx_animation_slide_back(GX_ANIMATION* animation)
 /*    _gx_animation_drag_event_process                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 static UINT _gx_animation_drag_event_check(GX_ANIMATION* animation, GX_WIDGET* widget, GX_EVENT* event_ptr)
 {
     const GX_ANIMATION_INFO& info = animation->info;
@@ -1928,7 +1894,6 @@ static UINT _gx_animation_drag_event_check(GX_ANIMATION* animation, GX_WIDGET* w
 
     return GX_SUCCESS;
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -1964,7 +1929,6 @@ static UINT _gx_animation_drag_event_check(GX_ANIMATION* animation, GX_WIDGET* w
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gx_animation_drag_event_process(GX_WIDGET* widget, GX_EVENT* event_ptr)
 {
     GX_ANIMATION* animation = _gx_system_animation_active_list;
@@ -1981,4 +1945,5 @@ UINT _gx_animation_drag_event_process(GX_WIDGET* widget, GX_EVENT* event_ptr)
 
     return GX_SUCCESS;
 }
-#endif
+
+#endif // (GX_ANIMATION_POOL_SIZE > 0)

@@ -21,6 +21,8 @@
 
 #include "gx_animation.h"
 
+#if (GX_ANIMATION_POOL_SIZE > 0)
+
 #include "gx_display.h"
 #include "gx_canvas.h"
 #include "gx_widget.h"
@@ -61,7 +63,6 @@ GX_CALLER_CHECKING_EXTERNS
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT  _gxe_animation_canvas_define(GX_ANIMATION *animation, GX_CANVAS *canvas)
 {
 UINT  status = GX_SUCCESS;
@@ -93,7 +94,6 @@ ULONG required_size;
     /* Return completion status code. */
     return(status);
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -127,7 +127,6 @@ ULONG required_size;
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT  _gxe_animation_create(GX_ANIMATION *animation)
 {
 UINT status;
@@ -149,7 +148,6 @@ UINT status;
     /* Return completion status.  */
     return(status);
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -185,7 +183,6 @@ UINT status;
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gxe_animation_delete(GX_ANIMATION *target, GX_WIDGET *parent)
 {
     /* Check for appropriate caller.  */
@@ -198,7 +195,6 @@ UINT _gxe_animation_delete(GX_ANIMATION *target, GX_WIDGET *parent)
 
     return _gx_animation_delete(target, parent);
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -236,7 +232,6 @@ UINT _gxe_animation_delete(GX_ANIMATION *target, GX_WIDGET *parent)
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gxe_animation_drag_disable(GX_ANIMATION *animation, GX_WIDGET *widget)
 {
     /* Check for appropriate caller.  */
@@ -256,7 +251,6 @@ UINT _gxe_animation_drag_disable(GX_ANIMATION *animation, GX_WIDGET *widget)
 
     return _gx_animation_drag_disable(animation, widget);
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -295,7 +289,6 @@ UINT _gxe_animation_drag_disable(GX_ANIMATION *animation, GX_WIDGET *widget)
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gxe_animation_drag_enable(GX_ANIMATION *animation, GX_WIDGET *widget, GX_ANIMATION_INFO *info)
 {
     /* Check for invalid pointer. */
@@ -331,7 +324,6 @@ UINT _gxe_animation_drag_enable(GX_ANIMATION *animation, GX_WIDGET *widget, GX_A
 
     return(_gx_animation_drag_enable(animation, widget, info));
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -368,7 +360,6 @@ UINT _gxe_animation_drag_enable(GX_ANIMATION *animation, GX_WIDGET *widget, GX_A
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gxe_animation_landing_speed_set(GX_ANIMATION *animation, USHORT shift_per_step)
 {
     /* Check for invalid input pointers.  */
@@ -384,7 +375,6 @@ UINT _gxe_animation_landing_speed_set(GX_ANIMATION *animation, USHORT shift_per_
 
     return _gx_animation_landing_speed_set(animation, shift_per_step);
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -420,7 +410,6 @@ UINT _gxe_animation_landing_speed_set(GX_ANIMATION *animation, USHORT shift_per_
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gxe_animation_start(GX_ANIMATION *animation, GX_ANIMATION_INFO *info)
 {
     /* Check for appropriate caller.  */
@@ -461,7 +450,6 @@ UINT _gxe_animation_start(GX_ANIMATION *animation, GX_ANIMATION_INFO *info)
 
     return(_gx_animation_start(animation, info));
 }
-#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -496,7 +484,6 @@ UINT _gxe_animation_start(GX_ANIMATION *animation, GX_ANIMATION_INFO *info)
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
-#if (GX_ANIMATION_POOL_SIZE > 0)
 UINT _gxe_animation_stop(GX_ANIMATION *animation)
 {
     /* Check for appropriate caller.  */
@@ -514,4 +501,5 @@ UINT _gxe_animation_stop(GX_ANIMATION *animation)
 
     return _gx_animation_stop(animation);
 }
-#endif
+
+#endif // (GX_ANIMATION_POOL_SIZE > 0)
