@@ -124,6 +124,7 @@ UINT status;
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
+#if defined(GX_ARC_DRAWING_SUPPORT)
 UINT _gxe_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle)
 {
 UINT status;
@@ -149,6 +150,7 @@ UINT status;
     /* Return completion status.  */
     return(status);
 }
+#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -240,6 +242,7 @@ UINT status;
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
+#if defined(GX_ARC_DRAWING_SUPPORT)
 UINT _gxe_canvas_circle_draw(INT xcenter, INT ycenter, UINT r)
 {
 UINT status;
@@ -265,6 +268,7 @@ UINT status;
     /* Return completion status.  */
     return(status);
 }
+#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -568,6 +572,7 @@ UINT status;
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
+#if defined(GX_ARC_DRAWING_SUPPORT)
 UINT _gxe_canvas_ellipse_draw(INT xcenter, INT ycenter, INT a, INT b)
 {
 UINT status;
@@ -593,6 +598,7 @@ UINT status;
     /* Return completion status.  */
     return(status);
 }
+#endif
 
 /**************************************************************************/
 /*                                                                        */
@@ -1099,6 +1105,7 @@ UINT status;
 /*    Application Code                                                    */
 /*                                                                        */
 /**************************************************************************/
+#if defined(GX_ARC_DRAWING_SUPPORT)
 UINT _gxe_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle)
 {
 UINT status;
@@ -1124,6 +1131,7 @@ UINT status;
     /* Return completion status.  */
     return(status);
 }
+#endif
 
 /**************************************************************************/
 /*                                                                        */

@@ -92,7 +92,7 @@ UINT GX_CANVAS::create_(const GX_CHAR* name, GX_DISPLAY* display,
 
 #ifdef GX_ENABLE_CANVAS_PARTIAL_FRAME_BUFFER
     this->memory_width = (GX_VALUE)width;
-    this->memory_height =  (GX_VALUE)height;
+    this->memory_height = (GX_VALUE)height;
 #endif
 
     this->hardware_layer = (GX_BYTE)-1;

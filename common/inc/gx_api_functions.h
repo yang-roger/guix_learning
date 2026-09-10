@@ -63,14 +63,11 @@
 #define gx_button_select                                         _gx_button_select
 
 #define gx_canvas_alpha_set                                      _gx_canvas_alpha_set
-#define gx_canvas_arc_draw                                       _gx_canvas_arc_draw
 #define gx_canvas_block_move(a, b, c, d)                         _gx_canvas_block_move(a, b, c, d)
-#define gx_canvas_circle_draw                                    _gx_canvas_circle_draw
 #define gx_canvas_create                                         _gx_canvas_create
 #define gx_canvas_delete                                         _gx_canvas_delete
 #define gx_canvas_drawing_complete                               _gx_canvas_drawing_complete
 #define gx_canvas_drawing_initiate(a, b, c)                      _gx_canvas_drawing_initiate(a, (GX_WIDGET *)b, c)
-#define gx_canvas_ellipse_draw                                   _gx_canvas_ellipse_draw
 #define gx_canvas_hardware_layer_bind                            _gx_canvas_hardware_layer_bind
 #define gx_canvas_hide                                           _gx_canvas_hide
 #define gx_canvas_line_draw                                      _gx_canvas_line_draw
@@ -88,13 +85,18 @@
 #define gx_canvas_pixelmap_rotate                                _gx_canvas_pixelmap_rotate
 #define gx_canvas_pixelmap_tile                                  _gx_canvas_pixelmap_tile
 #define gx_canvas_polygon_draw                                   _gx_canvas_polygon_draw
-#define gx_canvas_pie_draw                                       _gx_canvas_pie_draw
 #define gx_canvas_rectangle_draw                                 _gx_canvas_rectangle_draw
 #define gx_canvas_rotated_text_draw_ext                          _gx_canvas_rotated_text_draw_ext
 #define gx_canvas_shift                                          _gx_canvas_shift
 #define gx_canvas_show                                           _gx_canvas_show
 #define gx_canvas_aligned_text_draw                              _gx_canvas_aligned_text_draw
 #define gx_canvas_text_draw_ext                                  _gx_canvas_text_draw_ext
+#if defined(GX_ARC_DRAWING_SUPPORT)
+#define gx_canvas_arc_draw                                       _gx_canvas_arc_draw
+#define gx_canvas_circle_draw                                    _gx_canvas_circle_draw
+#define gx_canvas_ellipse_draw                                   _gx_canvas_ellipse_draw
+#define gx_canvas_pie_draw                                       _gx_canvas_pie_draw
+#endif
 
 #define gx_checkbox_create(a, b, c, d, e, f, g)                  _gx_checkbox_create(a, b, (GX_WIDGET *)c, d, e, f, g)
 #define gx_checkbox_draw                                         _gx_checkbox_draw
@@ -596,14 +598,11 @@
 #define gx_button_select                                         _gxe_button_select
 
 #define gx_canvas_alpha_set                                      _gxe_canvas_alpha_set
-#define gx_canvas_arc_draw                                       _gxe_canvas_arc_draw
 #define gx_canvas_block_move(a, b, c, d)                         _gxe_canvas_block_move(a, b, c, d)
-#define gx_canvas_circle_draw                                    _gxe_canvas_circle_draw
 #define gx_canvas_create(a, b, c, d, e, f, g, h)                 _gxe_canvas_create(a, b, c, d, e, f, g, h, sizeof(GX_CANVAS))
 #define gx_canvas_delete                                         _gxe_canvas_delete
 #define gx_canvas_drawing_complete                               _gxe_canvas_drawing_complete
 #define gx_canvas_drawing_initiate(a, b, c)                      _gxe_canvas_drawing_initiate(a, (GX_WIDGET *)b, c)
-#define gx_canvas_ellipse_draw                                   _gxe_canvas_ellipse_draw
 #define gx_canvas_hardware_layer_bind                            _gxe_canvas_hardware_layer_bind
 #define gx_canvas_hide                                           _gxe_canvas_hide
 #define gx_canvas_line_draw                                      _gxe_canvas_line_draw
@@ -614,7 +613,6 @@
 #define gx_canvas_mouse_show                                     _gxe_canvas_mouse_show
 #endif
 #define gx_canvas_offset_set                                     _gxe_canvas_offset_set
-#define gx_canvas_pie_draw                                       _gxe_canvas_pie_draw
 #define gx_canvas_pixel_draw                                     _gxe_canvas_pixel_draw
 #define gx_canvas_pixelmap_blend                                 _gxe_canvas_pixelmap_blend
 #define gx_canvas_pixelmap_draw                                  _gxe_canvas_pixelmap_draw
@@ -628,6 +626,12 @@
 #define gx_canvas_show                                           _gxe_canvas_show
 #define gx_canvas_aligned_text_draw                              _gxe_canvas_aligned_text_draw
 #define gx_canvas_text_draw_ext                                  _gxe_canvas_text_draw_ext
+#if defined(GX_ARC_DRAWING_SUPPORT)
+#define gx_canvas_arc_draw                                       _gxe_canvas_arc_draw
+#define gx_canvas_circle_draw                                    _gxe_canvas_circle_draw
+#define gx_canvas_ellipse_draw                                   _gxe_canvas_ellipse_draw
+#define gx_canvas_pie_draw                                       _gxe_canvas_pie_draw
+#endif
 
 #define gx_checkbox_create(a, b, c, d, e, f, g)                  _gxe_checkbox_create(a, b, (GX_WIDGET *)c, d, e, f, g, sizeof(GX_CHECKBOX))
 #define gx_checkbox_draw                                         _gx_checkbox_draw

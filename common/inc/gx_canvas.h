@@ -212,10 +212,12 @@ UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX
 UINT _gx_canvas_rectangle_draw(GX_RECTANGLE* rectangle);
 UINT _gx_canvas_polygon_draw(GX_POINT* point_array, INT number_of_points);
 
+#if defined(GX_ARC_DRAWING_SUPPORT)
 UINT _gx_canvas_circle_draw(INT xcenter, INT ycenter, UINT r);
 UINT _gx_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
 UINT _gx_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
 UINT _gx_canvas_ellipse_draw(INT xcenter, INT ycenter, INT a, INT b);
+#endif // GX_ARC_DRAWING_SUPPORT
 
 UINT _gx_canvas_pixelmap_get(GX_PIXELMAP* pixelmap);
 UINT _gx_canvas_pixelmap_draw(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap);
@@ -259,10 +261,12 @@ UINT _gxe_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, G
 UINT _gxe_canvas_rectangle_draw(GX_RECTANGLE* rectangle);
 UINT _gxe_canvas_polygon_draw(GX_POINT* point_array, INT number_of_points);
 
+#if defined(GX_ARC_DRAWING_SUPPORT)
 UINT _gxe_canvas_circle_draw(INT xcenter, INT ycenter, UINT r);
 UINT _gxe_canvas_arc_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
 UINT _gxe_canvas_pie_draw(INT xcenter, INT ycenter, UINT r, INT start_angle, INT end_angle);
 UINT _gxe_canvas_ellipse_draw(INT xcenter, INT ycenter, INT a, INT b);
+#endif // GX_ARC_DRAWING_SUPPORT
 
 UINT _gxe_canvas_pixelmap_get(GX_PIXELMAP* pixelmap);
 UINT _gxe_canvas_pixelmap_draw(GX_VALUE x, GX_VALUE y, GX_PIXELMAP* pixelmap);
