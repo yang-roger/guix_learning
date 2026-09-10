@@ -3,6 +3,7 @@
 #include "gx_canvas.h"
 #include "gx_pixelmap.h"
 
+#if defined(GX_MOUSE_SUPPORT)
 GX_RECTANGLE* _gx_display_driver_mouse_rectangle_set(GX_DISPLAY* display, INT* mouse_rect_width, INT* mouse_rect_height)
 {
     GX_RECTANGLE* mouse_rect = &display->mouse.rect;
@@ -40,3 +41,4 @@ GX_RECTANGLE* _gx_display_driver_mouse_rectangle_set(GX_DISPLAY* display, INT* m
     }
 }
 
+#endif
