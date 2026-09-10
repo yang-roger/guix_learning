@@ -52,18 +52,7 @@ struct GX_PIXELMAP;
 struct GX_THEME;
 struct GX_CANVAS;
 struct GX_DRAW_CONTEXT;
-
-/* Define fill map info type.  */
-struct GX_FILL_PIXELMAP_INFO
-{
-    GX_PIXELMAP* pixelmap;
-    GX_BOOL      draw;
-    GX_UBYTE*    current_pixel_ptr;
-    GX_UBYTE*    current_aux_ptr;
-    GX_UBYTE     mask;
-    INT          x_offset;
-    INT          y_offset;
-};
+struct GX_FILL_PIXELMAP_INFO;
 
 /* Display layer services structure type. These services may be provided by display drivers
    support multiple hardware graphics layers. */

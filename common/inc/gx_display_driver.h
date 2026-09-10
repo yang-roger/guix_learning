@@ -43,6 +43,7 @@
 #define GX_DISPLAY_DRIVER_H
 
 #include "gx_display.h"
+#include "gx_display_fill_pixelmap_info.h"
 
 /* Mouse */
 

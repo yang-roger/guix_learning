@@ -24,6 +24,63 @@
 #include "gx_context.h"
 #include "gx_pixelmap.h"
 
+static const USHORT* gx_compressed_pixelmap_line_skip(GX_FILL_PIXELMAP_INFO* info)
+{
+    const USHORT* get = (const USHORT*)info->current_pixel_ptr;
+
+    USHORT count;
+
+    INT pixelmap_width = info->pixelmap->width;
+    INT x = 0;
+    while (x < pixelmap_width)
+    {
+        count = *get++;
+
+        if (count & 0x8000)
+        {
+            count = (USHORT)((count & 0x7fff) + 1);
+            get++;
+        }
+        else
+        {
+            count++;
+            get += count;
+        }
+
+        x += count;
+    }
+
+    return get;
+}
+
+static const GX_UBYTE* gx_compressed_alpha_pixelmap_line_skip(GX_FILL_PIXELMAP_INFO* info)
+{
+    const GX_UBYTE* get = (const GX_UBYTE*)info->current_pixel_ptr;
+
+    GX_UBYTE count;
+
+    INT pixelmap_width = info->pixelmap->width;
+    INT x = 0;
+    while (x < pixelmap_width)
+    {
+        count = *get;
+
+        if (count & 0x80)
+        {
+            count = (GX_UBYTE)((count & 0x7f) + 1);
+            get += 4;
+        }
+        else
+        {
+            count++;
+            get += count * 4;
+        }
+
+        x += count;
+    }
+
+    return get;
+}
 
 #if defined(GX_BRUSH_ALPHA_SUPPORT)
 
@@ -66,17 +123,10 @@
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_raw_blend(GX_DRAW_CONTEXT *context,
-                                                                         INT xstart, INT xend, INT y,
-                                                                         GX_FILL_PIXELMAP_INFO *info, GX_UBYTE alpha)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_raw_blend(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info, GX_UBYTE alpha)
 {
-INT              xval;
-INT              offset;
-INT              pic_width;
-const USHORT    *get;
-USHORT           pixel;
-GX_PIXELMAP     *pixelmap;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE balpha);
+    void (*blend_func)(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     blend_func = context->display->driver_pixel_blend;
     if (blend_func == GX_NULL)
@@ -84,32 +134,31 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
         return;
     }
 
-    pixelmap = info->pixelmap;
-    pic_width = pixelmap->width;
+    INT pixelmap_width = info->pixelmap->width;
 
-    /* Pick the data pointer to the current row. */
-    get = (const USHORT *)info->current_pixel_ptr;
-
-    if ((info->draw) && (xstart <= xend))
+    if (info->draw && (xstart <= xend))
     {
-        /* Calculate the map offset in x-axis. */
-        offset = (info->x_offset % pic_width);
+        // Pick the data pointer to the current row.
+        const USHORT* get = (const USHORT*)info->current_pixel_ptr;
 
-        for (xval = xstart; xval <= xend; xval++)
+        INT offset = (info->x_offset % pixelmap_width);
+
+        for (INT x = xstart; x <= xend; ++x)
         {
-            pixel = *(get + offset);
-            blend_func(context, xval, y, pixel, alpha);
-            offset++;
+            USHORT color = *(get + offset);
 
-            if (offset >= pic_width)
+            blend_func(context, x, y, color, alpha);
+
+            ++offset;
+            if (offset >= pixelmap_width)
             {
-                offset -= pic_width;
+                offset -= pixelmap_width;
             }
         }
     }
 
-    /* Update data pointer for next row.*/
-    info->current_pixel_ptr += (UINT)pic_width * sizeof(USHORT);
+    // Update data pointer for next row.
+    info->current_pixel_ptr += (UINT)pixelmap_width * sizeof(USHORT);
 }
 
 /**************************************************************************/
@@ -151,20 +200,10 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_alpha_blend(GX_DRAW_CONTEXT *context,
-                                                                           INT xstart, INT xend, INT y,
-                                                                           GX_FILL_PIXELMAP_INFO *info, GX_UBYTE alpha)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_alpha_blend(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info, GX_UBYTE alpha)
 {
-INT                xval;
-const USHORT      *get;
-const GX_UBYTE    *getalpha;
-USHORT             color;
-GX_UBYTE           falpha;
-GX_UBYTE           combined_alpha;
-GX_PIXELMAP       *pixelmap;
-INT                pic_width;
-INT                offset;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
+    void (*blend_func)(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
     blend_func = context->display->driver_pixel_blend;
     if (blend_func == GX_NULL)
@@ -172,43 +211,40 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
         return;
     }
 
-    pixelmap = info->pixelmap;
-    pic_width = pixelmap->width;
+    INT pixelmap_width = info->pixelmap->width;
 
-    if ((info->draw) && (xstart <= xend))
+    if (info->draw && (xstart <= xend))
     {
-        /* Pick the data pointer to the current row. */
-        get = (const USHORT *)info->current_pixel_ptr;
-        getalpha = (const GX_UBYTE *)info->current_aux_ptr;
+        // Pick the data pointer to the current row.
+        const USHORT* get = (const USHORT*)info->current_pixel_ptr;
+        const GX_UBYTE* getalpha = (const GX_UBYTE*)info->current_aux_ptr;
 
-        /* Calculate the map offset in x-axis. */
-        offset = (info->x_offset % pic_width);
+        INT offset = (info->x_offset % pixelmap_width);
 
-        for (xval = xstart; xval <= xend; xval++)
+        for (INT x = xstart; x <= xend; ++x)
         {
-            color = *(get + offset);
-            falpha = *(getalpha + offset);
+            USHORT color = *(get + offset);
+            GX_UBYTE falpha = *(getalpha + offset);
 
             if (falpha)
             {
-                combined_alpha = (GX_UBYTE)(falpha * alpha / 255);
+                GX_UBYTE combined_alpha = (GX_UBYTE)(falpha * alpha / 255);
 
-                blend_func(context, xval, y, color, combined_alpha);
+                blend_func(context, x, y, color, combined_alpha);
             }
 
-            offset++;
-            if (offset >= pic_width)
+            ++offset;
+            if (offset >= pixelmap_width)
             {
-                offset -= pic_width;
+                offset -= pixelmap_width;
             }
         }
     }
 
-    /* Update data pointers for next row. */
-    info->current_pixel_ptr += (UINT)pic_width * sizeof(USHORT);
-    info->current_aux_ptr += (UINT)pic_width * sizeof(GX_UBYTE);
+    // Update data pointers for next row.
+    info->current_pixel_ptr += (UINT)pixelmap_width * sizeof(USHORT);
+    info->current_aux_ptr += (UINT)pixelmap_width * sizeof(GX_UBYTE);
 }
-
 
 /**************************************************************************/
 /*                                                                        */
@@ -249,49 +285,51 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_blend(GX_DRAW_CONTEXT *context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info, GX_UBYTE alpha)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_blend(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info, GX_UBYTE alpha)
 {
-INT              start_pos;
-INT              xval;
-USHORT           count;
-USHORT           pixel;
-const USHORT    *get = GX_NULL;
-GX_PIXELMAP     *pixelmap;
-void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
+    void (*blend_func)(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR fcolor, GX_UBYTE alpha);
 
     blend_func = context->display->driver_pixel_blend;
-    pixelmap = info->pixelmap;
     if (blend_func == GX_NULL)
     {
         return;
     }
 
-    if ((info->draw) && (xstart <= xend))
+    const USHORT* get = GX_NULL;
+
+    if (info->draw && (xstart <= xend))
     {
-        /* Calculate draw start position. */
-        start_pos = xstart - (info->x_offset % pixelmap->width);
+        USHORT count;
+        USHORT color;
+
+        INT pixelmap_width = info->pixelmap->width;
+
+        INT start_pos = xstart - (info->x_offset % pixelmap_width);
 
         while (start_pos <= xend)
         {
-            xval = start_pos;
+            // Start from where we need to repeat.
+            get = (const USHORT*)info->current_pixel_ptr;
 
-            /*Start from where we need to repeat.*/
-            get = (const USHORT *)info->current_pixel_ptr;
-
-            while (xval < start_pos + pixelmap->width)
+            INT x = start_pos;
+            while (x < start_pos + pixelmap_width)
             {
                 count = *get++;
+
                 if (count & 0x8000)
                 {
                     count = (USHORT)((count & 0x7fff) + 1);
-                    pixel = *get++;
+                    color = *get++;
+
                     while (count--)
                     {
-                        if (xval >= xstart && xval <= xend)
+                        if (x >= xstart && x <= xend)
                         {
-                            blend_func(context, xval, y, pixel, alpha);
+                            blend_func(context, x, y, color, alpha);
                         }
-                        xval++;
+
+                        x++;
                     }
                 }
                 else
@@ -299,41 +337,28 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
                     count++;
                     while (count--)
                     {
-                        pixel = *get++;
-                        if (xval >= xstart && xval <= xend)
+                        color = *get++;
+
+                        if (x >= xstart && x <= xend)
                         {
-                            blend_func(context, xval, y, pixel, alpha);
+                            blend_func(context, x, y, color, alpha);
                         }
-                        xval++;
+
+                        x++;
                     }
                 }
             }
-            start_pos += pixelmap->width;
+
+            start_pos += pixelmap_width;
         }
     }
     else
     {
-        xval = 0;
-        get = (const USHORT *)info->current_pixel_ptr;
-        while (xval < pixelmap->width)
-        {
-            count = *get++;
-            if (count & 0x8000)
-            {
-                count = (USHORT)((count & 0x7fff) + 1);
-                get++;
-            }
-            else
-            {
-                count++;
-                get += count;
-            }
-            xval += count;
-        }
+        get = gx_compressed_pixelmap_line_skip(info);
     }
 
-    /* Update data pointer for next row. */
-    info->current_pixel_ptr = (GX_UBYTE *)get;
+    // Update data pointer for next row.
+    info->current_pixel_ptr = (GX_UBYTE*)get;
 }
 
 /**************************************************************************/
@@ -375,68 +400,67 @@ void             (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR 
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_alpha_blend(GX_DRAW_CONTEXT *context,
-                                                                                      INT xstart, INT xend, INT y,
-                                                                                      GX_FILL_PIXELMAP_INFO *info, GX_UBYTE alpha)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_alpha_blend(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info, GX_UBYTE alpha)
 {
-INT                xval;
-GX_UBYTE           count;
-INT                start_pos;
-GX_UBYTE           falpha;
-GX_UBYTE           combined_alpha;
-USHORT             pixel;
-const GX_UBYTE    *get = GX_NULL;
-const USHORT      *getpixel;
-GX_PIXELMAP       *pixelmap;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
+    void (*blend_func)(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
-    pixelmap = info->pixelmap;
     blend_func = context->display->driver_pixel_blend;
-
     if (blend_func == GX_NULL)
     {
         return;
     }
 
-    if ((info->draw) && (xstart <= xend))
+    const GX_UBYTE* get = GX_NULL;
+
+    if (info->draw && (xstart <= xend))
     {
-        /* Calculate the draw start position. */
-        start_pos = xstart - (info->x_offset % pixelmap->width);
+        GX_UBYTE count;
+        USHORT color;
+        GX_UBYTE falpha;
+        GX_UBYTE combined_alpha;
+
+        INT pixelmap_width = info->pixelmap->width;
+
+        INT start_pos = xstart - (info->x_offset % pixelmap_width);
 
         while (start_pos <= xend)
         {
-            xval = start_pos;
+            // Start from where we need to repeat.
+            get = (const GX_UBYTE*)info->current_pixel_ptr;
 
-            /*Start from where we need to repeat.*/
-            get = (const GX_UBYTE *)info->current_pixel_ptr;
-            while (xval < start_pos + pixelmap->width)
+            INT x = start_pos;
+            while (x < start_pos + pixelmap_width)
             {
                 count = *get;
+
                 if (count & 0x80)
                 {
                     count = (GX_UBYTE)((count & 0x7f) + 1u);
+
                     falpha = *(get + 1);
                     combined_alpha = (GX_UBYTE)(falpha * alpha / 255);
+
                     if (combined_alpha)
                     {
                         get += 2;
-                        getpixel = (const USHORT *)get;
-                        pixel = *getpixel;
+                        color = *((const USHORT*)get);
                         get += 2;
 
                         while (count--)
                         {
-                            if (xval >= xstart && xval <= xend)
+                            if (x >= xstart && x <= xend)
                             {
-                                blend_func(context, xval, y, pixel, combined_alpha);
+                                blend_func(context, x, y, color, combined_alpha);
                             }
-                            xval++;
+
+                            x++;
                         }
                     }
                     else
                     {
                         get += 4;
-                        xval += count;
+                        x += count;
                     }
                 }
                 else
@@ -444,51 +468,37 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                     count++;
                     while (count--)
                     {
-                        if (xval >= xstart && xval <= xend)
+                        if (x >= xstart && x <= xend)
                         {
                             falpha = *(get + 1);
                             combined_alpha = (GX_UBYTE)(falpha * alpha / 255);
+
                             get += 2;
-                            getpixel = (USHORT *)get;
-                            pixel = *getpixel;
+                            color = *((const USHORT*)get);
                             get += 2;
-                            blend_func(context, xval, y, pixel, combined_alpha);
+
+                            blend_func(context, x, y, color, combined_alpha);
                         }
                         else
                         {
                             get += 4;
                         }
-                        xval++;
+
+                        x++;
                     }
                 }
             }
-            start_pos += pixelmap->width;
+
+            start_pos += pixelmap_width;
         }
     }
     else
     {
-        /* Skip this line. */
-        xval = 0;
-        get = (const GX_UBYTE *)info->current_pixel_ptr;
-        while (xval < pixelmap->width)
-        {
-            count = *get;
-            if (count & 0x80)
-            {
-                count = (GX_UBYTE)((count & 0x7f) + 1);
-                get += 4;
-            }
-            else
-            {
-                count++;
-                get += count * 4;
-            }
-            xval += count;
-        }
+        get = gx_compressed_alpha_pixelmap_line_skip(info);
     }
 
-    /* Update data pointer for the next line. */
-    info->current_pixel_ptr = (GX_UBYTE *)get;
+    // Update data pointer for the next line.
+    info->current_pixel_ptr = (GX_UBYTE*)get;
 }
 
 #endif /* GX_BRUSH_ALPHA_SUPPORT */
@@ -530,46 +540,35 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_raw_write(GX_DRAW_CONTEXT *context,
-                                                                         INT xstart, INT xend, INT y,
-                                                                         GX_FILL_PIXELMAP_INFO *info)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_raw_write(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info)
 {
-INT              xval;
-INT              offset;
-INT              pic_width;
-const USHORT    *get = GX_NULL;
-USHORT          *put;
-GX_PIXELMAP     *pixelmap;
+    INT pixelmap_width = info->pixelmap->width;
 
-    pixelmap = info->pixelmap;
-
-    pic_width = pixelmap->width;
-
-    /* Pickup data pointer for the current line. */
-    get = (const USHORT *)info->current_pixel_ptr;
-
-    if ((info->draw) && (xstart <= xend))
+    if (info->draw && (xstart <= xend))
     {
-        put = (USHORT *)context->memory;
+        // Pick up data pointers to the current line.
+        const USHORT* get = (const USHORT*)info->current_pixel_ptr;
+
+        USHORT* put = (USHORT*)context->memory;
         GX_CALCULATE_PUTROW(put, xstart, y, context);
 
-        /*calculate the offset.*/
-        offset = (info->x_offset % pic_width);
+        INT offset = (info->x_offset % pixelmap_width);
 
-        for (xval = xstart; xval <= xend; xval++)
+        for (INT x = xstart; x <= xend; x++)
         {
             *put++ = *(get + offset);
-            offset++;
 
-            if (offset >= pic_width)
+            ++offset;
+            if (offset >= pixelmap_width)
             {
-                offset -= pic_width;
+                offset -= pixelmap_width;
             }
         }
     }
 
-    /* Update data pointer for the next line. */
-    info->current_pixel_ptr += (UINT)pic_width * sizeof(USHORT);
+    // Update data pointer for the next line.
+    info->current_pixel_ptr += (UINT)pixelmap_width * sizeof(USHORT);
 }
 
 /**************************************************************************/
@@ -612,55 +611,45 @@ GX_PIXELMAP     *pixelmap;
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_alpha_write(GX_DRAW_CONTEXT *context,
-                                                                           INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_alpha_write(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info)
 {
-INT                xval;
-const USHORT      *get;
-const GX_UBYTE    *getalpha;
-USHORT             color;
-GX_UBYTE           alpha;
-GX_PIXELMAP       *pixelmap;
-INT                pic_width;
-INT                offset;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
+    void (*blend_func)(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
     blend_func = context->display->driver_pixel_blend;
-    pixelmap = info->pixelmap;
-
     if (blend_func == GX_NULL)
     {
         return;
     }
 
-    pic_width = pixelmap->width;
-    if ((info->draw) && (xstart <= xend))
+    INT pixelmap_width = info->pixelmap->width;
+
+    if (info->draw && (xstart <= xend))
     {
-        /* Pick up data pointers to the current line. */
-        get = (const USHORT *)info->current_pixel_ptr;
-        getalpha = (const GX_UBYTE *)info->current_aux_ptr;
+        // Pick up data pointers to the current line.
+        const USHORT* get = (const USHORT*)info->current_pixel_ptr;
+        const GX_UBYTE* getalpha = (const GX_UBYTE*)info->current_aux_ptr;
 
-        /* calculate map offset in x-axis. */
-        offset = (info->x_offset % pic_width);
+        INT offset = (info->x_offset % pixelmap_width);
 
-        for (xval = xstart; xval <= xend; xval++)
+        for (INT x = xstart; x <= xend; ++x)
         {
-            color = *(get + offset);
-            alpha = *(getalpha + offset);
+            USHORT color = *(get + offset);
+            GX_UBYTE alpha = *(getalpha + offset);
 
-            blend_func(context, xval, y, color, alpha);
+            blend_func(context, x, y, color, alpha);
 
-            offset++;
-            if (offset >= pic_width)
+            ++offset;
+            if (offset >= pixelmap_width)
             {
-                offset -= pic_width;
+                offset -= pixelmap_width;
             }
         }
     }
 
-    /* Update data pointers for the next line. */
-    info->current_pixel_ptr += (UINT)pic_width * sizeof(USHORT);
-    info->current_aux_ptr += (UINT)pic_width * sizeof(GX_UBYTE);
+    // Update data pointers for the next line.
+    info->current_pixel_ptr += (UINT)pixelmap_width * sizeof(USHORT);
+    info->current_aux_ptr += (UINT)pixelmap_width * sizeof(GX_UBYTE);
 }
 
 /**************************************************************************/
@@ -700,49 +689,47 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_write(GX_DRAW_CONTEXT *context,
-                                                                                INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_write(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info)
 {
-INT              start_pos;
-INT              xval;
-USHORT           count;
-USHORT           pixel;
-const USHORT    *get = GX_NULL;
-USHORT          *put;
-GX_PIXELMAP     *pixelmap;
+    const USHORT* get = GX_NULL;
 
-    pixelmap = info->pixelmap;
-
-    if ((info->draw) && (xstart <= xend))
+    if (info->draw && (xstart <= xend))
     {
-        /* Calculate draw start position. */
-        start_pos = xstart - (info->x_offset % pixelmap->width);
+        USHORT count;
+        USHORT color;
 
-        put = (USHORT *)context->memory;
+        INT pixelmap_width = info->pixelmap->width;
+
+        INT start_pos = xstart - (info->x_offset % pixelmap_width);
+
+        USHORT* put = (USHORT*)context->memory;
         GX_CALCULATE_PUTROW(put, start_pos, y, context);
 
-        /*Repeat the draw operation to fill the whole dirty area.*/
+        // Repeat the draw operation to fill the whole dirty area.
         while (start_pos <= xend)
         {
-            xval = start_pos;
+            // Start from where we need to repeat.
+            get = (const USHORT*)info->current_pixel_ptr;
 
-            /*Start from where we need to repeat.*/
-            get = (const USHORT *)info->current_pixel_ptr;
-
-            while (xval < start_pos + pixelmap->width)
+            INT x = start_pos;
+            while (x < start_pos + pixelmap_width)
             {
                 count = *get++;
+
                 if (count & 0x8000)
                 {
                     count = (USHORT)((count & 0x7fff) + 1);
-                    pixel = *get++;
+                    color = *get++;
+
                     while (count--)
                     {
-                        if (xval >= xstart && xval <= xend)
+                        if (x >= xstart && x <= xend)
                         {
-                            *put = pixel;
+                            *put = color;
                         }
-                        xval++;
+
+                        x++;
                         put++;
                     }
                 }
@@ -751,42 +738,29 @@ GX_PIXELMAP     *pixelmap;
                     count++;
                     while (count--)
                     {
-                        pixel = *get++;
-                        if (xval >= xstart && xval <= xend)
+                        color = *get++;
+
+                        if (x >= xstart && x <= xend)
                         {
-                            *put = pixel;
+                            *put = color;
                         }
-                        xval++;
+
+                        x++;
                         put++;
                     }
                 }
             }
-            start_pos += pixelmap->width;
+
+            start_pos += pixelmap_width;
         }
     }
     else
     {
-        xval = 0;
-        get = (const USHORT *)info->current_pixel_ptr;
-        while (xval < pixelmap->width)
-        {
-            count = *get++;
-            if (count & 0x8000)
-            {
-                count = (USHORT)((count & 0x7fff) + 1);
-                get++;
-            }
-            else
-            {
-                count++;
-                get += count;
-            }
-            xval += count;
-        }
+        get = gx_compressed_pixelmap_line_skip(info);
     }
 
-    /* Update data pointer for the next line. */
-    info->current_pixel_ptr = (GX_UBYTE *)get;
+    // Update data pointer for the next line.
+    info->current_pixel_ptr = (GX_UBYTE*)get;
 }
 
 /**************************************************************************/
@@ -827,40 +801,39 @@ GX_PIXELMAP     *pixelmap;
 /*    _gx_display_driver_565rgb_horizontal_pixelmap_line_draw             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_alpha_write(GX_DRAW_CONTEXT *context,
-                                                                                      INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info)
+static void _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_alpha_write(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info)
 {
-INT                xval;
-GX_UBYTE           count;
-INT                start_pos;
-GX_UBYTE           alpha;
-USHORT             pixel;
-const GX_UBYTE    *get = GX_NULL;
-const USHORT      *getpixel;
-GX_PIXELMAP       *pixelmap;
-void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
+    void (*blend_func)(GX_DRAW_CONTEXT* context, INT x, INT y, GX_COLOR color, GX_UBYTE alpha);
 
-    pixelmap = info->pixelmap;
     blend_func = context->display->driver_pixel_blend;
-
     if (blend_func == GX_NULL)
     {
         return;
     }
 
-    if ((info->draw) && (xstart <= xend))
-    {
-        /* Calculate draw start position. */
-        start_pos = xstart - (info->x_offset % pixelmap->width);
+    INT pixelmap_width = info->pixelmap->width;
 
-        /* Repeat the draw operation to fill the whole dirty area. */
+    const GX_UBYTE* get = GX_NULL;
+
+    INT x;
+    GX_UBYTE count;
+
+    if (info->draw && (xstart <= xend))
+    {
+        USHORT   color;
+        GX_UBYTE alpha;
+
+        INT start_pos = xstart - (info->x_offset % pixelmap_width);
+
+        // Repeat the draw operation to fill the whole dirty area.
         while (start_pos <= xend)
         {
-            xval = start_pos;
+            // Start from where we need to repeat.
+            get = (const GX_UBYTE*)info->current_pixel_ptr;
 
-            /* Start from where we need to repeat. */
-            get = (const GX_UBYTE *)info->current_pixel_ptr;
-            while (xval < start_pos + pixelmap->width)
+            x = start_pos;
+            while (x < start_pos + pixelmap_width)
             {
                 count = *get;
                 if (count & 0x80)
@@ -870,24 +843,23 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                     if (alpha)
                     {
                         get += 2;
-
-                        getpixel = (const USHORT *)get;
-                        pixel = *getpixel;
+                        color = *((const USHORT*)get);
                         get += 2;
 
                         while (count--)
                         {
-                            if (xval >= xstart && xval <= xend)
+                            if (x >= xstart && x <= xend)
                             {
-                                blend_func(context, xval, y, pixel, alpha);
+                                blend_func(context, x, y, color, alpha);
                             }
-                            xval++;
+
+                            x++;
                         }
                     }
                     else
                     {
                         get += 4;
-                        xval += count;
+                        x += count;
                     }
                 }
                 else
@@ -895,50 +867,36 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
                     count++;
                     while (count--)
                     {
-                        if (xval >= xstart && xval <= xend)
+                        if (x >= xstart && x <= xend)
                         {
                             alpha = *(get + 1);
+
                             get += 2;
-                            getpixel = (USHORT *)get;
-                            pixel = *getpixel;
+                            color = *((const USHORT*)get);
                             get += 2;
-                            blend_func(context, xval, y, pixel, alpha);
+
+                            blend_func(context, x, y, color, alpha);
                         }
                         else
                         {
                             get += 4;
                         }
-                        xval++;
+
+                        x++;
                     }
                 }
             }
-            start_pos += pixelmap->width;
+
+            start_pos += pixelmap_width;
         }
     }
     else
     {
-        /* Just do skip operation here. */
-        xval = 0;
-        get = (const GX_UBYTE *)info->current_pixel_ptr;
-        while (xval < pixelmap->width)
-        {
-            count = *get;
-            if (count & 0x80)
-            {
-                count = (GX_UBYTE)((count & 0x7f) + 1);
-                get += 4;
-            }
-            else
-            {
-                count++;
-                get += count * 4;
-            }
-            xval += count;
-        }
+        get = gx_compressed_alpha_pixelmap_line_skip(info);
     }
 
-    /* Update data pinter for the next line. */
-    info->current_pixel_ptr = (GX_UBYTE *)get;
+    // Update data pinter for the next line.
+    info->current_pixel_ptr = (GX_UBYTE*)get;
 }
 
 /**************************************************************************/
@@ -993,32 +951,30 @@ void               (*blend_func)(GX_DRAW_CONTEXT *context, INT x, INT y, GX_COLO
 /*    GUIX Internal Code                                                  */
 /*                                                                        */
 /**************************************************************************/
-void _gx_display_driver_565rgb_horizontal_pixelmap_line_draw(GX_DRAW_CONTEXT *context,
-                                                             INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO *info)
+void _gx_display_driver_565rgb_horizontal_pixelmap_line_draw(
+    GX_DRAW_CONTEXT* context, INT xstart, INT xend, INT y, GX_FILL_PIXELMAP_INFO* info)
 {
-#if defined GX_BRUSH_ALPHA_SUPPORT
-GX_UBYTE alpha;
+#if defined(GX_BRUSH_ALPHA_SUPPORT)
 
-    alpha = context->brush.alpha;
+    GX_UBYTE alpha = context->brush.alpha;
+
     if ((alpha == 0) || (info->pixelmap == GX_NULL))
     {
-        /* Nothing to drawn. Just return. */
-        return;
+        return; // Nothing to drawn. Just return.
     }
 
     if (alpha != 0xff)
     {
-
         if (info->pixelmap->flags & GX_PIXELMAP_ALPHA)
         {
             if (info->pixelmap->flags & GX_PIXELMAP_COMPRESSED)
             {
-                /* has both compression and alpha */
+                // has both compression and alpha
                 _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_alpha_blend(context, xstart, xend, y, info, alpha);
             }
             else
             {
-                /* alpha, no compression */
+                // alpha, no compression
                 _gx_display_driver_565rgb_horizontal_pixelmap_line_alpha_blend(context, xstart, xend, y, info, alpha);
             }
         }
@@ -1026,36 +982,33 @@ GX_UBYTE alpha;
         {
             if (info->pixelmap->flags & GX_PIXELMAP_COMPRESSED)
             {
-                /* compressed with no alpha */
+                // compressed with no alpha
                 _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_blend(context, xstart, xend, y, info, alpha);
             }
             else
             {
-                /* no compression or alpha */
+                // no compression or alpha
                 _gx_display_driver_565rgb_horizontal_pixelmap_line_raw_blend(context, xstart, xend, y, info, alpha);
             }
         }
 
-        /* Data pointer goes to the end of the fill map, move it to the start again. */
-        if (info->current_pixel_ptr >= info->pixelmap->data + info->pixelmap->data_size)
-        {
-            info->current_pixel_ptr = (GX_UBYTE *)info->pixelmap->data;
-            info->current_aux_ptr = (GX_UBYTE *)info->pixelmap->aux_data;
-        }
+        info->data_ptrs_reset_();
+
         return;
     }
-#endif
+
+#endif // GX_BRUSH_ALPHA_SUPPORT
 
     if (info->pixelmap->flags & GX_PIXELMAP_ALPHA)
     {
         if (info->pixelmap->flags & GX_PIXELMAP_COMPRESSED)
         {
-            /* has both compression and alpha */
+            // has both compression and alpha
             _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_alpha_write(context, xstart, xend, y, info);
         }
         else
         {
-            /* alpha, no compression */
+            // alpha, no compression
             _gx_display_driver_565rgb_horizontal_pixelmap_line_alpha_write(context, xstart, xend, y, info);
         }
     }
@@ -1063,20 +1016,15 @@ GX_UBYTE alpha;
     {
         if (info->pixelmap->flags & GX_PIXELMAP_COMPRESSED)
         {
-            /* compressed with no alpha */
+            // compressed with no alpha
             _gx_display_driver_565rgb_horizontal_pixelmap_line_compressed_write(context, xstart, xend, y, info);
         }
         else
         {
-            /* no compression or alpha */
+            // no compression or alpha
             _gx_display_driver_565rgb_horizontal_pixelmap_line_raw_write(context, xstart, xend, y, info);
         }
     }
 
-    /* Data pointers goes to the end of full map, move it to the start again. */
-    if (info->current_pixel_ptr >= info->pixelmap->data + info->pixelmap->data_size)
-    {
-        info->current_pixel_ptr = (GX_UBYTE *)info->pixelmap->data;
-        info->current_aux_ptr = (GX_UBYTE *)info->pixelmap->aux_data;
-    }
+    info->data_ptrs_reset_();
 }
