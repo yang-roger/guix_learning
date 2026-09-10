@@ -24,6 +24,10 @@
 #include "gx_system.h"
 #include "gx_utility.h"
 
+#ifdef GX_ENABLE_CANVAS_PARTIAL_FRAME_BUFFER
+#include "gx_canvas.h"
+#endif
+
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */

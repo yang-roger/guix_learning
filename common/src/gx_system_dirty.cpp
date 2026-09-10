@@ -350,12 +350,12 @@ static UINT _gx_system_canvas_draw(GX_WINDOW_ROOT* root)
 #ifdef GX_ENABLE_CANVAS_PARTIAL_FRAME_BUFFER
 static UINT _gx_system_canvas_draw_partial(GX_WINDOW_ROOT* root)
 {
-    UINT           status = GX_SUCCESS;
     GX_CANVAS*     canvas = root->canvas;
     GX_RECTANGLE   dirty_sum;
     GX_RECTANGLE   dirty_frame;
     GX_WIDGET*     drawit;
     GX_DIRTY_AREA* dirty_list_entry;
+    GX_DIRTY_AREA* dirty_list_end;
     GX_VALUE       dirty_width;
     GX_VALUE       dirty_height;
 
@@ -372,7 +372,7 @@ static UINT _gx_system_canvas_draw_partial(GX_WINDOW_ROOT* root)
     // Refresh canvas in the dirty area.
     if (canvas->draw_count > 0)
     {
-        _gx_system_dirty_partial_add((GX_WIDGET*)root, &canvas->dirty_area);
+        _gx_system_dirty_partial_add(root, &canvas->dirty_area);
         canvas->draw_count = 0;
     }
 
@@ -412,7 +412,8 @@ static UINT _gx_system_canvas_draw_partial(GX_WINDOW_ROOT* root)
 
             if (drawit && drawit->is_visible_())
             {
-                if (drawit->style & (GX_STYLE_BORDER_RAISED | GX_STYLE_BORDER_RECESSED))
+                if ((drawit->status & GX_STATUS_TRANSPARENT) ||
+                    (drawit->style & (GX_STYLE_BORDER_RAISED | GX_STYLE_BORDER_RECESSED)))
                 {
                     while (drawit->parent)
                     {
