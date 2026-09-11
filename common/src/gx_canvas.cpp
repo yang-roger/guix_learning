@@ -1356,6 +1356,21 @@ UINT _gx_canvas_mouse_hide(GX_CANVAS* canvas)
 
 /**************************************************************************/
 
+static inline void gx_pattern_mask_right_shift_(ULONG& mask, ULONG bits)
+{
+    bits &= 0x1F;
+
+    ULONG new_mask = (mask >> bits);
+    if (new_mask)
+    {
+        mask = new_mask;
+    }
+    else
+    {
+        mask <<= (32 - bits); // rotate
+    }
+}
+
 static inline void gx_canvas_angle_normalize_(INT& angle)
 {
     while (angle < 0)
@@ -1722,15 +1737,7 @@ UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX
 
                     if (clip_rect.right < x_end)
                     {
-                        width = (GX_VALUE)((x_end - clip_rect.left) & 0x1F);
-                        if ((brush.pattern_mask >> width) == 0)
-                        {
-                            brush.pattern_mask <<= (32 - width);
-                        }
-                        else
-                        {
-                            brush.pattern_mask >>= width;
-                        }
+                        gx_pattern_mask_right_shift_(brush.pattern_mask, ULONG(x_end - clip_rect.right));
                     }
                 }
                 else
@@ -1760,15 +1767,7 @@ UINT _gx_canvas_line_draw(GX_VALUE x_start, GX_VALUE y_start, GX_VALUE x_end, GX
 
                     if (clip_rect.bottom < y_end)
                     {
-                        width = (GX_VALUE)((y_end - clip_rect.bottom) & 0x1F);
-                        if ((brush.pattern_mask >> width) == 0)
-                        {
-                            brush.pattern_mask <<= (32 - width);
-                        }
-                        else
-                        {
-                            brush.pattern_mask >>= width;
-                        }
+                        gx_pattern_mask_right_shift_(brush.pattern_mask, ULONG(y_end - clip_rect.bottom));
                     }
                 }
                 else
