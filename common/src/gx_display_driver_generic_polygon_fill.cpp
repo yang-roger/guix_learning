@@ -101,7 +101,7 @@ INT      x_min;
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
-/*    _gx_display_driver_polygon_new_edge_table_init                      */
+/*    _gx_display_driver_polygon_new_edge_table_initialize                */
 /*                                                           6.1          */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -133,7 +133,7 @@ INT      x_min;
 /*    _gx_display_driver_generic_polygon_fill                             */
 /*                                                                        */
 /**************************************************************************/
-static void _gx_display_driver_polygon_new_edge_table_init(GX_DRAW_CONTEXT *context, GX_POINT *vertex, INT num, GX_POLYGON_EDGE *net, INT *net_size)
+static void _gx_display_driver_polygon_new_edge_table_initialize(GX_DRAW_CONTEXT *context, GX_POINT *vertex, INT num, GX_POLYGON_EDGE *net, INT *net_size)
 {
 GX_POLYGON_EDGE edge;
 INT             index;
@@ -665,7 +665,7 @@ GX_RECTANGLE          *clip = context->clip;
         _gx_display_driver_polygon_min_max_get(vertex, num, &ymin, &ymax, &xpos);
 
         /* Initiate new edge table. */
-        _gx_display_driver_polygon_new_edge_table_init(context, vertex, num, net, &net_size);
+        _gx_display_driver_polygon_new_edge_table_initialize(context, vertex, num, net, &net_size);
 
         brush = &context->brush;
         if (brush->style & GX_BRUSH_PIXELMAP_FILL)

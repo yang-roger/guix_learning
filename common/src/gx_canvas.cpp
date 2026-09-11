@@ -545,7 +545,7 @@ UINT GX_CANVAS::drawing_initiate_(GX_WIDGET* who, const GX_RECTANGLE& dirty_rect
     }
     else
     {
-        new_context->brush_default_init_();
+        new_context->brush.default_initialize_();
 
         new_context->canvas = this;
         new_context->display = this->display;
@@ -1439,7 +1439,7 @@ static GX_ARC_DRAW_FUNCTION* gx_arc_draw_function_get_(UINT brush_width, UINT br
     }
     else
     {
-        return GX_NULL; // no outline
+        return GX_NULL;
     }
 }
 
@@ -4241,7 +4241,6 @@ GX_CANVAS* _gx_canvas_composite_create(void)
     }
 
     composite->clamp_(&dirty_sum);
-
     composite->dirty_area = dirty_sum;
 
     canvas_count = 0;

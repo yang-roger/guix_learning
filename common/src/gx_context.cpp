@@ -3,7 +3,7 @@
 #include "gx_display.h"
 #include "gx_system.h"
 
-void GX_BRUSH::default_init_()
+void GX_BRUSH::default_initialize_()
 {
     pixelmap = GX_NULL;
     font = GX_NULL;
@@ -27,11 +27,6 @@ void GX_BRUSH::set_(GX_COLOR line_color, GX_COLOR fill_color, UINT style)
 GX_DRAW_CONTEXT* gx_context_current_()
 {
     return _gx_system_current_draw_context;
-}
-
-void GX_DRAW_CONTEXT::brush_default_init_()
-{
-    brush.default_init_();
 }
 
 UINT GX_DRAW_CONTEXT::brush_set_(GX_RESOURCE_ID line_color_id, GX_RESOURCE_ID fill_color_id, UINT style)
@@ -224,10 +219,9 @@ UINT GX_DRAW_CONTEXT::raw_fill_color_set_(GX_COLOR fill_color)
 /*    _gx_canvas_drawing_initiate                                         */
 /*                                                                        */
 /**************************************************************************/
-
 UINT _gx_context_brush_default(GX_DRAW_CONTEXT* context)
 {
-    context->brush_default_init_();
+    context->brush.default_initialize_();
 
     return GX_SUCCESS;
 }

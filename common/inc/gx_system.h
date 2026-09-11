@@ -114,7 +114,7 @@ UINT _gx_system_clipboard_get(void** data, UINT* data_size);
 UINT _gx_system_clipboard_put(void* data, UINT data_size);
 
 UINT _gx_system_pen_configure(const GX_PEN_CONFIGURATION* pen_configuration);
-void _gx_system_pen_speed_init(GX_POINT* current);
+void _gx_system_pen_speed_initialize(GX_POINT* current);
 void _gx_system_pen_speed_update(GX_POINT* current);
 void _gx_system_pen_flick_test(GX_WIDGET* target);
 

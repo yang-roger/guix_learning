@@ -25,7 +25,7 @@
 #include "gx_system.h"
 #include "gx_canvas.h"
 
-void GX_PROGRESS_BAR_INFO::default_init_()
+void GX_PROGRESS_BAR_INFO::default_initialize_()
 {
     min_val = 0;
     max_val = 100;
@@ -61,7 +61,7 @@ UINT GX_PROGRESS_BAR::create_(const GX_CHAR* name, GX_WIDGET* parent,
     }
     else
     {
-        this->info.default_init_();
+        this->info.default_initialize_();
     }
 
     this->draw_function = (void (*)(GX_WIDGET*))gx_progress_bar_draw_;

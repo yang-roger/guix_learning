@@ -52,38 +52,37 @@ struct GX_DISPLAY;
 /* Define Brush type.  */
 struct GX_BRUSH
 {
-    GX_PIXELMAP* pixelmap;                             /* Used for fills and line ends             */
-    GX_FONT*     font;                                 /* Used for drawing text                    */
-    ULONG        line_pattern;                         /* Used for drawing dashed lines            */
-    ULONG        pattern_mask;                         /* Used for drawing dashed lines            */
-    GX_COLOR     fill_color;                           /* For solid color fills                    */
-    GX_COLOR     line_color;                           /* For lines and outlines                   */
-    UINT         style;                                /* Flags defined below                      */
-    GX_VALUE     width;                                /* Line width                               */
-    UCHAR        alpha;                                /* for blending                             */
+    GX_PIXELMAP*    pixelmap;     /* Used for fills and line ends         */
+    GX_FONT*        font;         /* Used for drawing text                */
+    ULONG           line_pattern; /* Used for drawing dashed lines        */
+    ULONG           pattern_mask; /* Used for drawing dashed lines        */
+    GX_COLOR        fill_color;   /* For solid color fills                */
+    GX_COLOR        line_color;   /* For lines and outlines               */
+    UINT            style;        /* Flags defined below                  */
+    GX_VALUE        width;        /* Line width                           */
+    UCHAR           alpha;        /* for blending                         */
 
-    void default_init_();
+    void default_initialize_();
     void set_(GX_COLOR line_color, GX_COLOR fill_color, UINT style);
 };
 
 /* Define Drawing Context type.  */
 struct GX_DRAW_CONTEXT
 {
-    GX_BRUSH                brush;
-    GX_CANVAS*              canvas;
-    GX_DISPLAY*             display;
-    GX_VIEW*                view_head;
-    GX_VIEW                 simple_view;
-    GX_COLOR*               memory;
-    GX_RECTANGLE            dirty;
-    GX_RECTANGLE*           clip;
-    GX_VALUE                pitch;
+    GX_BRUSH        brush;
+    GX_CANVAS*      canvas;
+    GX_DISPLAY*     display;
+    GX_VIEW*        view_head;
+    GX_VIEW         simple_view;
+    GX_COLOR*       memory;
+    GX_RECTANGLE    dirty;
+    GX_RECTANGLE*   clip;
+    GX_VALUE        pitch;
 #if defined GX_ENABLE_CANVAS_PARTIAL_FRAME_BUFFER
-    GX_VALUE                offset_x;
-    GX_VALUE                offset_y;
+    GX_VALUE        offset_x;
+    GX_VALUE        offset_y;
 #endif
 
-    void brush_default_init_();
     UINT brush_set_(GX_RESOURCE_ID line_color_id, GX_RESOURCE_ID fill_color_id, UINT style);
     void brush_pattern_set_(ULONG pattern);
 

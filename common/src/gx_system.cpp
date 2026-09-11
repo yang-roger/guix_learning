@@ -1437,7 +1437,7 @@ UINT _gx_system_pen_configure(const GX_PEN_CONFIGURATION* pen_configuration)
 /*                                                                        */
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
-/*    _gx_system_pen_speed_init                                           */
+/*    _gx_system_pen_speed_initialize                                     */
 /*                                                           6.1          */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -1464,7 +1464,7 @@ UINT _gx_system_pen_configure(const GX_PEN_CONFIGURATION* pen_configuration)
 /*    _gx_system_event_send                 Send GUIX system event        */
 /*                                                                        */
 /**************************************************************************/
-void _gx_system_pen_speed_init(GX_POINT* current)
+void _gx_system_pen_speed_initialize(GX_POINT* current)
 {
     _gx_system_last_clock = GX_SYSTEM_CURRENT_CLOCK;
     _gx_system_last_pen_point = *current;

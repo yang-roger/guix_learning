@@ -55,7 +55,7 @@ struct GX_PROGRESS_BAR_INFO
     GX_RESOURCE_ID disabled_text_color;
     GX_RESOURCE_ID fill_pixelmap;
 
-    void default_init_();
+    void default_initialize_();
 };
 
 /* Define GX_PROGRESS_BAR type.  */

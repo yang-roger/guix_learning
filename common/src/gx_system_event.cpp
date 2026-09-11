@@ -274,7 +274,7 @@ UINT _gx_system_event_send(GX_EVENT* in_event)
     switch (in_event->type)
     {
     case GX_EVENT_PEN_DOWN:
-        _gx_system_pen_speed_init(&in_event->payload.pointdata);
+        _gx_system_pen_speed_initialize(&in_event->payload.pointdata);
         break;
 
     case GX_EVENT_PEN_DRAG:

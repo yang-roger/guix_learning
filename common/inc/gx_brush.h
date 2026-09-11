@@ -41,7 +41,7 @@ struct GX_BRUSH
     GX_VALUE     width;                                /* Line width                               */
     UCHAR        alpha;                                /* for blending                             */
 
-    void default_init_();
+    void default_initialize_();
     void set_(GX_COLOR line_color, GX_COLOR fill_color, UINT style);
 };
 
