@@ -3,10 +3,6 @@
 
 /* Define macros used in GUIX.  */
 
-#ifndef GX_PARAMETER_NOT_USED
-#define GX_PARAMETER_NOT_USED(p) ((void) (p))
-#endif /* GX_PARAMETER_NOT_USED */
-
 #ifndef GX_MIN
 #define GX_MIN(_a, _b)  (((_a) < (_b)) ? (_a) : (_b))
 #endif

@@ -43,11 +43,9 @@ static GX_BOOL gx_scroll_wheel_wrap_style_check_(GX_SCROLL_WHEEL* wheel)
     return wheel->is_wrap_style_();
 }
 
-UINT GX_SCROLL_WHEEL::create_(const GX_CHAR* name, GX_WIDGET* parent, INT total_rows,
+UINT GX_SCROLL_WHEEL::create_(const GX_CHAR* name, GX_WIDGET* /*parent*/, INT total_rows,
                               ULONG style, USHORT Id, const GX_RECTANGLE* size)
 {
-    GX_PARAMETER_NOT_USED(parent);
-
     if ((style & GX_STYLE_TEXT_ALIGNMENT_MASK) == 0)
     {
         style |= GX_STYLE_TEXT_CENTER;

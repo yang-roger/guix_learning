@@ -146,10 +146,8 @@ void GX_MULTI_LINE_TEXT_VIEW::client_updated_() const
     _gx_system_event_fold(&e);
 }
 
-UINT GX_MULTI_LINE_TEXT_VIEW::scroll_info_get_(ULONG style, GX_SCROLL_INFO* info)
+UINT GX_MULTI_LINE_TEXT_VIEW::scroll_info_get_(ULONG /*style*/, GX_SCROLL_INFO* info)
 {
-    GX_PARAMETER_NOT_USED(style);
-
     GX_FONT* font;
     font_get_(font_id_(), &font);
     if (!font)

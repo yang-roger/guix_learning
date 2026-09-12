@@ -269,10 +269,8 @@ UINT _gx_system_timer_stop(GX_WIDGET* owner, UINT timer_id)
 /*    tx_timer                                                            */
 /*                                                                        */
 /**************************************************************************/
-void _gx_system_timer_expiration(ULONG val)
+void _gx_system_timer_expiration(ULONG /*val*/)
 {
-    GX_PARAMETER_NOT_USED(val);
-
     if (!_gx_system_active_timer_list &&
         !_gx_system_animation_active_list)
     {

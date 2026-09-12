@@ -107,17 +107,17 @@ private:
 
 /* Define scroll wheel management function prototypes.  */
 
-UINT    _gx_scroll_wheel_create(GX_SCROLL_WHEEL* wheel, const GX_CHAR* name, GX_WIDGET* parent, INT total_rows,
-                                ULONG style, USHORT Id, const GX_RECTANGLE* size);
-UINT    _gx_scroll_wheel_event_process(GX_SCROLL_WHEEL* wheel, GX_EVENT* event_ptr);
-UINT    _gx_scroll_wheel_gradient_alpha_set(GX_SCROLL_WHEEL* wheel, GX_UBYTE start_alpha, GX_UBYTE end_alpha);
-UINT    _gx_scroll_wheel_row_height_set(GX_SCROLL_WHEEL* wheel, GX_VALUE row_height);
-UINT    _gx_scroll_wheel_selected_background_set(GX_SCROLL_WHEEL* wheel, GX_RESOURCE_ID selected_bg);
-UINT    _gx_scroll_wheel_selected_get(GX_SCROLL_WHEEL* wheel, INT* row);
-UINT    _gx_scroll_wheel_selected_set(GX_SCROLL_WHEEL* wheel, INT row);
-UINT    _gx_scroll_wheel_speed_set(GX_SCROLL_WHEEL* wheel, GX_FIXED_VAL start_speed_rate, GX_FIXED_VAL end_speed_rate,
-                                   GX_VALUE max_steps, GX_VALUE delay);
-UINT    _gx_scroll_wheel_total_rows_set(GX_SCROLL_WHEEL* wheel, INT total_rows);
+UINT _gx_scroll_wheel_create(GX_SCROLL_WHEEL* wheel, const GX_CHAR* name, GX_WIDGET* parent, INT total_rows,
+                             ULONG style, USHORT Id, const GX_RECTANGLE* size);
+UINT _gx_scroll_wheel_event_process(GX_SCROLL_WHEEL* wheel, GX_EVENT* event_ptr);
+UINT _gx_scroll_wheel_gradient_alpha_set(GX_SCROLL_WHEEL* wheel, GX_UBYTE start_alpha, GX_UBYTE end_alpha);
+UINT _gx_scroll_wheel_row_height_set(GX_SCROLL_WHEEL* wheel, GX_VALUE row_height);
+UINT _gx_scroll_wheel_selected_background_set(GX_SCROLL_WHEEL* wheel, GX_RESOURCE_ID selected_bg);
+UINT _gx_scroll_wheel_selected_get(GX_SCROLL_WHEEL* wheel, INT* row);
+UINT _gx_scroll_wheel_selected_set(GX_SCROLL_WHEEL* wheel, INT row);
+UINT _gx_scroll_wheel_speed_set(GX_SCROLL_WHEEL* wheel, GX_FIXED_VAL start_speed_rate, GX_FIXED_VAL end_speed_rate,
+                                GX_VALUE max_steps, GX_VALUE delay);
+UINT _gx_scroll_wheel_total_rows_set(GX_SCROLL_WHEEL* wheel, INT total_rows);
 
 
 /* Define error checking shells for API services.  These are only referenced by the application.  */

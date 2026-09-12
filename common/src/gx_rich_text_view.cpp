@@ -86,10 +86,8 @@ UINT GX_RICH_TEXT_VIEW::fonts_set_(GX_RICH_TEXT_FONTS* fonts)
     return GX_SUCCESS;
 }
 
-UINT GX_RICH_TEXT_VIEW::scroll_info_get_(ULONG style, GX_SCROLL_INFO* info)
+UINT GX_RICH_TEXT_VIEW::scroll_info_get_(ULONG /*style*/, GX_SCROLL_INFO* info)
 {
-    GX_PARAMETER_NOT_USED(style);
-
     GX_FONT* font;
     font_get_(fonts.normal_id, &font);
     if (!font)

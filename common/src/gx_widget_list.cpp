@@ -918,10 +918,8 @@ void GX_WIDGET_LIST::scrollbar_reset_()
     }
 }
 
-void GX_WIDGET_LIST::scroll_info_get_(ULONG style, GX_SCROLL_INFO* info)
+void GX_WIDGET_LIST::scroll_info_get_(ULONG /*style*/, GX_SCROLL_INFO* info)
 {
-    GX_PARAMETER_NOT_USED(style);
-
     info->maximum = client_children_extent_();
     if (info->maximum > 0)
     {

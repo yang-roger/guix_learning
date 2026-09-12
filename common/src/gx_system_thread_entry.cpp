@@ -68,7 +68,7 @@
 /*    ThreadX                                                             */
 /*                                                                        */
 /**************************************************************************/
-void _gx_system_thread_entry(ULONG id)
+void _gx_system_thread_entry(ULONG /*id*/)
 {
     UINT status = GX_FAILURE;
 
@@ -79,8 +79,6 @@ void _gx_system_thread_entry(ULONG id)
 #endif
 
     GX_EVENT* event_ptr;
-
-    GX_PARAMETER_NOT_USED(id);
 
     for (;;)
     {
