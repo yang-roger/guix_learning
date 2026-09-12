@@ -24,7 +24,7 @@ extern VOID                  rotate_memory_free(VOID *mem);
 
 extern GX_WINDOW     *pRotateScreen;
 extern GX_WINDOW     *pRotateWin;
-INT                   angle = 90;
+INT                   angle = 30;
 INT                   rotate_pixelmap_index = 0;
 GX_RESOURCE_ID        rotate_pixelmap_id[] = { GX_PIXELMAP_ID_ROTATE_FOOT, GX_PIXELMAP_ID_ROTATE_APPLE, GX_PIXELMAP_ID_ROTATE_FISH, GX_PIXELMAP_ID_BLACK_PAUSE_ALPHAMAP};
 GX_BOOL               direct = GX_FALSE;
@@ -72,7 +72,7 @@ UINT status = 0;
         rotate_pixelmap_index = 2;
         gx_system_dirty_mark(pRotateScreen);
         break;
-        
+
     case GX_SIGNAL(ID_DIRECT_ROTATE, GX_EVENT_TOGGLE_ON):
         direct = GX_TRUE;
         gx_system_dirty_mark(pRotateScreen);
@@ -85,7 +85,6 @@ UINT status = 0;
 
     default:
         return next_button_handler(window, myevent);
-        break;
     }
     return status;
 }
