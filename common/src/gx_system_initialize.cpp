@@ -227,18 +227,6 @@ UINT _gx_system_initialize(void)
     memset(&_gx_system_event_queue, 0, sizeof(_gx_system_event_queue));
     memset(&_gx_system_protect, 0, sizeof(_gx_system_protect));
 
-    ULONG event_size = GX_EVENT_SIZE;
-    if (event_size < sizeof(GX_EVENT))
-    {
-        // The constant GX_EVENT_SIZE is not large enough to hold a GX_EVENT type,
-        // which is a system error.
-        // GX_EVENT_SIZE must be redefined and the GUIX library must be rebuilt.
-
-        _gx_system_error_process(GX_SYSTEM_EVENT_SIZE_MISMATCH);
-
-        return GX_SYSTEM_ERROR;
-    }
-
 #ifndef GX_DISABLE_THREADX_TIMER_SOURCE
     memset(&_gx_system_os_timer, 0, sizeof(_gx_system_os_timer));
 

@@ -5,8 +5,7 @@
 
 struct GX_WIDGET;
 
-/* Define Event type.  Note: the size of this structure must be less than or equal to the constant
-   GX_EVENT_SIZE defined previously.  */
+/* Define Event type.  */
 struct GX_EVENT
 {
     ULONG      type;                                       /* Global event type                        */
@@ -29,5 +28,7 @@ struct GX_EVENT
 
 #define GX_EVENT_SIZE   sizeof(GX_EVENT)
 #define GX_EVENT_ULONGS ((GX_EVENT_SIZE + 3) / sizeof(ULONG))
+
+GX_COMPILE_ASSERT(GX_EVENT_SIZE >= sizeof(GX_EVENT));
 
 #endif
